@@ -5,6 +5,8 @@ export const LAYOUT_TEST_IDS = {
   upgradePrompt: 'upgrade-prompt',
   upgradePromptCta: 'upgrade-prompt-cta',
   upgradePromptDismiss: 'upgrade-prompt-dismiss',
+  modalShell: 'template-modal',
+  modalShellClose: 'cancel-button',
 } as const;
 
 /** Route the UpgradePrompt CTA navigates to by default (the apps' billing settings path). */

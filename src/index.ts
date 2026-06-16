@@ -13,6 +13,9 @@ export type { UpgradePromptProps } from './UpgradePrompt/UpgradePrompt';
 export { ModalDropdown } from './ModalDropdown/ModalDropdown';
 export type { ModalDropdownProps, DropdownOption } from './ModalDropdown/ModalDropdown';
 
+export { ModalShell } from './ModalShell/ModalShell';
+export type { ModalShellProps } from './ModalShell/ModalShell';
+
 export { useFocusTrap } from './hooks/useFocusTrap';
 
 export { LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE } from './constants';
