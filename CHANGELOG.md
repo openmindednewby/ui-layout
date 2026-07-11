@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.3.0
+
+- Add **`Accordion`** + **`AccordionItem`** — a themed expand/collapse disclosure group that
+  replaces per-app hand-rolled `<details>` / expanders (AML "More options" + expandable
+  matched-candidate rows, Erevna survey groups, Katalogos menu sections…).
+- Compound API: an `Accordion` container owns the open state and shares it with `AccordionItem`
+  children via context. Each item = a pressable header (title left, optional `right`
+  adornment/badge slot, a rotating chevron) over a collapsible body `region`.
+- **Controlled** (`openIds` + `onOpenChange`) **and uncontrolled** (`defaultOpenIds`, plus
+  per-item `defaultOpen`). `allowMultiple` (default `true`) vs single-open. Per-item `disabled`.
+- **a11y**: header is an accessible `button` (`accessibilityRole="button"`,
+  `accessibilityState={{ expanded }}`, web `aria-expanded` + `aria-controls`); body is a
+  `role="region"`. Renders as a native `<button>`, so **Enter / Space toggle** it.
+- **Themed** entirely from the `@dloizides/ui-feedback` theme (border / surface / text colours),
+  no hardcoded palette; renders borderless so it nests inside a `Section` / `Card`.
+- **Animated** open/close via a guarded `LayoutAnimation` (web- and native-safe no-op fallback,
+  never throws) + an `Animated` chevron rotation. Hook-safe (lazy `useState`, no ref reads in render).
+- **Additive / backward-compatible**: purely new exports (`Accordion`, `AccordionItem`,
+  `AccordionProps`, `AccordionItemProps`). Existing consumers (erevna / katalogos / aml-v2) are
+  unaffected.
+
 ## 1.2.0
 
 - `ModalDropdown` can now render as an **inline anchored menu** (native `<select>` feel), not only a

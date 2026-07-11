@@ -13,7 +13,61 @@ Read theme + translations from the shared `@dloizides/ui-feedback` context (`use
 | `UpgradePrompt` | Free-tier upgrade nudge; CTA navigates to the billing route via `useUi().navigate`. |
 | `ModalDropdown` | Generic dropdown selector. **Responsive by default**: an inline anchored menu on wide/desktop web, a modal on narrow/mobile — override per screen with `variant`. |
 | `DropdownVariant` | Enum (`Menu` / `Modal`) to force a `ModalDropdown` rendering variant. |
+| `Accordion` / `AccordionItem` | Themed expand/collapse disclosure group (replaces hand-rolled `<details>`/expanders). Controlled or uncontrolled, single- or multi-open, animated, keyboard + screen-reader accessible. |
 | `useFocusTrap` | Web keyboard focus-trap hook (no-op on native). |
+
+### `Accordion`
+
+A compound component: an `Accordion` container that owns the open state + `AccordionItem`
+children that read it via context. Each item is a pressable header (title left, optional
+`right` adornment/badge slot, a rotating chevron) over a collapsible body `region`.
+
+- **Controlled** — pass `openIds` + `onOpenChange`.
+- **Uncontrolled** — pass `defaultOpenIds` on the container and/or `defaultOpen` per item.
+- **`allowMultiple`** (default `true`) keeps any number of items open; `false` = single-open.
+- **Per-item `disabled`.**
+- **a11y** — header is an accessible `button` (`accessibilityRole="button"`,
+  `accessibilityState={{ expanded }}`, web `aria-expanded` + `aria-controls`); the body is a
+  `role="region"`. The header renders as a native `<button>`, so **Enter / Space toggle** it.
+- **Themed** entirely from the active `useUi()` theme (border / surface / text colours). Renders
+  borderless so it drops cleanly inside a `Section` / `Card`.
+- **Animated** open/close via guarded `LayoutAnimation` (a no-op where unavailable — never errors
+  on web or native) plus an `Animated` chevron rotation.
+- **testIDs** — container `testID` (default `accordion`); per item the header is
+  `testID` (default `accordion-item-<id>`), the body `<header>-body`, the chevron `<header>-chevron`.
+
+```tsx
+import { Accordion, AccordionItem, Section, StatusBadge } from '@dloizides/ui-layout';
+
+// 1) A form "More options" disclosure (single collapsible section, starts closed):
+<Section>
+  <Accordion>
+    <AccordionItem id="more" title="More options">
+      <FuzzinessSlider />
+      <DatasetPicker />
+    </AccordionItem>
+  </Accordion>
+</Section>
+
+// 2) An expandable list row per matched candidate (single-open, badge in the right slot):
+<Accordion allowMultiple={false} onOpenChange={(ids) => setOpenRow(ids[0])}>
+  {candidates.map((c) => (
+    <AccordionItem
+      key={c.id}
+      id={c.id}
+      title={c.name}
+      right={<StatusBadge label={c.tier} color={c.fg} backgroundColor={c.bg} />}
+    >
+      <CandidateDetail candidate={c} />
+    </AccordionItem>
+  ))}
+</Accordion>
+
+// Controlled variant:
+<Accordion openIds={openIds} onOpenChange={setOpenIds}>{/* …items… */}</Accordion>
+```
+
+The apps supply the header hint string via the shared translate: key `common.accordionToggleHint`.
 
 ### `ModalDropdown` variants
 
