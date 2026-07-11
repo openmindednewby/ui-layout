@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1
+
+Fix: the modal-variant dismiss backdrop was a pressable WRAPPING the option buttons,
+producing invalid DOM on web ("<button> cannot contain a nested <button>") + a React
+console.error. The backdrop is now an absolute-fill SIBLING behind the dialog — same
+tap-to-dismiss behaviour, no nesting. No API change.
+
+
 ## 1.7.0
 
 - **`ModalDropdown` inline-menu (`variant={DropdownVariant.Menu}`) z-index / clipping fix.** On

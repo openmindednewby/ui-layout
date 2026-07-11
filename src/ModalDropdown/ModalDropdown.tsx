@@ -163,16 +163,20 @@ export const ModalDropdown = <T extends string | number>({
 
       {!isMenu ? (
         <Modal transparent animationType="fade" visible={isOpen} onRequestClose={handleClose}>
-          <TouchableOpacity
-            accessible
-            accessibilityHint={t('common.dismissDropdownHint')}
-            accessibilityLabel={t('common.dismissDropdown')}
-            accessibilityRole="button"
-            activeOpacity={1}
-            style={styles.modalOverlay}
-            testID={`${testID}-backdrop`}
-            onPress={handleClose}
-          >
+          {/* The dismiss backdrop is a SIBLING behind the dialog, not its parent — a wrapping
+              pressable would nest the option buttons inside a button (invalid DOM: "<button>
+              cannot contain a nested <button>"). Absolute-fill catches taps outside the dialog. */}
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              accessible
+              accessibilityHint={t('common.dismissDropdownHint')}
+              accessibilityLabel={t('common.dismissDropdown')}
+              accessibilityRole="button"
+              activeOpacity={1}
+              style={StyleSheet.absoluteFill}
+              testID={`${testID}-backdrop`}
+              onPress={handleClose}
+            />
             <View
               ref={dialogRef}
               accessibilityViewIsModal
@@ -182,7 +186,7 @@ export const ModalDropdown = <T extends string | number>({
             >
               <FlatList data={[...options]} keyExtractor={keyExtractor} renderItem={renderModalOption} />
             </View>
-          </TouchableOpacity>
+          </View>
         </Modal>
       ) : null}
     </View>
