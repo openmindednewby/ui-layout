@@ -86,6 +86,15 @@ describe('ModalDropdown inline menu variant', () => {
     expect(screen.queryByTestId('risk-select-menu')).toBeNull();
     expect(screen.getByText('Alpha')).toBeTruthy();
   });
+
+  it('portals the open menu to document.body so it escapes ancestor stacking/overflow', () => {
+    renderDropdown({ variant: DropdownVariant.Menu });
+    fireEvent.click(screen.getByTestId('risk-select'));
+    const menu = screen.getByTestId('risk-select-menu');
+    // A portal renders the menu as a direct child of <body>, not nested under the anchor —
+    // that is what lets it paint above later siblings (the case table / adjacent fields).
+    expect(menu.parentElement).toBe(document.body);
+  });
 });
 
 describe('ModalDropdown modal variant (explicit)', () => {

@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.7.0
+
+- **`ModalDropdown` inline-menu (`variant={DropdownVariant.Menu}`) z-index / clipping fix.** On
+  wide/desktop web the open inline menu painted UNDERNEATH later content (adjacent filter fields,
+  the results table, cards) so options were hidden/clipped. Root cause: react-native-web renders
+  **every `View`** with `position: relative; z-index: 0`, making each View its own stacking context —
+  so the popover's `zIndex: 1000` was trapped inside its anchor / the app's field wrapper and could
+  never rise above later-painting siblings.
+- **Fix:** on web the menu is now rendered in a **portal to `document.body`** with `position: fixed`
+  at the trigger's measured viewport rect (recomputed on scroll/resize) and a high `zIndex`. A portal
+  escapes every ancestor stacking context AND every ancestor `overflow: hidden`, so the menu always
+  paints on top and is never clipped — the same "menu above the table" outcome as
+  `@dloizides/ui-tables` `SizeDropdown`. The anchor wrapper is also lifted to a raised `zIndex` while
+  open (defence-in-depth; the primary lift on native).
+- **Native-safe:** the portal + `document`/`window` listeners are all behind `Platform.OS === 'web'`;
+  native keeps the in-tree `position:absolute` popover + `elevation`. `react-dom` is added as an
+  **optional** peer (already present in every react-native-web consumer).
+- Outside-click dismissal now consults the portalled popover's own node too, so clicking an option
+  still selects (a portalled option is no longer a DOM descendant of the anchor). Keyboard nav
+  (↑/↓, Home/End, Enter, Escape), `role="menu"`/`menuitem`, `aria-expanded`/`aria-selected`, and the
+  modal variant on narrow/native are all unchanged.
+- **Additive / backward-compatible:** the `ModalDropdown` API is unchanged; erevna / katalogos / kefi
+  are unaffected.
+
 ## 1.6.0
 
 - **Accessibility (WCAG 2.1 AA) hardening — additive + backward-compatible.**

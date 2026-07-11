@@ -19,6 +19,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap';
 import { DropdownVariant } from './DropdownVariant';
 import type { DropdownOption } from './dropdownTypes';
 import { InlineMenu } from './InlineMenu';
+import { buildAnchorStackStyle } from './menuStacking';
 import { OptionRow } from './OptionRow';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
 
@@ -108,6 +109,12 @@ export const ModalDropdown = <T extends string | number>({
     () => [styles.container, { borderColor: colors.border, backgroundColor: colors.surface }],
     [colors.border, colors.surface],
   );
+  // While the inline menu is open, lift the anchor wrapper's stacking so it wins over immediate
+  // sibling views (defence-in-depth behind the web portal; the primary lift on native).
+  const anchorStyle = useMemo(
+    () => [styles.anchor, buildAnchorStackStyle(isMenu && isOpen)],
+    [isMenu, isOpen],
+  );
   const modalContentStyle = useMemo(
     () => [styles.modalContent, { backgroundColor: colors.surface }],
     [colors.surface],
@@ -127,7 +134,7 @@ export const ModalDropdown = <T extends string | number>({
   const keyExtractor = useCallback((item: DropdownOption<T>) => String(item.value), []);
 
   return (
-    <View ref={anchorRef} style={styles.anchor}>
+    <View ref={anchorRef} style={anchorStyle}>
       <TouchableOpacity
         accessible
         accessibilityHint={accessibilityHint}

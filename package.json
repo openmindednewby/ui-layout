@@ -78,8 +78,14 @@
     "@dloizides/ui-feedback": ">=1.1.0",
     "@dloizides/ui-icons": ">=1.0.1",
     "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
     "react-native": ">=0.74.0",
     "react-native-svg": ">=13.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@dloizides/ui-feedback": "^1.2.0",
