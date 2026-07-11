@@ -11,7 +11,9 @@ export { UpgradePrompt } from './UpgradePrompt/UpgradePrompt';
 export type { UpgradePromptProps } from './UpgradePrompt/UpgradePrompt';
 
 export { ModalDropdown } from './ModalDropdown/ModalDropdown';
-export type { ModalDropdownProps, DropdownOption } from './ModalDropdown/ModalDropdown';
+export type { ModalDropdownProps } from './ModalDropdown/ModalDropdown';
+export type { DropdownOption } from './ModalDropdown/dropdownTypes';
+export { DropdownVariant } from './ModalDropdown/DropdownVariant';
 
 export { ModalShell } from './ModalShell/ModalShell';
 export type { ModalShellProps } from './ModalShell/ModalShell';

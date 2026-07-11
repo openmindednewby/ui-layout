@@ -5,6 +5,7 @@ import { Heading } from './Heading/Heading';
 import { StatusBadge } from './StatusBadge/StatusBadge';
 import { UpgradePrompt } from './UpgradePrompt/UpgradePrompt';
 import { ModalDropdown } from './ModalDropdown/ModalDropdown';
+import { DropdownVariant } from './ModalDropdown/DropdownVariant';
 
 // Read theme/translate from @dloizides/ui-feedback's default context (no provider needed in tests).
 
@@ -43,7 +44,7 @@ describe('UpgradePrompt', () => {
 });
 
 describe('ModalDropdown', () => {
-  it('shows the selected label and opens on press', () => {
+  it('shows the selected label and opens the modal when the modal variant is forced', () => {
     const onChange = jest.fn();
     render(
       <ModalDropdown
@@ -51,6 +52,7 @@ describe('ModalDropdown', () => {
         accessibilityLabel="Plan"
         accessibilityHint="Pick a plan"
         value="a"
+        variant={DropdownVariant.Modal}
         options={[{ label: 'Alpha', value: 'a' }, { label: 'Beta', value: 'b' }]}
         onChange={onChange}
       />

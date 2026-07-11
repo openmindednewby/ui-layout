@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0
+
+- `ModalDropdown` can now render as an **inline anchored menu** (native `<select>` feel), not only a
+  modal. New `variant?: DropdownVariant` prop (`Menu` | `Modal`) selects the presentation per screen.
+- **Responsive default** (when `variant` is omitted): inline `Menu` on wide/desktop web
+  (viewport ≥ 768px), `Modal` on narrow/mobile and on any native platform. An explicit `variant`
+  overrides the auto choice.
+- The inline menu anchors under the trigger, is dismissible via click-outside / `Esc`, is
+  keyboard-navigable (↑/↓, `Home`/`End`, `Enter`), scrolls when long, and does not push layout.
+  The modal path is unchanged. Both variants share the same option-rendering/selection logic
+  (`OptionRow`), so nothing is duplicated.
+- **Additive / backward-compatible**: existing `ModalDropdown` callers (erevna / katalogos / aml-v2)
+  keep their exact API and now get the inline-on-desktop menu automatically. New export:
+  `DropdownVariant` (a runtime enum — deliberately not `const enum`, which cannot cross a published
+  package boundary under `isolatedModules`).
+
 ## 1.1.0
 
 - Add `ModalShell` — slide-up full-screen modal with a themed header (title + close) and scrollable body.
