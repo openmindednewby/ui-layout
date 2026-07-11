@@ -20,8 +20,20 @@ function enableAndroidLayoutAnimationOnce(): void {
   }
 }
 
+/**
+ * True when the user asked the OS to reduce motion (web only). The expand/collapse layout
+ * animation is then skipped so the panel appears/disappears instantly (WCAG 2.3.3). Safe under
+ * SSR / where `matchMedia` is unavailable, and always false on native (handled by the caller).
+ */
+function prefersReducedMotion(): boolean {
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 /** Animate the layout change caused by the next state update (expand/collapse). */
 export function animateNextLayout(): void {
+  // Honour reduced-motion: skip the animation entirely so the change is instant.
+  if (prefersReducedMotion()) return;
   enableAndroidLayoutAnimationOnce();
   const configure = LayoutAnimation.configureNext;
   if (typeof configure !== 'function') return;

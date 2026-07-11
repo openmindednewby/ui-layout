@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.6.0
+
+- **Accessibility (WCAG 2.1 AA) hardening — additive + backward-compatible.**
+  - `AccordionItem`: the rotating chevron (plain) and leading ▸ marker (boxed) are purely
+    decorative — the open/closed state is already on the header via `aria-expanded` — so they are
+    now `aria-hidden` / `accessibilityElementsHidden` to keep them out of the screen-reader tree.
+  - `Accordion`: the expand/collapse `LayoutAnimation` and the chevron rotation now honour
+    `prefers-reduced-motion: reduce`, snapping instantly for users who request reduced motion
+    (WCAG 2.3.3, web only).
+  - `ModalDropdown`: the trigger now also emits `accessibilityState.expanded` (native parity for
+    the existing web `aria-expanded`).
+
 ## 1.5.0
 
 - `Accordion` / `AccordionItem` gain a `variant` prop (`'plain' | 'boxed'`, default `'plain'`).

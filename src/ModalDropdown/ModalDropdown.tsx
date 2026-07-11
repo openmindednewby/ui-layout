@@ -133,6 +133,7 @@ export const ModalDropdown = <T extends string | number>({
         accessibilityHint={accessibilityHint}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen }}
         aria-expanded={isOpen}
         style={containerStyle}
         testID={testID}

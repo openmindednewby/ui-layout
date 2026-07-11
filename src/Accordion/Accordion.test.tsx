@@ -124,6 +124,18 @@ describe('Accordion', () => {
     expect(screen.queryByText('Body A')).toBeNull();
   });
 
+  it('marks the boxed marker (decorative chevron) aria-hidden so it adds no SR noise', () => {
+    render(
+      <Accordion variant="boxed">
+        <AccordionItem id="a" title="First">
+          <span>Body A</span>
+        </AccordionItem>
+      </Accordion>,
+    );
+    // The state is conveyed by aria-expanded on the header; the rotating ▸ is decorative.
+    expect(screen.getByTestId('accordion-item-a-chevron').getAttribute('aria-hidden')).toBe('true');
+  });
+
   it('does not toggle a disabled item', () => {
     render(
       <Accordion>

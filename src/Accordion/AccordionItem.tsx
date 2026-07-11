@@ -101,6 +101,16 @@ interface WebKeyboardProps {
 }
 
 const ACTIVATION_KEYS = ['Enter', ' ', 'Spacebar'];
+const INSTANT_DURATION_MS = 0;
+
+/**
+ * True when the user asked the OS to reduce motion (web only). The chevron/marker rotation then
+ * snaps instead of easing (WCAG 2.3.3). Safe under SSR / where `matchMedia` is absent.
+ */
+function prefersReducedMotion(): boolean {
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 export const AccordionItem = ({
   id,
@@ -129,7 +139,7 @@ export const AccordionItem = ({
   useEffect(() => {
     Animated.timing(rotation, {
       toValue: expanded ? ROTATE_EXPANDED : ROTATE_COLLAPSED,
-      duration: ROTATE_DURATION_MS,
+      duration: prefersReducedMotion() ? INSTANT_DURATION_MS : ROTATE_DURATION_MS,
       easing: Easing.out(Easing.ease),
       useNativeDriver: Platform.OS !== 'web',
     }).start();
@@ -204,7 +214,14 @@ export const AccordionItem = ({
       >
         <View style={[styles.headerLeft, boxed ? styles.headerLeftRow : null]}>
           {boxed ? (
-            <Animated.View style={[styles.marker, { transform: [{ rotate }] }]} testID={chevronTestID}>
+            // Decorative — the open/closed state is already conveyed by aria-expanded on the header.
+            <Animated.View
+              accessibilityElementsHidden
+              aria-hidden
+              importantForAccessibility="no-hide-descendants"
+              style={[styles.marker, { transform: [{ rotate }] }]}
+              testID={chevronTestID}
+            >
               <Text style={[styles.markerText, { color: colors.textSecondary }]}>{BOX_MARKER}</Text>
             </Animated.View>
           ) : null}
@@ -213,7 +230,12 @@ export const AccordionItem = ({
         <View style={styles.headerRight}>
           {right}
           {boxed ? null : (
-            <Animated.View style={[styles.chevron, { transform: [{ rotate }] }]}>
+            <Animated.View
+              accessibilityElementsHidden
+              aria-hidden
+              importantForAccessibility="no-hide-descendants"
+              style={[styles.chevron, { transform: [{ rotate }] }]}
+            >
               <SvgIcon color={colors.textSecondary} name="chevronDown" size={CHEVRON_SIZE} testID={chevronTestID} />
             </Animated.View>
           )}
