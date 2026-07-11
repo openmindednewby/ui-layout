@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.4.0
+
+- Add **`SegmentedControl`** — a single rounded pill *track* holding N mutually-exclusive
+  segments (the iOS-style segmented / tab toggle). The selected segment lifts onto a raised
+  surface (`colors.surface`) with a subtle shadow; the rest stay transparent over the soft
+  track (`colors.background`). Promoted from the v1 AML console's `.lf-mode` mode switch so
+  erevna/katalogos/kefi share ONE toggle instead of hand-rolling two primary/ghost buttons.
+- **Generic over the value union** (`SegmentedControl<'peps' | 'leaders'>`) for a typed
+  `onChange`; each segment carries its own `label` / `value` / optional `testID` +
+  `accessibilityLabel` / `accessibilityHint`.
+- **a11y**: the group renders as a `tablist`, each segment as a `tab` with
+  `accessibilityState={{ selected }}` (react-native-web forwards `role` + `aria-selected`).
+- **Themed** entirely from the `@dloizides/ui-feedback` theme (surface / background / border /
+  text colours); no colour literal except the selected-segment drop shadow.
+- **Additive / backward-compatible**: purely new exports (`SegmentedControl`,
+  `SegmentedControlProps`, `SegmentedOption`). Existing consumers are unaffected.
+
 ## 1.3.0
 
 - Add **`Accordion`** + **`AccordionItem`** — a themed expand/collapse disclosure group that

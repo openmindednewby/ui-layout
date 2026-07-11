@@ -7,6 +7,9 @@ export type { HeadingProps } from './Heading/Heading';
 export { StatusBadge } from './StatusBadge/StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
 
+export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/SegmentedControl';
+
 export { UpgradePrompt } from './UpgradePrompt/UpgradePrompt';
 export type { UpgradePromptProps } from './UpgradePrompt/UpgradePrompt';
 
