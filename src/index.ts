@@ -25,6 +25,7 @@ export { Accordion } from './Accordion/Accordion';
 export type { AccordionProps } from './Accordion/Accordion';
 export { AccordionItem } from './Accordion/AccordionItem';
 export type { AccordionItemProps } from './Accordion/AccordionItem';
+export type { AccordionVariant } from './Accordion/AccordionVariant';
 
 export { useFocusTrap } from './hooks/useFocusTrap';
 

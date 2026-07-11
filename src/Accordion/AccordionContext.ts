@@ -4,6 +4,8 @@
  */
 import { createContext, useContext } from 'react';
 
+import type { AccordionVariant } from './AccordionVariant';
+
 export interface AccordionContextValue {
   /** Ids of the currently-open items. */
   openIds: ReadonlySet<string>;
@@ -11,6 +13,8 @@ export interface AccordionContextValue {
   toggle: (id: string) => void;
   /** When false, opening an item closes the others. */
   allowMultiple: boolean;
+  /** Visual treatment shared with every item (`plain` default, or `boxed`). */
+  variant: AccordionVariant;
 }
 
 export const AccordionContext = createContext<AccordionContextValue | null>(null);

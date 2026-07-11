@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.0
+
+- `Accordion` / `AccordionItem` gain a `variant` prop (`'plain' | 'boxed'`, default `'plain'`).
+  `plain` is the original borderless look (hairline dividers, right-hand chevron flipping 180° on
+  open) — existing consumers render **identically**, no change. `boxed` is the AML v1 console
+  `<details>` look: each item is its own bordered, rounded box (spaced by a gap) with a **leading
+  ▸ marker** that rotates 90° on open and a muted, 600-weight summary. The full API is preserved
+  (controlled/uncontrolled, `allowMultiple`, `defaultOpen`, a11y `aria-expanded`/region, the
+  open/close LayoutAnimation + chevron rotation). Additive + backward-compatible.
+
 ## 1.4.0
 
 - Add **`SegmentedControl`** — a single rounded pill *track* holding N mutually-exclusive

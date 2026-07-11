@@ -135,4 +135,47 @@ describe('Accordion', () => {
     fireEvent.click(screen.getByTestId('accordion-item-a'));
     expect(screen.queryByText('Body A')).toBeNull();
   });
+
+  it('boxed variant keeps the full API: toggles, a11y and body region still work', () => {
+    render(
+      <Accordion variant="boxed">
+        <AccordionItem id="a" title="First">
+          <span>Body A</span>
+        </AccordionItem>
+        <AccordionItem id="b" title="Second">
+          <span>Body B</span>
+        </AccordionItem>
+      </Accordion>,
+    );
+    const header = screen.getByTestId('accordion-item-a');
+    // Leading ▸ marker (the boxed chevron) is present even with SvgIcon stubbed out.
+    expect(screen.getByTestId('accordion-item-a-chevron')).toBeTruthy();
+    expect(header.getAttribute('aria-expanded')).toBe('false');
+
+    fireEvent.click(header);
+    expect(header.getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getByText('Body A')).toBeTruthy();
+    expect(screen.getByTestId('accordion-item-a-body')).toBeTruthy();
+
+    fireEvent.click(header);
+    expect(screen.queryByText('Body A')).toBeNull();
+  });
+
+  it('boxed variant supports single-open mode (allowMultiple=false)', () => {
+    render(
+      <Accordion variant="boxed" allowMultiple={false}>
+        <AccordionItem id="a" title="First">
+          <span>Body A</span>
+        </AccordionItem>
+        <AccordionItem id="b" title="Second">
+          <span>Body B</span>
+        </AccordionItem>
+      </Accordion>,
+    );
+    fireEvent.click(screen.getByTestId('accordion-item-a'));
+    expect(screen.getByText('Body A')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('accordion-item-b'));
+    expect(screen.getByText('Body B')).toBeTruthy();
+    expect(screen.queryByText('Body A')).toBeNull();
+  });
 });

@@ -6,7 +6,9 @@
  * (`defaultOpenIds`, plus per-item `defaultOpen`). `allowMultiple` (default) lets any
  * number of items be open at once; set it false for single-open (radio-like) behaviour.
  *
- * Renders borderless so it drops cleanly inside a `Section` / `Card`.
+ * `variant` picks the look: `plain` (default) renders borderless so it drops cleanly inside a
+ * `Section` / `Card`; `boxed` renders each item as its own bordered, rounded box with a leading
+ * ▸ marker (the AML v1 console `<details>` look).
  */
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -14,10 +16,14 @@ import { StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { AccordionContext, type AccordionContextValue } from './AccordionContext';
 import type { AccordionItemProps } from './AccordionItem';
+import type { AccordionVariant } from './AccordionVariant';
 import { animateNextLayout } from './accordionAnimation';
+
+const BOXED_GAP = 12;
 
 const styles = StyleSheet.create({
   container: { alignSelf: 'stretch' },
+  boxed: { gap: BOXED_GAP },
 });
 
 export interface AccordionProps {
@@ -31,6 +37,8 @@ export interface AccordionProps {
   onOpenChange?: (openIds: string[]) => void;
   /** Allow several items open at once (default true). False = single-open. */
   allowMultiple?: boolean;
+  /** Visual treatment: `plain` (default, borderless) or `boxed` (bordered ▸ boxes). */
+  variant?: AccordionVariant;
   testID?: string;
   style?: ViewStyle | ViewStyle[];
 }
@@ -62,6 +70,7 @@ export const Accordion = ({
   defaultOpenIds,
   onOpenChange,
   allowMultiple = true,
+  variant = 'plain',
   testID = 'accordion',
   style,
 }: AccordionProps): React.ReactElement => {
@@ -94,14 +103,15 @@ export const Accordion = ({
   );
 
   const contextValue = useMemo<AccordionContextValue>(
-    () => ({ openIds: openSet, toggle, allowMultiple }),
-    [openSet, toggle, allowMultiple],
+    () => ({ openIds: openSet, toggle, allowMultiple, variant }),
+    [openSet, toggle, allowMultiple, variant],
   );
 
-  const containerStyle = useMemo<ViewStyle[]>(
-    () => (style === undefined ? [styles.container] : [styles.container, ...(Array.isArray(style) ? style : [style])]),
-    [style],
-  );
+  const containerStyle = useMemo<ViewStyle[]>(() => {
+    const base = variant === 'boxed' ? [styles.container, styles.boxed] : [styles.container];
+    if (style === undefined) return base;
+    return [...base, ...(Array.isArray(style) ? style : [style])];
+  }, [style, variant]);
 
   return (
     <AccordionContext.Provider value={contextValue}>
