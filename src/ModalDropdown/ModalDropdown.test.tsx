@@ -189,3 +189,62 @@ describe('ModalDropdown custom trigger + option testIDs (1.8.0)', () => {
     expect(onChange).toHaveBeenCalledWith('b');
   });
 });
+
+describe('ModalDropdown keyboard selection with the trigger still focused (1.9.1 regression)', () => {
+  // THE BUG: the trigger keeps DOM focus while the menu is open, and react-native-web maps Enter on
+  // a focused Touchable to onPress. React dispatches that from its ROOT listener — below `document`
+  // — so a BUBBLING document listener ran second: the trigger toggled the menu shut, React unmounted
+  // the popover, the cleanup removed the listener the event was still travelling toward, and Enter
+  // never selected. Keyboard users could open and navigate a dropdown but never CHOOSE with the
+  // keyboard. The handler now runs in the CAPTURE phase and claims the keys the open menu owns.
+  it('Enter selects the highlighted option instead of the still-focused trigger toggling it shut', () => {
+    const onChange = jest.fn();
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={onChange}
+      />,
+    );
+    const trigger = screen.getByTestId('risk-select');
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('risk-select-menu')).toBeTruthy();
+
+    // Arrow off the selected option ('a', index 0) onto 'b', then commit with Enter — dispatched
+    // from the TRIGGER, which is where a keyboard user's focus actually is.
+    fireEvent.keyDown(document, { key: 'ArrowDown' });
+    fireEvent.keyDown(trigger, { key: 'Enter' });
+
+    expect(onChange).toHaveBeenCalledWith('b');
+    expect(screen.queryByTestId('risk-select-menu')).toBeNull();
+  });
+
+  it('an open menu CLAIMS its keys, so they never reach the trigger (no toggle behind our back)', () => {
+    const bubbled = jest.fn();
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('risk-select'));
+
+    // A bubble-phase listener stands in for React's root listener (which sits below `document`).
+    document.addEventListener('keydown', bubbled);
+    try {
+      fireEvent.keyDown(screen.getByTestId('risk-select'), { key: 'ArrowDown' });
+      expect(bubbled).not.toHaveBeenCalled();
+    } finally {
+      document.removeEventListener('keydown', bubbled);
+    }
+  });
+});

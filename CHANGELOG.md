@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.9.1
+
+- **Fix (keyboard a11y, affects every consumer): Enter CLOSED the inline menu instead of SELECTING
+  the highlighted option.** The trigger keeps DOM focus while the menu is open, and react-native-web
+  maps Enter on a focused Touchable to `onPress`. React dispatches that from its ROOT container
+  listener — an ancestor of the trigger, but a *descendant* of `document` — so the menu's BUBBLING
+  `document` keydown listener ran second: the trigger toggled the menu shut, React unmounted the
+  popover, the effect cleanup removed the very listener the event was still travelling toward, and
+  `document` never saw the Enter. Keyboard users could open a dropdown and arrow through it but
+  could never CHOOSE with the keyboard (mouse selection was unaffected, which is why it went
+  unnoticed).
+- **Fix:** the menu's key handler now runs in the **capture** phase and `stopPropagation`s the keys
+  an open menu owns (↑/↓/Home/End/Enter/Escape), so it runs ahead of React's listener and the
+  trigger cannot re-toggle behind it. Found while browser-verifying the AML v2 topbar dropdowns.
+
 ## 1.9.0
 
 - **`ModalDropdown`: `menuMinWidth` — a width FLOOR for the open inline menu (additive, optional).**

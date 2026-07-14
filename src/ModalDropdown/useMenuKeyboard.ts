@@ -13,6 +13,17 @@
  * so it is NOT a DOM descendant of `containerRef`. The outside-click check therefore consults the
  * optional `menuRef` too, otherwise a mousedown on an option would count as "outside" and close the
  * menu before the option's click could select it.
+ *
+ * WHY THE KEY LISTENER IS ON THE **CAPTURE** PHASE (a real bug this fixes): the trigger keeps DOM
+ * focus while the menu is open, and react-native-web maps Enter on a focused Touchable to `onPress`.
+ * React dispatches that from its ROOT container listener — an ancestor of the trigger but a
+ * DESCENDANT of `document` — so on a BUBBLING listener React's handler ran FIRST: it toggled the
+ * menu shut, React unmounted the popover, this effect's cleanup removed the very listener the event
+ * was still travelling toward, and `document` never saw the Enter. Net effect: **Enter closed the
+ * menu instead of selecting the highlighted option** — keyboard users could open and navigate a
+ * dropdown but never choose with the keyboard. Listening in the CAPTURE phase puts this handler
+ * ahead of React's, and `stopPropagation` on the keys the open menu owns keeps the trigger from
+ * re-toggling behind our back.
  */
 import { useEffect } from 'react';
 import type { RefObject } from 'react';
@@ -45,33 +56,42 @@ const clampIndex = (index: number, itemCount: number): number => {
   return index > lastIndex ? lastIndex : index;
 };
 
+/**
+ * An OPEN menu owns these keys: swallow them so the still-focused trigger (whose Enter
+ * react-native-web maps to `onPress`) cannot toggle the menu shut behind the handler's back.
+ */
+function claimKey(event: KeyboardEvent): void {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 function buildKeyHandler(params: MenuKeyboardParams): (event: KeyboardEvent) => void {
   const { itemCount, onHighlightChange, onSelectHighlighted, onClose } = params;
 
   return (event: KeyboardEvent): void => {
     switch (event.key) {
       case 'ArrowDown':
-        event.preventDefault();
+        claimKey(event);
         onHighlightChange((prev) => clampIndex(prev + 1, itemCount));
         return;
       case 'ArrowUp':
-        event.preventDefault();
+        claimKey(event);
         onHighlightChange((prev) => clampIndex(prev - 1, itemCount));
         return;
       case 'Home':
-        event.preventDefault();
+        claimKey(event);
         onHighlightChange(() => 0);
         return;
       case 'End':
-        event.preventDefault();
+        claimKey(event);
         onHighlightChange(() => clampIndex(itemCount - 1, itemCount));
         return;
       case 'Enter':
-        event.preventDefault();
+        claimKey(event);
         onSelectHighlighted();
         return;
       case 'Escape':
-        event.preventDefault();
+        claimKey(event);
         onClose();
         return;
       default:
@@ -94,11 +114,14 @@ export function useMenuKeyboard(params: MenuKeyboardParams): void {
       if (!insideAnchor && !insideMenu) onClose();
     };
 
-    document.addEventListener('keydown', onKeyDown);
+    // CAPTURE phase — see the file header: on the bubble phase React's root listener (the trigger's
+    // Enter → onPress) ran first, closed the menu, and unmounted this listener mid-flight, so Enter
+    // never selected. Capture puts the open menu's keys ahead of it.
+    document.addEventListener('keydown', onKeyDown, true);
     document.addEventListener('mousedown', onMouseDown);
 
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keydown', onKeyDown, true);
       document.removeEventListener('mousedown', onMouseDown);
     };
     // `params` is rebuilt each render; the primitive/callback members it carries are the real deps.
