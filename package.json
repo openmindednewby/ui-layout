@@ -1,6 +1,6 @@
 {
   "name": "@dloizides/ui-layout",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Themable, brand-agnostic React Native (RN-web) layout primitives — Section, Heading, StatusBadge, UpgradePrompt, ModalDropdown — sharing the @dloizides/ui-feedback UI context.",
   "keywords": [
     "react",
