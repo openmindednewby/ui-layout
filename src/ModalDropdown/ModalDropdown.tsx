@@ -58,6 +58,13 @@ export interface ModalDropdownProps<T> {
    * a dropdown.
    */
   optionTestID?: (value: T) => string;
+  /**
+   * Minimum width of the open inline menu. The menu otherwise matches the TRIGGER's width, which
+   * is right for a full-width field but leaves a COMPACT anchor (a locale pill, an avatar chip, an
+   * icon button — see `renderTrigger`) with a menu too narrow to read its own option labels. It is
+   * a floor only: a wider trigger still wins. Omit to keep the trigger-width behaviour.
+   */
+  menuMinWidth?: number;
 }
 
 const BORDER_RADIUS = 8;
@@ -102,6 +109,7 @@ export const ModalDropdown = <T extends string | number>({
   variant,
   renderTrigger,
   optionTestID,
+  menuMinWidth,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -191,6 +199,7 @@ export const ModalDropdown = <T extends string | number>({
         <InlineMenu
           accessibilityLabel={accessibilityLabel}
           containerRef={anchorRef}
+          menuMinWidth={menuMinWidth}
           optionTestID={optionTestIDFor}
           options={options}
           testID={testID}

@@ -43,3 +43,19 @@ describe('buildAnchorStackStyle', () => {
     expect(buildAnchorStackStyle(false)).toBeNull();
   });
 });
+
+describe('buildPortalPopoverStyle — compact-anchor width floor (1.9.0)', () => {
+  const compact = { top: 10, left: 900, width: 52, bottom: 54 };
+
+  it('floors the menu width for a COMPACT trigger (a 52px locale pill cannot show its labels)', () => {
+    expect(buildPortalPopoverStyle(compact, 160).width).toBe(160);
+  });
+
+  it('never shrinks a menu: a trigger wider than the floor still wins', () => {
+    expect(buildPortalPopoverStyle({ top: 0, left: 0, width: 220, bottom: 30 }, 160).width).toBe(220);
+  });
+
+  it('defaults to the trigger width when no floor is given (unchanged for existing callers)', () => {
+    expect(buildPortalPopoverStyle(compact).width).toBe(compact.width);
+  });
+});

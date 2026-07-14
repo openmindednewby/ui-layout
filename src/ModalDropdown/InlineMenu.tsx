@@ -103,6 +103,8 @@ export interface InlineMenuProps<T> {
   containerRef: RefObject<RNView | null>;
   /** Custom testID per option row. Defaults to `` `${testID}-option-${value}` ``. */
   optionTestID?: (value: T) => string;
+  /** Minimum popover width — a floor for COMPACT anchors, whose width cannot fit an option label. */
+  menuMinWidth?: number;
   onSelect: (value: T) => void;
   onClose: () => void;
 }
@@ -114,6 +116,7 @@ export const InlineMenu = <T extends string | number>({
   options,
   containerRef,
   optionTestID,
+  menuMinWidth = 0,
   onSelect,
   onClose,
 }: InlineMenuProps<T>): React.ReactElement | null => {
@@ -156,10 +159,14 @@ export const InlineMenu = <T extends string | number>({
   const popoverStyle = useMemo(() => {
     const themed = { borderColor: colors.border, backgroundColor: colors.surface };
     // Web: fixed-positioned in a portal at the measured trigger rect (escapes stacking + clipping).
-    if (IS_WEB) return [buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }), themed];
-    // Native: in-tree absolute popover under the trigger.
-    return [styles.popover, themed];
-  }, [colors.border, colors.surface, rect]);
+    if (IS_WEB)
+      return [
+        buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }, menuMinWidth),
+        themed,
+      ];
+    // Native: in-tree absolute popover under the trigger (stretched to the anchor, floored the same).
+    return [styles.popover, { minWidth: menuMinWidth }, themed];
+  }, [colors.border, colors.surface, menuMinWidth, rect]);
 
   const menu = (
     <View

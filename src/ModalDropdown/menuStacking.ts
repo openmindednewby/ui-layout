@@ -49,15 +49,19 @@ export interface AnchorRect {
  * Web portal popover style: `position: fixed` at the trigger rect with a high `zIndex`. Because
  * it is portalled to `document.body`, `fixed` positions it against the viewport, so it tracks the
  * trigger via the measured rect (recomputed on scroll/resize) and is clipped by nothing.
+ *
+ * The popover matches the trigger's width — right for a full-width field, but a COMPACT anchor (a
+ * locale pill, an avatar chip, an icon button) would then get a menu too narrow to read its own
+ * option labels. `minWidth` sets a floor for exactly that case; it never shrinks a menu.
  */
-export function buildPortalPopoverStyle(rect: AnchorRect): ViewStyle {
+export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0): ViewStyle {
   return {
     // RN's ViewStyle union omits 'fixed', but react-native-web honours it at runtime.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- web-only position value
     position: 'fixed' as unknown as ViewStyle['position'],
     top: rect.bottom + MENU_TOP_GAP,
     left: rect.left,
-    width: rect.width,
+    width: Math.max(rect.width, minWidth),
     zIndex: MENU_Z_INDEX,
     borderWidth: BORDER_WIDTH,
     borderRadius: BORDER_RADIUS,

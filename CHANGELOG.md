@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.0
+
+- **`ModalDropdown`: `menuMinWidth` — a width FLOOR for the open inline menu (additive, optional).**
+  The menu matches the TRIGGER's width, which is right for a full-width field but leaves a compact
+  anchor (the 1.8.0 `renderTrigger` case: a locale pill, an avatar chip, an icon button) with a menu
+  too narrow to read its own option labels — a 52px "EN ▾" pill produced a 52px menu whose rows were
+  clipped to a dark strip. `menuMinWidth` floors it; a wider trigger still wins.
+- **Backward-compatible:** omitted, the width is the trigger's, exactly as before.
+
 ## 1.8.0
 
 - **`ModalDropdown`: `renderTrigger` — a custom ANCHOR slot (additive, optional).** The dropdown's
