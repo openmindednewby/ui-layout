@@ -123,3 +123,69 @@ describe('ModalDropdown responsive default', () => {
     expect(screen.queryByTestId('risk-select-menu')).toBeNull();
   });
 });
+
+describe('ModalDropdown custom trigger + option testIDs (1.8.0)', () => {
+  it('renders a custom trigger instead of the default field, and still exposes the a11y wrapper', () => {
+    render(
+      <ModalDropdown
+        testID="lang"
+        accessibilityLabel="Language"
+        accessibilityHint="Change the language"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+        renderTrigger={({ label, isOpen }) => <span>{`${label}${isOpen ? ' open' : ''}`}</span>}
+      />,
+    );
+    const trigger = screen.getByTestId('lang');
+    // The custom content replaces the default field text …
+    expect(trigger.textContent).toBe('Alpha');
+    // … while the dropdown keeps owning the accessible contract.
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(trigger.getAttribute('aria-label')).toBe('Language');
+
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('lang').textContent).toBe('Alpha open');
+    expect(screen.getByTestId('lang').getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('uses optionTestID for the inline-menu option rows (keeps a legacy selector stable)', () => {
+    const onChange = jest.fn();
+    render(
+      <ModalDropdown
+        testID="lang"
+        accessibilityLabel="Language"
+        accessibilityHint="Change the language"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={onChange}
+        optionTestID={(v) => `lang-${String(v)}`}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('lang'));
+    expect(screen.queryByTestId('lang-option-g')).toBeNull();
+    fireEvent.click(screen.getByTestId('lang-g'));
+    expect(onChange).toHaveBeenCalledWith('g');
+  });
+
+  it('uses optionTestID for the modal-variant option rows too', () => {
+    const onChange = jest.fn();
+    render(
+      <ModalDropdown
+        testID="lang"
+        accessibilityLabel="Language"
+        accessibilityHint="Change the language"
+        value={'a' as Value}
+        variant={DropdownVariant.Modal}
+        options={OPTIONS}
+        onChange={onChange}
+        optionTestID={(v) => `lang-${String(v)}`}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('lang'));
+    fireEvent.click(screen.getByTestId('lang-b'));
+    expect(onChange).toHaveBeenCalledWith('b');
+  });
+});

@@ -101,6 +101,8 @@ export interface InlineMenuProps<T> {
   value: T;
   options: ReadonlyArray<DropdownOption<T>>;
   containerRef: RefObject<RNView | null>;
+  /** Custom testID per option row. Defaults to `` `${testID}-option-${value}` ``. */
+  optionTestID?: (value: T) => string;
   onSelect: (value: T) => void;
   onClose: () => void;
 }
@@ -111,6 +113,7 @@ export const InlineMenu = <T extends string | number>({
   value,
   options,
   containerRef,
+  optionTestID,
   onSelect,
   onClose,
 }: InlineMenuProps<T>): React.ReactElement | null => {
@@ -173,7 +176,9 @@ export const InlineMenu = <T extends string | number>({
             isHighlighted={index === highlightedIndex}
             isSelected={option.value === value}
             label={option.label}
-            testID={`${testID}-option-${String(option.value)}`}
+            testID={
+              optionTestID !== undefined ? optionTestID(option.value) : `${testID}-option-${String(option.value)}`
+            }
             onSelect={() => onSelect(option.value)}
           />
         ))}

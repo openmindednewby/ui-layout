@@ -23,6 +23,14 @@ import { buildAnchorStackStyle } from './menuStacking';
 import { OptionRow } from './OptionRow';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
 
+/** State handed to a custom trigger renderer. */
+export interface DropdownTriggerState {
+  /** The selected option's label (or the select placeholder when nothing matches). */
+  label: string;
+  /** Whether the menu is currently open. */
+  isOpen: boolean;
+}
+
 export interface ModalDropdownProps<T> {
   testID: string;
   accessibilityLabel: string;
@@ -36,6 +44,20 @@ export interface ModalDropdownProps<T> {
    * (and always a modal on native). An explicit value overrides the auto choice.
    */
   variant?: DropdownVariant;
+  /**
+   * Custom ANCHOR content. When supplied, the caller owns the trigger's visuals
+   * entirely (the default bordered field box is not rendered) — use it for compact
+   * chips / avatars / icon triggers. The a11y wrapper (role=button, `aria-expanded`,
+   * the label + hint, the testID) is still supplied by the dropdown, so a custom
+   * trigger cannot drop the accessible contract. Omit for the default field look.
+   */
+  renderTrigger?: (state: DropdownTriggerState) => React.ReactNode;
+  /**
+   * Custom testID per option row. Defaults to `` `${testID}-option-${value}` ``.
+   * Lets a caller keep a pre-existing selector stable when a flat control becomes
+   * a dropdown.
+   */
+  optionTestID?: (value: T) => string;
 }
 
 const BORDER_RADIUS = 8;
@@ -78,6 +100,8 @@ export const ModalDropdown = <T extends string | number>({
   options,
   onChange,
   variant,
+  renderTrigger,
+  optionTestID,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -105,9 +129,19 @@ export const ModalDropdown = <T extends string | number>({
     [onChange],
   );
 
+  // A custom trigger owns its own visuals, so the default bordered field box stands down.
   const containerStyle = useMemo(
-    () => [styles.container, { borderColor: colors.border, backgroundColor: colors.surface }],
-    [colors.border, colors.surface],
+    () =>
+      renderTrigger !== undefined
+        ? undefined
+        : [styles.container, { borderColor: colors.border, backgroundColor: colors.surface }],
+    [colors.border, colors.surface, renderTrigger],
+  );
+
+  const optionTestIDFor = useCallback(
+    (optionValue: T): string =>
+      optionTestID !== undefined ? optionTestID(optionValue) : `${testID}-option-${String(optionValue)}`,
+    [optionTestID, testID],
   );
   // While the inline menu is open, lift the anchor wrapper's stacking so it wins over immediate
   // sibling views (defence-in-depth behind the web portal; the primary lift on native).
@@ -125,11 +159,11 @@ export const ModalDropdown = <T extends string | number>({
       <OptionRow
         isSelected={item.value === value}
         label={item.label}
-        testID={`${testID}-option-${String(item.value)}`}
+        testID={optionTestIDFor(item.value)}
         onSelect={() => handleSelect(item.value)}
       />
     ),
-    [handleSelect, testID, value],
+    [handleSelect, optionTestIDFor, value],
   );
   const keyExtractor = useCallback((item: DropdownOption<T>) => String(item.value), []);
 
@@ -146,13 +180,18 @@ export const ModalDropdown = <T extends string | number>({
         testID={testID}
         onPress={handleToggle}
       >
-        <Text style={[styles.selectedText, { color: colors.text }]}>{selectedLabel}</Text>
+        {renderTrigger !== undefined ? (
+          renderTrigger({ label: selectedLabel, isOpen })
+        ) : (
+          <Text style={[styles.selectedText, { color: colors.text }]}>{selectedLabel}</Text>
+        )}
       </TouchableOpacity>
 
       {isMenu && isOpen ? (
         <InlineMenu
           accessibilityLabel={accessibilityLabel}
           containerRef={anchorRef}
+          optionTestID={optionTestIDFor}
           options={options}
           testID={testID}
           value={value}

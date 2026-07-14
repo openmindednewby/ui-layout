@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.8.0
+
+- **`ModalDropdown`: `renderTrigger` — a custom ANCHOR slot (additive, optional).** The dropdown's
+  default trigger is a bordered field box, which is wrong for a *menu* anchored to a compact chip
+  (a locale pill, an avatar/user chip, an icon button). Callers can now supply
+  `renderTrigger={({ label, isOpen }) => …}` and own the anchor's visuals entirely; the default box
+  is then not rendered. The a11y wrapper stays with the dropdown — `role=button`, `aria-expanded`,
+  the accessible label + hint, and the `testID` are still applied — so a custom trigger *cannot*
+  drop the accessible contract, and the portalled, keyboard-navigable (↑/↓/Home/End/Enter/Escape),
+  never-clipped menu comes along for free.
+- **`ModalDropdown`: `optionTestID` — custom per-option testIDs (additive, optional).** Options
+  still default to `` `${testID}-option-${value}` ``; a caller turning an existing flat control into
+  a dropdown can now keep its established selectors stable
+  (`optionTestID={(code) => `lang-${code}`}`).
+- **Backward-compatible:** both props are optional and, when omitted, the render tree is unchanged —
+  erevna / katalogos / kefi / agora are unaffected and need no markup changes.
+
 ## 1.7.1
 
 Fix: the modal-variant dismiss backdrop was a pressable WRAPPING the option buttons,
