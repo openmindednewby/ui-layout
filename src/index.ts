@@ -27,6 +27,10 @@ export { AccordionItem } from './Accordion/AccordionItem';
 export type { AccordionItemProps } from './Accordion/AccordionItem';
 export type { AccordionVariant } from './Accordion/AccordionVariant';
 
+export { TruncatedText } from './TruncatedText/TruncatedText';
+export type { TruncatedTextProps } from './TruncatedText/TruncatedText';
+export { truncateMiddle, formatUrlForDisplay, ELLIPSIS } from './TruncatedText/truncate';
+
 export { useFocusTrap } from './hooks/useFocusTrap';
 
 export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';

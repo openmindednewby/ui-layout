@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.12.0
+
+- **New: `TruncatedText`** — a single-line text/link that middle-truncates to fit its container
+  and cannot overflow at any width. Promoted out of the AML console, where a full adverse-media
+  article URL rendered as raw `<Text>` and blew out its table row.
+
+  Three things that look like they would solve this and do not, all verified against
+  react-native-web 0.21 rather than assumed:
+
+  1. `numberOfLines={1}` alone truncates at the **tail** (RN-web compiles it to
+     `text-overflow: ellipsis`). Every URL from one publisher then collapses to the same
+     `timesofindia.indiatimes.com/city/de…` prefix and the reader cannot tell the articles
+     apart. There is no CSS for middle truncation, so it is computed in JS.
+  2. `title={full}` is **silently dropped** — RN-web's `<Text>` forwards only `href`, `lang`
+     and `pointerEvents` beyond the shared whitelist. The tooltip is set on the host node
+     through a ref instead.
+  3. JS truncation alone can mis-estimate an unusual glyph mix, so `numberOfLines={1}` is ALSO
+     applied as a hard backstop. Overflow is impossible by construction, not by tuning.
+
+  The full value always stays reachable — as the accessible name and, on web, the native
+  tooltip. Also exported: the pure `truncateMiddle` / `formatUrlForDisplay` helpers and
+  `ELLIPSIS`.
+
 ## 1.11.0
 
 - **Fix (HIGH — 1.10.0's out-of-view close never fired in the real runtime).** 1.10.0 added
