@@ -76,6 +76,10 @@ The apps supply the header hint string via the shared translate: key `common.acc
 - **Wide / desktop web** (viewport ≥ 768px) → an **inline anchored menu** that opens directly
   under the trigger (native `<select>` feel): dismissible via click-outside / `Esc`,
   keyboard-navigable (↑/↓, `Home`/`End`, `Enter`), scrolls when long, and never pushes layout.
+  It is portalled to `document.body` so no ancestor stacking context or `overflow` can trap or
+  clip it, and it **stays glued to its trigger**: it re-anchors on scroll (in any ancestor scroll
+  container), on resize, and on layout changes that fire no scroll event at all, then **closes**
+  once the trigger scrolls out of the viewport rather than floating over unrelated content.
 - **Narrow / mobile, or any native platform** → the original **modal** / bottom-sheet.
 
 Pass `variant` to force either behaviour regardless of viewport — the prop overrides the auto choice:
@@ -93,6 +97,10 @@ import { ModalDropdown, DropdownVariant } from '@dloizides/ui-layout';
 // Force the modal everywhere:
 <ModalDropdown /* …props… */ variant={DropdownVariant.Modal} />
 ```
+
+`accessibilityHint` reaches assistive tech on both platforms: natively via `accessibilityHint`, and
+on web via a visually-hidden node referenced by the trigger's `aria-describedby` (react-native-web
+does not map the RN prop, so the hint would otherwise be silently dropped).
 
 The public API is additive — callers that never pass `variant` keep working and now
 get the inline-on-desktop menu for free.

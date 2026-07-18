@@ -34,11 +34,13 @@ const SEGMENT_FONT = 14;
 const SEGMENT_WEIGHT = '600';
 const BORDER_WIDTH = 1;
 
-/** Shadow under the SELECTED segment — matches v1 `.lf-mode__btn[aria-selected] box-shadow`. */
-const SHADOW_COLOR = '#141e32';
-const SHADOW_OPACITY = 0.1;
-const SHADOW_RADIUS = 3;
-const SHADOW_OFFSET = { width: 0, height: 1 } as const;
+/**
+ * Shadow under the SELECTED segment — matches v1 `.lf-mode__btn[aria-selected] box-shadow`.
+ * Expressed as `boxShadow`: the `shadow*` family is deprecated in React Native and logged a
+ * deprecation warning on every import of this module.
+ */
+const SEGMENT_BOX_SHADOW = '0px 1px 3px rgba(20, 30, 50, 0.1)';
+/** Android draws `elevation`, not `boxShadow`. */
 const SHADOW_ELEVATION = 2;
 const TRANSPARENT = 'transparent';
 
@@ -58,10 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: SEGMENT_RADIUS,
   },
   segmentSelected: {
-    shadowColor: SHADOW_COLOR,
-    shadowOpacity: SHADOW_OPACITY,
-    shadowRadius: SHADOW_RADIUS,
-    shadowOffset: SHADOW_OFFSET,
+    boxShadow: SEGMENT_BOX_SHADOW,
     elevation: SHADOW_ELEVATION,
   },
   label: {

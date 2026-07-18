@@ -16,8 +16,12 @@
  * The `containerRef` is the relatively-positioned wrapper owned by ModalDropdown that holds the
  * trigger; on native the popover renders inside it. On web the popover lives in the portal, so
  * outside-click detection also consults this popover's own node (`menuRef`).
+ *
+ * `position: fixed` is viewport-relative, so the measured rect goes stale the moment anything moves
+ * the trigger. {@link useAnchorTracking} owns keeping the two together — and closes the menu once
+ * the trigger has left the viewport, rather than leaving it orphaned over unrelated content.
  */
-import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
 import { createPortal } from 'react-dom';
@@ -34,9 +38,9 @@ import {
   MENU_TOP_GAP,
   MENU_Z_INDEX,
   buildPortalPopoverStyle,
-  type AnchorRect,
 } from './menuStacking';
 import { OptionRow } from './OptionRow';
+import { useAnchorTracking } from './useAnchorTracking';
 import { useMenuKeyboard } from './useMenuKeyboard';
 
 const IS_WEB = Platform.OS === 'web';
@@ -62,38 +66,6 @@ const styles = StyleSheet.create({
     elevation: MENU_ELEVATION,
   },
 });
-
-/** Read the anchor's viewport rect (web only). Returns null when unavailable (native / no node). */
-function readAnchorRect(containerRef: RefObject<RNView | null>): AnchorRect | null {
-  if (!IS_WEB) return null;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- RN web ref is an HTMLElement at runtime
-  const node = containerRef.current as unknown as HTMLElement | null;
-  if (node === null || typeof node.getBoundingClientRect !== 'function') return null;
-  const r = node.getBoundingClientRect();
-  return { top: r.top, left: r.left, width: r.width, bottom: r.bottom };
-}
-
-/**
- * Keep the fixed-positioned web popover glued to its trigger: measure once before paint, then
- * re-measure on scroll (capture, so nested scrollers count) and resize while open. No-op on native.
- */
-function useAnchorRect(containerRef: RefObject<RNView | null>): AnchorRect | null {
-  const [rect, setRect] = useState<AnchorRect | null>(() => readAnchorRect(containerRef));
-
-  useLayoutEffect(() => {
-    if (!IS_WEB) return undefined;
-    const measure = (): void => { setRect(readAnchorRect(containerRef)); };
-    measure();
-    window.addEventListener('scroll', measure, true);
-    window.addEventListener('resize', measure);
-    return () => {
-      window.removeEventListener('scroll', measure, true);
-      window.removeEventListener('resize', measure);
-    };
-  }, [containerRef]);
-
-  return rect;
-}
 
 export interface InlineMenuProps<T> {
   testID: string;
@@ -124,7 +96,9 @@ export const InlineMenu = <T extends string | number>({
   const { colors } = theme;
 
   const menuRef = useRef<RNView>(null);
-  const rect = useAnchorRect(containerRef);
+  // Tracks the trigger while open, and closes rather than orphaning the menu once the trigger
+  // has scrolled out of the viewport entirely.
+  const rect = useAnchorTracking(containerRef, onClose);
 
   const selectedIndex = useMemo(
     () => Math.max(0, options.findIndex((opt) => opt.value === value)),

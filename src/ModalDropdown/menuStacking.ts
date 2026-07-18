@@ -80,3 +80,26 @@ export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0): ViewSty
 export function buildAnchorStackStyle(isMenuOpen: boolean): ViewStyle | null {
   return isMenuOpen ? { zIndex: ANCHOR_OPEN_Z_INDEX, elevation: MENU_ELEVATION } : null;
 }
+
+/**
+ * True when the trigger has left the viewport entirely.
+ *
+ * A `position: fixed` popover keeps painting at its last coordinates no matter where its trigger
+ * went, so a trigger scrolled off-screen leaves an orphaned menu hovering over unrelated content
+ * with nothing on screen explaining what it belongs to. Repositioning alone cannot fix that — the
+ * menu would simply follow the trigger off-screen — so the caller closes the menu instead. This is
+ * also the backstop for any layout change that fires no event we listen for.
+ */
+export function isAnchorOutOfView(rect: AnchorRect, viewportHeight: number, viewportWidth: number): boolean {
+  // A zero-area rect, or a viewport with no dimensions, means "no layout information yet" — NOT
+  // "off-screen". Treating the two the same closes the menu the instant it opens against an
+  // element that has not been laid out (a just-mounted trigger, a hidden→visible transition,
+  // jsdom). Absent information, leave the menu alone.
+  const hasLayout = rect.width > 0 && rect.bottom !== rect.top;
+  const hasViewport = viewportHeight > 0 && viewportWidth > 0;
+  if (!hasLayout || !hasViewport) return false;
+
+  const isAboveOrBelow = rect.bottom <= 0 || rect.top >= viewportHeight;
+  const isLeftOrRight = rect.left + rect.width <= 0 || rect.left >= viewportWidth;
+  return isAboveOrBelow || isLeftOrRight;
+}
