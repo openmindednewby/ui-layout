@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.12.1
+
+- **Fix (`TruncatedText` did not actually middle-truncate).** 1.12.0 measured its available
+  width with `onLayout` **on the `<Text>` itself, which never fires under RN-web**. The width
+  stayed 0, the character budget stayed 0, and the component silently fell back to rendering
+  the full string — i.e. to exactly the tail-only CSS ellipsis it exists to replace. It
+  compiled, typechecked and passed all its unit tests throughout, because the truncation
+  helpers are pure and were never the broken part; only a browser could see it. Measured in
+  Chrome at a 120px container: text rendered `timesofindia.indiatimes.com/city/delhi/delhi-…`
+  with **no `…` character present** — CSS clipping, not middle truncation.
+
+  The width is now measured on a wrapping `<View>`, which does fire `onLayout`. The overflow
+  guarantee was never affected (the element stayed inside its parent in both versions); what
+  was lost was the informative half of the behaviour.
+
 ## 1.12.0
 
 - **New: `TruncatedText`** — a single-line text/link that middle-truncates to fit its container

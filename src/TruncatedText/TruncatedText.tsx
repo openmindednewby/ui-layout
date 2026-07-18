@@ -17,13 +17,19 @@
  *    estimate can be wrong for an unusual glyph mix. So `numberOfLines={1}` is ALSO applied,
  *    as a hard backstop: if the estimate ever runs long, CSS clamps it. Overflow is then
  *    impossible by construction rather than by tuning.
+ * 4. `onLayout` on the `<Text>` itself. It does not fire under RN-web, so the measured width
+ *    stayed 0, the character budget stayed 0, and the component silently degraded to exactly
+ *    the tail-only CSS truncation of (1) — compiling, typechecking and passing its unit tests
+ *    the whole time, because the helpers are pure and were never the broken part. The width is
+ *    measured on a wrapping `<View>`, which does fire, and the result was confirmed in a
+ *    browser rather than inferred.
  *
  * The full, untruncated value always stays reachable: as the accessible name (`aria-label`)
  * and, on web, as the native tooltip.
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { Platform, StyleSheet, Text, type LayoutChangeEvent, type TextStyle } from 'react-native';
+import { Platform, StyleSheet, Text, View, type LayoutChangeEvent, type TextStyle } from 'react-native';
 
 import { formatUrlForDisplay, truncateMiddle } from './truncate';
 
@@ -106,20 +112,21 @@ export const TruncatedText = ({
   }, [value, isUrl, width, fontSize]);
 
   return (
-    <Text
-      ref={attachTooltip}
-      onLayout={onLayout}
-      numberOfLines={1}
-      style={[styles.base, styles.fill, style]}
-      testID={testID}
-      accessibilityRole={onPress !== undefined || href !== undefined ? 'link' : 'text'}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
-      onPress={onPress}
-      {...(Platform.OS === 'web' && href !== undefined ? { href } : {})}
-    >
-      {display}
-    </Text>
+    <View style={styles.fill} onLayout={onLayout}>
+      <Text
+        ref={attachTooltip}
+        numberOfLines={1}
+        style={[styles.base, style]}
+        testID={testID}
+        accessibilityRole={onPress !== undefined || href !== undefined ? 'link' : 'text'}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        onPress={onPress}
+        {...(Platform.OS === 'web' && href !== undefined ? { href } : {})}
+      >
+        {display}
+      </Text>
+    </View>
   );
 };
 
