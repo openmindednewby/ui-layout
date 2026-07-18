@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.11.0
+
+- **Fix (HIGH — 1.10.0's out-of-view close never fired in the real runtime).** 1.10.0 added
+  "close the menu once the trigger leaves the viewport". Repositioning worked, but the close was
+  measured **against the viewport**, and **RN-web apps never scroll the document** — every screen
+  renders inside a `ScrollView`, so scrolling happens in an inner `<div>` and `window.scrollY`
+  stays 0 forever. A trigger scrolled out of that inner scroller is invisible to the user while its
+  rect sits comfortably inside the viewport, so the check could not fire on any screen of any
+  portal. Measured in Chrome: trigger at `top: -37` (fully above the scroller), menu still rendered.
+  Visibility is now measured against the **clip window** — the viewport intersected with every
+  clipping ancestor — which is what makes it work inside an inner scroll container.
+- **Fix: "entirely out of view" was also the wrong threshold.** When a scroll container reaches the
+  end of its range the trigger stops with a few pixels still showing (4px in the reported case), so
+  "fully out" was *unreachable* and the menu never closed however far the user scrolled. There is
+  now a minimum-visible-pixel floor (`MIN_VISIBLE_PX`).
+- **Guard: the menu never closes on its FIRST measurement**, so opening a dropdown whose trigger is
+  already partly clipped still works; only movement after opening can close it.
+- **The zero-area "not laid out yet" guard is unchanged in intent but now provably size-only** — it
+  asks about the element's own box, never its position, so it cannot swallow a genuine hidden case.
+- **New: `LAYOUT_I18N`** — the manifest of every translation key this package resolves, mirroring
+  `TABLE_I18N` / `FILTERS_I18N` from `@dloizides/ui-tables` so hosts can bind an existing
+  missing-key guard to it with no new pattern. The kit is fallback-free, so a key a host forgets
+  reaches users as a raw dotted name; hand-maintained key lists rot (one portal was found missing
+  26 kit keys, another had `common.accordionToggleHint` undefined while `Accordion` was mounted).
+  Every `t(...)` call in the package now references the map, and the suite fails on a raw key
+  literal or a stale entry — so the manifest cannot drift from the code.
+- **Fix: the 1.10.0 CHANGELOG entry was written in cp1252**, leaving the published file invalid
+  UTF-8. Re-encoded.
+- **No breaking change.** `LAYOUT_I18N` is additive and the key strings are unchanged, so existing
+  translation files keep working untouched.
+
 ## 1.10.0
 
 Two defects found by browser visual QA of the inline dropdown menu against a live app.
@@ -8,12 +39,12 @@ Two defects found by browser visual QA of the inline dropdown menu against a liv
   menu is portalled to `document.body` with `position: fixed` at the trigger's measured rect.
   `fixed` is viewport-relative, so that coordinate is only valid until something moves the trigger.
   A `scroll`/`resize` listener on `window` was already in place (since 1.7.0) and does handle plain
-  scrolling � but it left three real gaps:
-  - **Layout changes that fire no scroll event at all** � an accordion above the trigger expanding,
+  scrolling — but it left three real gaps:
+  - **Layout changes that fire no scroll event at all** — an accordion above the trigger expanding,
     a sticky header resizing, a banner appearing, an async list rendering. The trigger moved, nothing
     scrolled, no listener fired, and the menu stayed behind. Now covered by a `ResizeObserver` on the
     anchor and on `document.body`.
-  - **The trigger leaving the viewport.** Repositioning cannot help here � the menu just follows its
+  - **The trigger leaving the viewport.** Repositioning cannot help here — the menu just follows its
     trigger off-screen and hangs over unrelated content with nothing on screen explaining it. The
     menu now **closes** once the trigger is fully out of view.
   - **Layout thrash.** The handler ran a synchronous `getBoundingClientRect()` (a forced reflow) plus
@@ -23,12 +54,12 @@ Two defects found by browser visual QA of the inline dropdown menu against a liv
   any ancestor scroll container counts. Tracking moved into a dedicated `useAnchorTracking` hook.
   Native is unaffected (the popover is in-tree and moves with its anchor).
 - **Fix (a11y): `accessibilityHint` never reached a screen reader.** The prop is part of the public
-  API and every caller passes one, but react-native-web does not map it � the trigger carried
+  API and every caller passes one, but react-native-web does not map it — the trigger carried
   `aria-label` and `aria-expanded` and **no hint of any kind**, so the text was silently thrown away
   (older react-native-web versions additionally leaked it to the DOM, logging
   `React does not recognize the accessibilityHint prop on a DOM element`). On web the hint is now
-  rendered into a visually-hidden node referenced by `aria-describedby` � the same wiring
-  `@dloizides/ui-forms`' `Field` uses for its error line � and the RN-only prop is no longer passed
+  rendered into a visually-hidden node referenced by `aria-describedby` — the same wiring
+  `@dloizides/ui-forms`' `Field` uses for its error line — and the RN-only prop is no longer passed
   on web at all. Native still receives `accessibilityHint` unchanged.
 - **No API change.** Both fixes are internal; every existing caller benefits without edits.
 

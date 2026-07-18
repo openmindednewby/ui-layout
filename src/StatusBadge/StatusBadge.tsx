@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { LAYOUT_TEST_IDS } from '../constants';
+import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
 const DEFAULT_PADDING_H = 10;
 const DEFAULT_PADDING_V = 4;
@@ -52,7 +52,7 @@ export const StatusBadge = ({
 
   return (
     <View
-      accessibilityHint={accessibilityHint ?? t('common.statusBadgeHint')}
+      accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.statusBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? label}
       style={[styles.badge, dynamicBadge]}
       testID={testID}

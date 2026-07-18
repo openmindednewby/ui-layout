@@ -7,7 +7,7 @@
  *  2. `accessibilityHint` never reached assistive tech: react-native-web drops the prop, so the
  *     trigger carried `aria-label` + `aria-expanded` and NO hint of any kind.
  */
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, within } from '@testing-library/react';
 
 import { ModalDropdown } from './ModalDropdown';
 import { DropdownVariant } from './DropdownVariant';
@@ -239,5 +239,134 @@ describe('ModalDropdown accessibilityHint reaches assistive tech (1.10.0)', () =
   it('does not paint the hint text into the visible trigger label', () => {
     renderMenu();
     expect(screen.getByTestId('d').textContent).toBe('Alpha');
+  });
+});
+
+/**
+ * THE RUNTIME THIS PACKAGE ACTUALLY SHIPS INTO (the 1.10.0 miss).
+ *
+ * Every RN-web portal renders each screen inside a `ScrollView`, so the DOCUMENT never scrolls:
+ * `window.scrollY` stays 0 forever and all scrolling happens in an inner `<div overflow:auto>`.
+ * A trigger scrolled out of that inner scroller is invisible to the user while its rect is still
+ * comfortably inside the viewport — so 1.10.0's viewport-only out-of-view check could never fire
+ * on any screen of any portal, even though the rect-based REPOSITION worked fine.
+ *
+ * These tests therefore mount the dropdown INSIDE a scroll container and scroll that container.
+ * Both assert the menu CLOSES while the anchor rect stays within `innerHeight`/`innerWidth`, so a
+ * viewport-only implementation fails them.
+ */
+describe('ModalDropdown inside an INNER scroll container (the real RN-web runtime)', () => {
+  const VIEWPORT_H = 600;
+  const VIEWPORT_W = 1280;
+  /** The scroller occupies the lower part of the viewport; content above it is clipped away. */
+  const SCROLLER_TOP = 100;
+  const SCROLLER_BOTTOM = 560;
+
+  let scroller: HTMLDivElement;
+
+  beforeEach(() => {
+    window.innerHeight = VIEWPORT_H;
+    window.innerWidth = VIEWPORT_W;
+    scroller = document.createElement('div');
+    // The per-axis longhands are what react-native-web's ScrollView actually emits.
+    scroller.style.overflowY = 'auto';
+    scroller.style.overflowX = 'hidden';
+    scroller.getBoundingClientRect = () =>
+      ({
+        top: SCROLLER_TOP,
+        bottom: SCROLLER_BOTTOM,
+        left: 0,
+        right: VIEWPORT_W,
+        width: VIEWPORT_W,
+        height: SCROLLER_BOTTOM - SCROLLER_TOP,
+        x: 0,
+        y: SCROLLER_TOP,
+        toJSON: () => ({}),
+      }) as DOMRect;
+    document.body.appendChild(scroller);
+  });
+
+  afterEach(() => {
+    scroller.remove();
+  });
+
+  function renderInScroller(): HTMLElement {
+    render(
+      <ModalDropdown
+        testID="d"
+        accessibilityLabel="Currency"
+        accessibilityHint="Pick the display currency"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+      />,
+      { container: scroller },
+    );
+    return within(scroller).getByTestId('d');
+  }
+
+  it('closes when the trigger scrolls out of the INNER scroller (rect still inside the viewport)', async () => {
+    const trigger = renderInScroller();
+    const anchor = trigger.parentElement as HTMLElement;
+    let top = 300;
+    stubAnchorRect(anchor, () => top);
+
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('d-menu')).toBeTruthy();
+
+    // Scrolled above the scroller's top edge — invisible to the user, but top=20/bottom=60 is
+    // WELL inside a 600px-tall viewport, so a viewport-only check sees a perfectly visible
+    // trigger and never closes. Only clipping-aware logic catches this.
+    top = 20;
+    expect(top).toBeGreaterThan(0);
+    expect(top + TRIGGER_HEIGHT).toBeLessThan(VIEWPORT_H);
+
+    await act(async () => { scroller.dispatchEvent(new Event('scroll', { bubbles: false })); });
+    await flushFrame();
+
+    expect(screen.queryByTestId('d-menu')).toBeNull();
+  });
+
+  it('closes on the SLIVER case: the scroller bottoms out leaving a few pixels showing', async () => {
+    const trigger = renderInScroller();
+    const anchor = trigger.parentElement as HTMLElement;
+    // Reproduces the reported measurement: the scroll container reaches the end of its range with
+    // the trigger stopped part-way off the top edge. "Entirely out of view" is then UNREACHABLE —
+    // which is why 1.10.0 never closed no matter how far the user kept scrolling.
+    let top = 300;
+    stubAnchorRect(anchor, () => top);
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('d-menu')).toBeTruthy();
+
+    top = SCROLLER_TOP - TRIGGER_HEIGHT + 4;
+    await act(async () => { scroller.dispatchEvent(new Event('scroll', { bubbles: false })); });
+    await flushFrame();
+    expect(screen.queryByTestId('d-menu')).toBeNull();
+  });
+
+  it('stays OPEN while the trigger is comfortably inside the scroller', async () => {
+    const trigger = renderInScroller();
+    const anchor = trigger.parentElement as HTMLElement;
+    let top = 300;
+    stubAnchorRect(anchor, () => top);
+    fireEvent.click(trigger);
+
+    top = 250;
+    await act(async () => { scroller.dispatchEvent(new Event('scroll', { bubbles: false })); });
+    await flushFrame();
+
+    expect(screen.getByTestId('d-menu')).toBeTruthy();
+  });
+
+  it('opens normally even when the trigger is ALREADY clipped (never closes on first measure)', () => {
+    const trigger = renderInScroller();
+    const anchor = trigger.parentElement as HTMLElement;
+    // Already scrolled out of the scroller before the user activates it.
+    stubAnchorRect(anchor, () => 10);
+
+    fireEvent.click(trigger);
+
+    expect(screen.getByTestId('d-menu')).toBeTruthy();
   });
 });

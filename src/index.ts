@@ -29,4 +29,4 @@ export type { AccordionVariant } from './Accordion/AccordionVariant';
 
 export { useFocusTrap } from './hooks/useFocusTrap';
 
-export { LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE } from './constants';
+export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';

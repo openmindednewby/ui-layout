@@ -23,6 +23,8 @@ import { buildAnchorStackStyle } from './menuStacking';
 import { OptionRow } from './OptionRow';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
 
+import { LAYOUT_I18N } from '../constants';
+
 /** State handed to a custom trigger renderer. */
 export interface DropdownTriggerState {
   /** The selected option's label (or the select placeholder when nothing matches). */
@@ -157,7 +159,7 @@ export const ModalDropdown = <T extends string | number>({
 
   const selectedLabel = useMemo(() => {
     const found = options.find((opt) => opt.value === value);
-    return found?.label ?? t('common.selectPlaceholder');
+    return found?.label ?? t(LAYOUT_I18N.selectPlaceholder);
   }, [options, value, t]);
 
   const handleToggle = useCallback(() => { setIsOpen((prev) => !prev); }, []);
@@ -259,8 +261,8 @@ export const ModalDropdown = <T extends string | number>({
           <View style={styles.modalOverlay}>
             <TouchableOpacity
               accessible
-              accessibilityHint={t('common.dismissDropdownHint')}
-              accessibilityLabel={t('common.dismissDropdown')}
+              accessibilityHint={t(LAYOUT_I18N.dismissDropdownHint)}
+              accessibilityLabel={t(LAYOUT_I18N.dismissDropdown)}
               accessibilityRole="button"
               activeOpacity={1}
               style={StyleSheet.absoluteFill}

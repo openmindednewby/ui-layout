@@ -8,6 +8,8 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
+import { LAYOUT_I18N } from '../constants';
+
 const OPTION_BORDER_RADIUS = 4;
 const BODY_FONT_SIZE = 14;
 const SELECTED_FONT_WEIGHT = '600' as const;
@@ -52,7 +54,7 @@ export const OptionRow = ({
   return (
     <TouchableOpacity
       accessible
-      accessibilityHint={t('common.selectOptionHint')}
+      accessibilityHint={t(LAYOUT_I18N.selectOptionHint)}
       accessibilityLabel={label}
       accessibilityRole="button"
       aria-selected={isSelected}

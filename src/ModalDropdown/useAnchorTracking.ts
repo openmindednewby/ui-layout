@@ -33,7 +33,7 @@ import type { RefObject } from 'react';
 import { Platform } from 'react-native';
 import type { View as RNView } from 'react-native';
 
-import { isAnchorOutOfView, type AnchorRect } from './menuStacking';
+import { MIN_VISIBLE_PX, isAnchorHidden, type AnchorRect, type ClipBounds } from './menuStacking';
 
 const IS_WEB = Platform.OS === 'web';
 
@@ -52,6 +52,47 @@ export function readAnchorRect(containerRef: RefObject<RNView | null>): AnchorRe
   if (node === null) return null;
   const r = node.getBoundingClientRect();
   return { top: r.top, left: r.left, width: r.width, bottom: r.bottom };
+}
+
+/** Does this element clip its children on the given axis (a scroll container, an overflow panel)? */
+function clipsAxis(overflow: string): boolean {
+  return overflow !== '' && overflow !== 'visible';
+}
+
+/** Narrow `bounds` to `el`'s box on whichever axes `el` clips. */
+function clipToAncestor(bounds: ClipBounds, el: HTMLElement): void {
+  const style = window.getComputedStyle(el);
+  // The per-axis longhands are authoritative, but fall back to the `overflow` shorthand: not every
+  // environment expands it (jsdom does not), and a missed clipping ancestor silently disables the
+  // out-of-view close — the exact class of failure this whole hook exists to prevent.
+  const clipsY = clipsAxis(style.overflowY) || clipsAxis(style.overflow);
+  const clipsX = clipsAxis(style.overflowX) || clipsAxis(style.overflow);
+  if (!clipsY && !clipsX) return;
+  const r = el.getBoundingClientRect();
+  if (clipsY) {
+    bounds.top = Math.max(bounds.top, r.top);
+    bounds.bottom = Math.min(bounds.bottom, r.bottom);
+  }
+  if (clipsX) {
+    bounds.left = Math.max(bounds.left, r.left);
+    bounds.right = Math.min(bounds.right, r.right);
+  }
+}
+
+/**
+ * The window the anchor is actually visible through: the viewport narrowed by every clipping
+ * ancestor. THIS is what makes the out-of-view check work in an RN-web app, where the document
+ * never scrolls and every screen lives inside an inner `ScrollView` — a trigger scrolled out of
+ * that scroller is invisible while its rect is still inside the viewport.
+ */
+export function readClipBounds(node: HTMLElement | null): ClipBounds {
+  const bounds: ClipBounds = { top: 0, left: 0, bottom: window.innerHeight, right: window.innerWidth };
+  let el = node?.parentElement ?? null;
+  while (el !== null && el !== document.body && el !== document.documentElement) {
+    clipToAncestor(bounds, el);
+    el = el.parentElement;
+  }
+  return bounds;
 }
 
 /**
@@ -84,13 +125,19 @@ export function useAnchorTracking(
     if (!IS_WEB) return undefined;
     let frame: number | null = null;
     let isDisposed = false;
+    let hasMeasured = false;
 
     const apply = (): void => {
       frame = null;
       if (isDisposed) return;
       const next = readAnchorRect(containerRef);
       setRect(next);
-      if (next !== null && isAnchorOutOfView(next, window.innerHeight, window.innerWidth)) onOutOfView();
+      // Never close on the FIRST measurement. Opening a dropdown whose trigger is already partly
+      // clipped must still work; only movement AFTER the menu is open may close it.
+      const isHidden =
+        next !== null && isAnchorHidden(next, readClipBounds(toDomNode(containerRef)), MIN_VISIBLE_PX);
+      if (hasMeasured && isHidden) onOutOfView();
+      hasMeasured = true;
     };
 
     // Coalesce a burst of scroll/resize/layout events into a single measurement per frame.

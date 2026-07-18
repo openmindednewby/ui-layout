@@ -79,7 +79,9 @@ The apps supply the header hint string via the shared translate: key `common.acc
   It is portalled to `document.body` so no ancestor stacking context or `overflow` can trap or
   clip it, and it **stays glued to its trigger**: it re-anchors on scroll (in any ancestor scroll
   container), on resize, and on layout changes that fire no scroll event at all, then **closes**
-  once the trigger scrolls out of the viewport rather than floating over unrelated content.
+  once the trigger is no longer meaningfully visible. Visibility is measured against the viewport
+  intersected with every clipping ancestor — RN-web apps scroll an inner `ScrollView`, never the
+  document, so a viewport-only test would never fire.
 - **Narrow / mobile, or any native platform** → the original **modal** / bottom-sheet.
 
 Pass `variant` to force either behaviour regardless of viewport — the prop overrides the auto choice:
@@ -119,3 +121,22 @@ translations, and navigation.
 ## License
 
 MIT
+
+## i18n contract (required)
+
+The kit is **fallback-free**: the neutral default `t` returns the key itself, so a host that forgets
+a key does not silently show English — it renders the raw dotted name to users, or announces it to
+screen readers. `LAYOUT_I18N` is the machine-readable manifest of every key this package resolves;
+bind your missing-key guard to it exactly as you already do for `TABLE_I18N` / `FILTERS_I18N` from
+`@dloizides/ui-tables`, and an upgrade can never add a key your app silently fails to define.
+
+```ts
+import { LAYOUT_I18N } from '@dloizides/ui-layout';
+import { TABLE_I18N } from '@dloizides/ui-tables';
+
+// Every value is a translation key this package will call `t(...)` with.
+const REQUIRED_KIT_KEYS = [...Object.values(LAYOUT_I18N), ...Object.values(TABLE_I18N)];
+```
+
+The manifest cannot drift: every `t(...)` call in the package references `LAYOUT_I18N`, and the test
+suite fails on a raw key literal in a component or a stale entry in the map.

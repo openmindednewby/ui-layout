@@ -82,24 +82,48 @@ export function buildAnchorStackStyle(isMenuOpen: boolean): ViewStyle | null {
 }
 
 /**
- * True when the trigger has left the viewport entirely.
- *
- * A `position: fixed` popover keeps painting at its last coordinates no matter where its trigger
- * went, so a trigger scrolled off-screen leaves an orphaned menu hovering over unrelated content
- * with nothing on screen explaining what it belongs to. Repositioning alone cannot fix that — the
- * menu would simply follow the trigger off-screen — so the caller closes the menu instead. This is
- * also the backstop for any layout change that fires no event we listen for.
+ * The window the trigger is actually visible through: the viewport intersected with every
+ * ancestor that clips (a scroll container, an `overflow: hidden` panel).
  */
-export function isAnchorOutOfView(rect: AnchorRect, viewportHeight: number, viewportWidth: number): boolean {
-  // A zero-area rect, or a viewport with no dimensions, means "no layout information yet" — NOT
-  // "off-screen". Treating the two the same closes the menu the instant it opens against an
-  // element that has not been laid out (a just-mounted trigger, a hidden→visible transition,
-  // jsdom). Absent information, leave the menu alone.
-  const hasLayout = rect.width > 0 && rect.bottom !== rect.top;
-  const hasViewport = viewportHeight > 0 && viewportWidth > 0;
-  if (!hasLayout || !hasViewport) return false;
+export interface ClipBounds {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+}
 
-  const isAboveOrBelow = rect.bottom <= 0 || rect.top >= viewportHeight;
-  const isLeftOrRight = rect.left + rect.width <= 0 || rect.left >= viewportWidth;
-  return isAboveOrBelow || isLeftOrRight;
+/**
+ * Below this many pixels visible in either axis the trigger is, to a user, gone — so the menu
+ * must not keep hanging off it. A few pixels rather than zero, because a trigger pinned at the
+ * very edge of a scroll container that has bottomed out never reaches zero (see below).
+ */
+export const MIN_VISIBLE_PX = 8;
+
+/**
+ * True when the trigger is no longer meaningfully visible, so an anchored menu would be pointing
+ * at nothing and must close. Repositioning cannot solve this case — the menu simply follows its
+ * trigger out of sight and hangs over unrelated content.
+ *
+ * TWO THINGS THIS DELIBERATELY IS NOT (both were shipped as bugs in 1.10.0):
+ *
+ *  1. **Not "outside the viewport".** RN-web apps scroll an inner `ScrollView`, not the document.
+ *     A trigger scrolled out of that inner scroller is invisible to the user while its rect is
+ *     still comfortably inside the viewport — a viewport-only test can never fire. Visibility is
+ *     therefore measured against `clip`, the intersection of the viewport with every clipping
+ *     ancestor. (The RECT stays viewport-relative, which is why repositioning worked throughout.)
+ *  2. **Not "entirely hidden".** When a scroll container reaches the end of its range the trigger
+ *     stops with a sliver still inside the clip window — the real-world case was 4px — so "fully
+ *     out" is unreachable and the menu never closed. A small visible-pixel floor fixes that.
+ */
+export function isAnchorHidden(rect: AnchorRect, clip: ClipBounds, minVisiblePx: number): boolean {
+  // A zero-AREA rect means "not laid out yet" — NOT "off-screen". Note this asks only about the
+  // element's OWN box, never about where it sits: a trigger scrolled far out of view still has
+  // its full width and height, so this can never swallow a genuine hidden case.
+  const hasLayout = rect.width > 0 && rect.bottom > rect.top;
+  const hasClip = clip.bottom > clip.top && clip.right > clip.left;
+  if (!hasLayout || !hasClip) return false;
+
+  const visibleHeight = Math.min(rect.bottom, clip.bottom) - Math.max(rect.top, clip.top);
+  const visibleWidth = Math.min(rect.left + rect.width, clip.right) - Math.max(rect.left, clip.left);
+  return visibleHeight < minVisiblePx || visibleWidth < minVisiblePx;
 }

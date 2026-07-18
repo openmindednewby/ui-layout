@@ -17,6 +17,8 @@ import { SvgIcon } from '@dloizides/ui-icons';
 
 import { useAccordionContext } from './AccordionContext';
 
+import { LAYOUT_I18N } from '../constants';
+
 const HEADER_PADDING_H = 16;
 const HEADER_PADDING_V = 12;
 const BODY_PADDING_H = 16;
@@ -200,7 +202,7 @@ export const AccordionItem = ({
   return (
     <View style={itemStyle}>
       <Pressable
-        accessibilityHint={accessibilityHint ?? t('common.accordionToggleHint')}
+        accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.accordionToggleHint)}
         accessibilityLabel={resolvedLabel}
         accessibilityRole="button"
         accessibilityState={{ expanded, disabled }}

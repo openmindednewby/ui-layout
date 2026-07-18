@@ -8,7 +8,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE } from '../constants';
+import { LAYOUT_I18N, LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE } from '../constants';
 
 const PROMPT_PADDING = 20;
 const PROMPT_BORDER_RADIUS = 12;
@@ -68,37 +68,37 @@ export const UpgradePrompt = ({
       testID={LAYOUT_TEST_IDS.upgradePrompt}
     >
       <Text style={[styles.title, { color: colors.text }]}>
-        {t('settings.billing.upgradePrompt.title')}
+        {t(LAYOUT_I18N.upgradePromptTitle)}
       </Text>
 
       <Text style={[styles.message, { color: colors.textSecondary }]}>
-        {t('settings.billing.upgradePrompt.message', requiredTier, currentTier)}
+        {t(LAYOUT_I18N.upgradePromptMessage, requiredTier, currentTier)}
       </Text>
 
       <TouchableOpacity
-        accessibilityHint={t('settings.billing.upgradePrompt.ctaHint')}
-        accessibilityLabel={t('settings.billing.upgradePrompt.cta')}
+        accessibilityHint={t(LAYOUT_I18N.upgradePromptCtaHint)}
+        accessibilityLabel={t(LAYOUT_I18N.upgradePromptCta)}
         accessibilityRole="button"
         style={[styles.cta, { backgroundColor: primary }]}
         testID={LAYOUT_TEST_IDS.upgradePromptCta}
         onPress={handleUpgradePress}
       >
         <Text style={[styles.ctaText, { color: colors.surface }]}>
-          {t('settings.billing.upgradePrompt.cta')}
+          {t(LAYOUT_I18N.upgradePromptCta)}
         </Text>
       </TouchableOpacity>
 
       {onDismiss ? (
         <TouchableOpacity
-          accessibilityHint={t('settings.billing.upgradePrompt.dismissHint')}
-          accessibilityLabel={t('settings.billing.upgradePrompt.dismiss')}
+          accessibilityHint={t(LAYOUT_I18N.upgradePromptDismissHint)}
+          accessibilityLabel={t(LAYOUT_I18N.upgradePromptDismiss)}
           accessibilityRole="button"
           style={styles.dismiss}
           testID={LAYOUT_TEST_IDS.upgradePromptDismiss}
           onPress={onDismiss}
         >
           <Text style={[styles.dismissText, { color: colors.textSecondary }]}>
-            {t('settings.billing.upgradePrompt.dismiss')}
+            {t(LAYOUT_I18N.upgradePromptDismiss)}
           </Text>
         </TouchableOpacity>
       ) : null}

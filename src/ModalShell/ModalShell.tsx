@@ -10,7 +10,7 @@ import { useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
 
 import { Heading } from '../Heading/Heading';
-import { LAYOUT_TEST_IDS } from '../constants';
+import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
 const CLOSE_ICON_SIZE = 18;
 
@@ -53,8 +53,8 @@ export const ModalShell = ({
     () => [styles.container, { backgroundColor: theme.colors.background }, contentStyle],
     [theme.colors.background, contentStyle],
   );
-  const closeA11yLabel = t('quizTemplates.cancel');
-  const accessibleTitle = typeof title === 'string' ? title : t('common.dialog');
+  const closeA11yLabel = t(LAYOUT_I18N.close);
+  const accessibleTitle = typeof title === 'string' ? title : t(LAYOUT_I18N.dialog);
 
   return (
     <Modal
@@ -70,10 +70,10 @@ export const ModalShell = ({
         style={containerStyle}
       >
         <View style={styles.headerRow}>
-          <Heading>{title ?? t('close')}</Heading>
+          <Heading>{title ?? t(LAYOUT_I18N.closeHeading)}</Heading>
           {showClose ? (
             <TouchableOpacity
-              accessibilityHint={t('common.closeDialogHint')}
+              accessibilityHint={t(LAYOUT_I18N.closeDialogHint)}
               accessibilityLabel={closeA11yLabel}
               accessibilityRole="button"
               style={styles.closeButton}
