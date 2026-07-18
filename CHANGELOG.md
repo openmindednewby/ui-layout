@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.12.2
+
+- **Fix (`TruncatedText` STILL did not middle-truncate; 1.12.1's fix was the wrong mechanism).**
+  1.12.1 moved the `onLayout` measurement from the `<Text>` to a wrapping `<View>`. Verified in
+  Chrome: that did not fire either, and neither did a `ResizeObserver` on the same node — zero
+  callbacks from all three mechanisms under react-native-web 0.21.
+
+  Width now comes from `useAvailableWidth`, which on web reads the **parent's** inner width
+  straight off the DOM in a ref callback, plus a `resize` listener. The parent is measured
+  rather than the element because the element shrink-wraps its own text, so measuring it would
+  feed the output back into the input and oscillate. Native keeps `onLayout`, where it works.
+
+  Confirmed in Chrome at four container widths — the same URL renders as
+  `timesofindia.indiatimes.com/cit…ties/articleshow/114237788.cms` (520px) down to
+  `timeso…88.cms` (120px), with no element exceeding its container at either a 1400px or a
+  420px viewport.
+
+  Note for anyone extending this: unit tests cannot catch this class of bug here. The
+  truncation helpers are pure and passed throughout all three versions; what was broken was
+  whether the measurement ever ran in a real browser.
+
 ## 1.12.1
 
 - **Fix (`TruncatedText` did not actually middle-truncate).** 1.12.0 measured its available

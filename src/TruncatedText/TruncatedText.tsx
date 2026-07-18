@@ -17,21 +17,23 @@
  *    estimate can be wrong for an unusual glyph mix. So `numberOfLines={1}` is ALSO applied,
  *    as a hard backstop: if the estimate ever runs long, CSS clamps it. Overflow is then
  *    impossible by construction rather than by tuning.
- * 4. `onLayout` on the `<Text>` itself. It does not fire under RN-web, so the measured width
+ * 4. `onLayout` (on the `<Text>` OR on a wrapping `<View>`), and `ResizeObserver`. None of the
+ *    three delivered a single callback for this element under RN-web 0.21. The measured width
  *    stayed 0, the character budget stayed 0, and the component silently degraded to exactly
  *    the tail-only CSS truncation of (1) — compiling, typechecking and passing its unit tests
- *    the whole time, because the helpers are pure and were never the broken part. The width is
- *    measured on a wrapping `<View>`, which does fire, and the result was confirmed in a
- *    browser rather than inferred.
+ *    the whole time, because the helpers are pure and were never the broken part. Only a
+ *    browser could catch it. Width now comes from `useAvailableWidth`, which reads the parent's
+ *    inner width straight off the DOM on web; see that module for why the PARENT.
  *
  * The full, untruncated value always stays reachable: as the accessible name (`aria-label`)
  * and, on web, as the native tooltip.
  */
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from "react";
 
-import { Platform, StyleSheet, Text, View, type LayoutChangeEvent, type TextStyle } from 'react-native';
+import { Platform, StyleSheet, Text, type TextStyle } from "react-native";
 
-import { formatUrlForDisplay, truncateMiddle } from './truncate';
+import { formatUrlForDisplay, truncateMiddle } from "./truncate";
+import { useAvailableWidth } from "./useAvailableWidth";
 
 /**
  * Mean glyph width as a fraction of font size, for the system sans stack. Deliberately on the
@@ -82,27 +84,28 @@ export const TruncatedText = ({
   accessibilityLabel,
   accessibilityHint,
 }: TruncatedTextProps): React.ReactElement => {
-  const [width, setWidth] = useState(UNMEASURED);
+  const { width, measureRef, onLayout } = useAvailableWidth();
   const hostRef = useRef<Text | null>(null);
 
-  const onLayout = useCallback((e: LayoutChangeEvent) => {
-    setWidth(e.nativeEvent.layout.width);
-  }, []);
-
   /**
-   * The native tooltip. RN-web renders `<Text>` to a real DOM node, so the ref is an
-   * HTMLElement there; on native the ref is a Text instance and this is skipped.
+   * One ref doing two jobs: hand the node to the width measurement, and set the native
+   * tooltip. RN-web renders `<Text>` to a real DOM node, so the ref is an HTMLElement there;
+   * on native the ref is a Text instance and the tooltip step is skipped.
    */
-  const attachTooltip = useCallback(
+  const attachRef = useCallback(
     (node: Text | null) => {
       hostRef.current = node;
-      if (Platform.OS !== 'web' || node === null) return;
-      (node as unknown as HTMLElement).setAttribute?.('title', value);
+      measureRef(node);
+      if (Platform.OS !== "web" || node === null) return;
+      (node as unknown as HTMLElement).setAttribute?.("title", value);
     },
-    [value],
+    [value, measureRef],
   );
 
-  const flatStyle = useMemo(() => StyleSheet.flatten([styles.base, style]) as TextStyle, [style]);
+  const flatStyle = useMemo(
+    () => StyleSheet.flatten([styles.base, style]) as TextStyle,
+    [style],
+  );
   const fontSize = flatStyle.fontSize ?? DEFAULT_FONT_SIZE;
 
   const display = useMemo(() => {
@@ -112,21 +115,22 @@ export const TruncatedText = ({
   }, [value, isUrl, width, fontSize]);
 
   return (
-    <View style={styles.fill} onLayout={onLayout}>
-      <Text
-        ref={attachTooltip}
-        numberOfLines={1}
-        style={[styles.base, style]}
-        testID={testID}
-        accessibilityRole={onPress !== undefined || href !== undefined ? 'link' : 'text'}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint={accessibilityHint}
-        onPress={onPress}
-        {...(Platform.OS === 'web' && href !== undefined ? { href } : {})}
-      >
-        {display}
-      </Text>
-    </View>
+    <Text
+      ref={attachRef}
+      onLayout={onLayout}
+      numberOfLines={1}
+      style={[styles.base, styles.fill, style]}
+      testID={testID}
+      accessibilityRole={
+        onPress !== undefined || href !== undefined ? "link" : "text"
+      }
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      onPress={onPress}
+      {...(Platform.OS === "web" && href !== undefined ? { href } : {})}
+    >
+      {display}
+    </Text>
   );
 };
 
