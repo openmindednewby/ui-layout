@@ -11,8 +11,9 @@
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FlatList, Modal, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useA11y } from '@dloizides/a11y';
 import { useUi, MODAL_OVERLAY_COLOR } from '@dloizides/ui-feedback';
 
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -69,8 +70,6 @@ export interface ModalDropdownProps<T> {
   menuMinWidth?: number;
 }
 
-const IS_WEB = Platform.OS === 'web';
-
 const BORDER_RADIUS = 8;
 const BORDER_WIDTH = 1;
 const BODY_FONT_SIZE = 14;
@@ -79,38 +78,18 @@ const MODAL_MIN_WIDTH = 200;
 const MODAL_MAX_HEIGHT = 300;
 const CONTAINER_PADDING_H = 12;
 const CONTAINER_PADDING_V = 10;
-/** 1x1 clipped box: off-screen visually, still in the a11y tree (unlike display/visibility:none). */
-const SR_ONLY_SIZE = 1;
-const SR_ONLY_OFFSET = -1;
 
-/**
- * Deliver the accessible hint on the platform's own terms.
- *
- * React Native consumes `accessibilityHint` natively. **react-native-web does not** — it silently
- * drops the prop (and older versions leaked it to the DOM as an unknown attribute, producing
- * `React does not recognize the accessibilityHint prop on a DOM element`). Either way the hint
- * never reached a screen reader, so every caller's carefully-written hint was thrown away. On web
- * we therefore point `aria-describedby` at a visually-hidden node carrying the text — the same
- * wiring `@dloizides/ui-forms`' `Field` uses for its error line — and do not pass the RN prop at
- * all, so nothing invalid can reach the DOM.
+/*
+ * The hint used to be threaded by a private `buildHintProps` helper plus a hand-rolled
+ * `srOnly` visually-hidden <Text>, both living in this file. That was a verbatim
+ * reimplementation of `@dloizides/a11y`'s `useA11y` + `A11yHint` — same platform branch,
+ * same 1x1-clip technique, same `aria-describedby` wiring — so it was a second place for
+ * the SAME bug to regress, with none of that package's dual-platform test gate behind it.
+ * It now delegates. See `useA11y` in the render below.
  */
-function buildHintProps(
-  hint: string,
-  hintId: string,
-): { accessibilityHint?: string; 'aria-describedby'?: string } {
-  return IS_WEB ? { 'aria-describedby': hintId } : { accessibilityHint: hint };
-}
 
 const styles = StyleSheet.create({
   anchor: { position: 'relative' },
-  srOnly: {
-    position: 'absolute',
-    width: SR_ONLY_SIZE,
-    height: SR_ONLY_SIZE,
-    margin: SR_ONLY_OFFSET,
-    padding: 0,
-    overflow: 'hidden',
-  },
   container: {
     borderWidth: BORDER_WIDTH,
     borderRadius: BORDER_RADIUS,
@@ -150,9 +129,23 @@ export const ModalDropdown = <T extends string | number>({
   const isMenu = resolvedVariant === DropdownVariant.Menu;
 
   const [isOpen, setIsOpen] = useState(false);
-  // Derived from the (required, caller-unique) testID, so the id is stable across renders and
-  // readable in the DOM — no render-order-dependent counter needed.
-  const hintId = `${testID}-hint`;
+  /*
+   * The trigger's accessible contract, emitted per-platform by the shared adapter:
+   * `aria-label`/`aria-describedby`/`role`/`aria-expanded` on web, the `accessibility*`
+   * props on native. `hintNode` is the visually-hidden description element — `null` on
+   * native, where the hint is a first-class prop — and MUST be rendered inside the same
+   * host component, which is why it sits among the trigger's children below.
+   *
+   * The hint id is no longer derived from `testID`: `useA11y` generates it from React's
+   * `useId()`, which stays unique even if two dropdowns are ever handed the same testID.
+   */
+  const { a11yProps, hintNode } = useA11y({
+    label: accessibilityLabel,
+    hint: accessibilityHint,
+    role: 'button',
+    state: { expanded: isOpen },
+    testID,
+  });
   const anchorRef = useRef<View>(null);
   const dialogRef = useRef<View>(null);
   useFocusTrap(dialogRef, isOpen && !isMenu);
@@ -213,31 +206,17 @@ export const ModalDropdown = <T extends string | number>({
 
   return (
     <View ref={anchorRef} style={anchorStyle}>
-      <TouchableOpacity
-        accessible
-        {...buildHintProps(accessibilityHint, hintId)}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        accessibilityState={{ expanded: isOpen }}
-        aria-expanded={isOpen}
-        style={containerStyle}
-        testID={testID}
-        onPress={handleToggle}
-      >
+      <TouchableOpacity {...a11yProps} style={containerStyle} onPress={handleToggle}>
         {renderTrigger !== undefined ? (
           renderTrigger({ label: selectedLabel, isOpen })
         ) : (
           <Text style={[styles.selectedText, { color: colors.text }]}>{selectedLabel}</Text>
         )}
+        {/* The hidden description node the trigger's `aria-describedby` points at. A DESCENDANT
+            rather than a sibling, so it cannot outlive the trigger and leave the attribute
+            dangling. `null` on native, where the hint is a first-class prop. */}
+        {hintNode}
       </TouchableOpacity>
-
-      {/* The hint text itself — referenced by the trigger's `aria-describedby`, announced after the
-          label, and never painted. Web only: native reads `accessibilityHint` off the trigger. */}
-      {IS_WEB ? (
-        <Text nativeID={hintId} style={styles.srOnly} testID={`${testID}-hint`}>
-          {accessibilityHint}
-        </Text>
-      ) : null}
 
       {isMenu && isOpen ? (
         <InlineMenu

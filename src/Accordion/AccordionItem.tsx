@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '@dloizides/rn-web-hooks';
 import { useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
 
@@ -105,14 +106,13 @@ interface WebKeyboardProps {
 const ACTIVATION_KEYS = ['Enter', ' ', 'Spacebar'];
 const INSTANT_DURATION_MS = 0;
 
-/**
- * True when the user asked the OS to reduce motion (web only). The chevron/marker rotation then
- * snaps instead of easing (WCAG 2.3.3). Safe under SSR / where `matchMedia` is absent.
+/*
+ * The local `prefersReducedMotion` that used to sit here was a character-for-character copy of
+ * the one in accordionAnimation.ts. Both now come from @dloizides/rn-web-hooks. This call site
+ * uses the HOOK rather than the imperative probe: it reads the preference during render, so the
+ * chevron now responds when the user flips "reduce motion" mid-session — the one-shot copy kept
+ * animating until some unrelated state change happened to re-run the effect.
  */
-function prefersReducedMotion(): boolean {
-  if (Platform.OS !== 'web' || typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
 
 export const AccordionItem = ({
   id,
@@ -137,15 +137,16 @@ export const AccordionItem = ({
   const chevronTestID = `${headerTestID}-chevron`;
 
   const [rotation] = useState(() => new Animated.Value(expanded ? ROTATE_EXPANDED : ROTATE_COLLAPSED));
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     Animated.timing(rotation, {
       toValue: expanded ? ROTATE_EXPANDED : ROTATE_COLLAPSED,
-      duration: prefersReducedMotion() ? INSTANT_DURATION_MS : ROTATE_DURATION_MS,
+      duration: reducedMotion ? INSTANT_DURATION_MS : ROTATE_DURATION_MS,
       easing: Easing.out(Easing.ease),
       useNativeDriver: Platform.OS !== 'web',
     }).start();
-  }, [expanded, rotation]);
+  }, [expanded, rotation, reducedMotion]);
 
   const rotate = rotation.interpolate({
     inputRange: [ROTATE_COLLAPSED, ROTATE_EXPANDED],

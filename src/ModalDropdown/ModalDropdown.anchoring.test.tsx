@@ -9,6 +9,7 @@
  */
 import { render, screen, fireEvent, act, within } from '@testing-library/react';
 
+import { describedByNode, expectVisuallyHidden, visibleText } from '../__testing__/a11yVisibility';
 import { ModalDropdown } from './ModalDropdown';
 import { DropdownVariant } from './DropdownVariant';
 
@@ -238,7 +239,18 @@ describe('ModalDropdown accessibilityHint reaches assistive tech (1.10.0)', () =
 
   it('does not paint the hint text into the visible trigger label', () => {
     renderMenu();
-    expect(screen.getByTestId('d').textContent).toBe('Alpha');
+    const trigger = screen.getByTestId('d');
+
+    // The hint node is now a DESCENDANT of the trigger (see `@dloizides/a11y` — a sibling
+    // could outlive its host and leave `aria-describedby` dangling), so `textContent`
+    // legitimately contains the hint. What must stay true is that it is not VISIBLE.
+    // Asserting that directly is stronger than the previous textContent check, which
+    // passed both for a hint that was absent and for one that was present but hidden.
+    expect(visibleText(trigger)).toBe('Alpha');
+
+    const hint = describedByNode(trigger);
+    expect(hint?.textContent).toBe('Pick the display currency');
+    expectVisuallyHidden(hint as HTMLElement);
   });
 });
 

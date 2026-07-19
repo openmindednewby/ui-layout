@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
+import { visibleText } from '../__testing__/a11yVisibility';
 import { ModalDropdown } from './ModalDropdown';
 import { DropdownVariant } from './DropdownVariant';
 
@@ -139,14 +140,15 @@ describe('ModalDropdown custom trigger + option testIDs (1.8.0)', () => {
       />,
     );
     const trigger = screen.getByTestId('lang');
-    // The custom content replaces the default field text …
-    expect(trigger.textContent).toBe('Alpha');
+    // The custom content replaces the default field text … (`visibleText` excludes the
+    // hidden `aria-describedby` hint node, which is a descendant of the trigger.)
+    expect(visibleText(trigger)).toBe('Alpha');
     // … while the dropdown keeps owning the accessible contract.
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(trigger.getAttribute('aria-label')).toBe('Language');
 
     fireEvent.click(trigger);
-    expect(screen.getByTestId('lang').textContent).toBe('Alpha open');
+    expect(visibleText(screen.getByTestId('lang'))).toBe('Alpha open');
     expect(screen.getByTestId('lang').getAttribute('aria-expanded')).toBe('true');
   });
 

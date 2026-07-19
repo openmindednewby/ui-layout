@@ -11,5 +11,5 @@ export default defineConfig({
   minify: false,
   target: 'es2020',
   outDir: 'dist',
-  external: ['react', 'react-dom', 'react-native', 'react-native-svg', '@dloizides/ui-feedback', '@dloizides/ui-icons'],
+  external: ['react', 'react-dom', 'react-native', 'react-native-svg', '@dloizides/a11y', '@dloizides/rn-web-hooks', '@dloizides/ui-feedback', '@dloizides/ui-icons'],
 });

@@ -7,6 +7,8 @@
  */
 import { LayoutAnimation, Platform, UIManager } from 'react-native';
 
+import { prefersReducedMotion } from '@dloizides/rn-web-hooks';
+
 let androidEnabled = false;
 
 /** Old-architecture Android requires opting in to LayoutAnimation once, at runtime. */
@@ -20,15 +22,13 @@ function enableAndroidLayoutAnimationOnce(): void {
   }
 }
 
-/**
- * True when the user asked the OS to reduce motion (web only). The expand/collapse layout
- * animation is then skipped so the panel appears/disappears instantly (WCAG 2.3.3). Safe under
- * SSR / where `matchMedia` is unavailable, and always false on native (handled by the caller).
+/*
+ * `prefersReducedMotion` used to be defined right here, and again — character for character —
+ * in AccordionItem.tsx. It now comes from @dloizides/rn-web-hooks, which already owned the
+ * identical `(prefers-contrast: more)` probe and has a dual-platform test gate behind it.
+ * The imperative form (rather than the `useReducedMotion` hook) is the right one for this
+ * call site: `animateNextLayout` runs outside render, so it cannot call a hook.
  */
-function prefersReducedMotion(): boolean {
-  if (Platform.OS !== 'web' || typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
 
 /** Animate the layout change caused by the next state update (expand/collapse). */
 export function animateNextLayout(): void {

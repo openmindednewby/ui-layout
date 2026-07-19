@@ -74,6 +74,10 @@
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "version": "npm run build"
   },
+  "dependencies": {
+    "@dloizides/a11y": "^1.0.1",
+    "@dloizides/rn-web-hooks": "^1.0.2"
+  },
   "peerDependencies": {
     "@dloizides/ui-feedback": ">=1.1.0",
     "@dloizides/ui-icons": ">=1.0.1",
@@ -88,9 +92,10 @@
     }
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
     "@dloizides/ui-feedback": "^1.2.0",
     "@dloizides/ui-icons": "^1.0.1",
-    "react-native-svg": "15.12.1",
+    "@react-native/babel-preset": "^0.81.6",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -98,8 +103,10 @@
     "@types/node": "^20.19.32",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/react-test-renderer": "^19.1.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "babel-jest": "^29.7.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -108,7 +115,9 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-native": "0.81.5",
+    "react-native-svg": "15.12.1",
     "react-native-web": "^0.21.0",
+    "react-test-renderer": "^19.2.7",
     "rimraf": "^5.0.0",
     "ts-jest": "^29.1.0",
     "tsup": "^8.0.0",
