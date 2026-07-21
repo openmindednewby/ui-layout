@@ -54,4 +54,16 @@ export const LAYOUT_I18N = {
   upgradePromptCtaHint: 'settings.billing.upgradePrompt.ctaHint',
   upgradePromptDismiss: 'settings.billing.upgradePrompt.dismiss',
   upgradePromptDismissHint: 'settings.billing.upgradePrompt.dismissHint',
+  /** `CopyableId`: the copy control's label in each of its three states, plus its hint. */
+  copy: 'common.copy',
+  copyHint: 'common.copyHint',
+  copied: 'common.copied',
+  /**
+   * Shown when the clipboard write genuinely failed — non-secure context, denied permission.
+   * This string reaching a user is CORRECT behaviour, not a defect: the alternative is them
+   * believing they hold an identifier they do not.
+   */
+  copyFailed: 'common.copyFailed',
+  /** `CopyableId`: hint on the value itself, explaining it is shortened for display. */
+  copyableIdHint: 'common.copyableIdHint',
 } as const;

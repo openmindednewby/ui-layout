@@ -31,6 +31,13 @@ export { TruncatedText } from './TruncatedText/TruncatedText';
 export type { TruncatedTextProps } from './TruncatedText/TruncatedText';
 export { truncateMiddle, formatUrlForDisplay, ELLIPSIS } from './TruncatedText/truncate';
 
+export { CopyableId } from './CopyableId/CopyableId';
+export type { CopyableIdProps } from './CopyableId/CopyableId';
+export { CopyStatus } from './CopyableId/CopyStatus';
+export { useCopyToClipboard, COPY_FEEDBACK_MS } from './CopyableId/useCopyToClipboard';
+export type { CopyToClipboard } from './CopyableId/useCopyToClipboard';
+export { copyText } from './CopyableId/copyText';
+
 export { useFocusTrap } from './hooks/useFocusTrap';
 
 export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';

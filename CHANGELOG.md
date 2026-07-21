@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.15.0
+
+- **New: `CopyableId`** — show a long machine identifier (a GUID, a reference, a correlation id)
+  so a human can both READ enough of it to tell two apart and TAKE it in one action. Composes the
+  existing `TruncatedText`, so the middle-truncation work is reused rather than re-derived.
+
+  Driven by the AML console needing to surface a screening ID an analyst can copy and re-screen
+  with, but it is deliberately domain-free: every portal has identifiers it currently either hides
+  or dumps raw into a table cell.
+
+  Three things this gets right that a naive copy button does not:
+
+  1. **It copies the FULL value, never the display string.** A truncated GUID that a user
+     hand-selects yields `3f2a9c81…d4e7`, ellipsis and all, which silently fails wherever it is
+     pasted. Showing a truncated identifier with no copy affordance is strictly WORSE than not
+     showing it. The full value is always the accessible name and the web tooltip.
+  2. **Middle truncation, not tail.** Two GUIDs from one table share a prefix far more often than
+     intuition suggests, and `numberOfLines={1}` renders them IDENTICALLY. The tail is what tells
+     them apart, so both ends survive.
+  3. **A failed copy is SHOWN, not swallowed.** `navigator.clipboard` is not merely unreliable —
+     it is `undefined` outside a secure context, which is how every staging box and LAN preview in
+     this fleet is served, i.e. exactly where people hand-test. `copyText` therefore falls back to
+     `document.execCommand` over an off-screen textarea, and returns a boolean rather than
+     assuming. On total failure the control renders a distinct `common.copyFailed` state; a silent
+     failure would leave the user believing they hold an identifier they do not.
+
+  The status is carried in the control's accessible **NAME**, not its hint, because
+  `accessibilityHint` is dropped by react-native-web and never reaches the DOM — a screen-reader
+  user would otherwise get no confirmation at all.
+
+  No native clipboard dependency is taken. Hosts on React Native inject a `writer`
+  (`Clipboard.setString`); an injected writer that throws falls through to the DOM paths.
+
+  New `LAYOUT_I18N` keys — hosts binding a missing-key guard to that map (as aml-v2 does) will
+  fail their catalog test until these are defined: `common.copy`, `common.copyHint`,
+  `common.copied`, `common.copyFailed`, `common.copyableIdHint`.
+
 ## 1.12.2
 
 - **Fix (`TruncatedText` STILL did not middle-truncate; 1.12.1's fix was the wrong mechanism).**
