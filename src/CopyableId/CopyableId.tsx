@@ -19,7 +19,7 @@
  */
 import React, { useMemo } from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
@@ -49,11 +49,19 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: ROW_GAP },
   /**
    * The truncation width comes from this wrapper, not from the row: `TruncatedText` measures its
-   * PARENT (see `useAvailableWidth`), and the row also holds the button. `minWidth: 0` is what
-   * actually lets a flex child shrink below its content width — without it the row just grows and
-   * nothing ever truncates.
+   * PARENT (see `useAvailableWidth`), and the row also holds the copy button.
+   *
+   * `flex: 1` IS LOAD-BEARING — do not weaken it to `flexShrink: 1`. A shrink-only wrapper
+   * SHRINK-WRAPS its content, which makes the measured parent width depend on the very string we
+   * are computing: truncate -> wrapper narrows -> re-measure smaller -> truncate harder. Verified
+   * in Chrome: with `flexShrink: 1` a 506px-wide container and a 306px one both rendered the SAME
+   * 196px string, i.e. the id was cut short with 300px of room going spare. `flex: 1` makes the
+   * wrapper fill the row's leftover width instead, so its size is independent of what we put in
+   * it — the same reason `useAvailableWidth` measures the parent and not the element.
+   *
+   * `minWidth: 0` is what actually permits a flex child to go below its content width.
    */
-  valueWrap: { flexShrink: 1, minWidth: 0 },
+  valueWrap: { flex: 1, minWidth: 0 },
   value: { fontSize: VALUE_FONT_SIZE, fontWeight: '600' },
   action: {
     fontSize: ACTION_FONT_SIZE,
@@ -69,7 +77,16 @@ export interface CopyableIdProps {
   value: string;
   /** Optional eyebrow above the value (e.g. "Screening ID"). Pass pre-localized. */
   label?: string;
-  /** Base testID; the copy control is `${testID}-copy` and the status text `${testID}-status`. */
+  /**
+   * Style for the outer container.
+   *
+   * Hosts should give this a width that does NOT derive from its own content — a `flexBasis`, a
+   * `width`, or `flex: 1`. The component measures its container to decide how much of the value
+   * to show, so a shrink-to-fit parent makes the available width depend on the string being
+   * computed, and the id renders clipped with space to spare.
+   */
+  style?: StyleProp<ViewStyle>;
+  /** Base testID; the copy control is `${testID}-copy` and the value `${testID}-value`. */
   testID: string;
   /** Accessible name for the value itself. Pass pre-localized; falls back to the raw value. */
   accessibilityLabel?: string;
@@ -107,6 +124,7 @@ function useActionState(status: CopyStatus): { key: string; color: string } {
 export const CopyableId = ({
   value,
   label,
+  style,
   testID,
   accessibilityLabel,
   writer,
@@ -117,7 +135,7 @@ export const CopyableId = ({
   const action = useActionState(status);
 
   return (
-    <View style={styles.cell} testID={testID}>
+    <View style={[styles.cell, style]} testID={testID}>
       {label !== undefined && (
         <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
       )}

@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.15.1
+
+- **Fix (`CopyableId` truncated the value with room to spare).** 1.15.0 gave the value wrapper
+  `flexShrink: 1`, which makes it SHRINK-WRAP its content — so the width the component measures to
+  decide how much to show was derived from the very string it was computing: truncate → wrapper
+  narrows → re-measure smaller → truncate harder. Verified in Chrome via `apps/ui-showcase`: a
+  506px-wide container and a 306px one rendered the SAME 196px string, i.e. a 36-character GUID was
+  cut to 26 characters with ~300px going unused.
+
+  The wrapper is now `flex: 1`, so it fills the row's leftover width and its size is independent of
+  its content. Re-verified at four widths: 520px and 320px now render the full 36-character GUID
+  untruncated; 200px and 120px middle-truncate with both ends intact, and nothing overflows.
+
+  This is the SAME failure mode `useAvailableWidth` documents for `TruncatedText` (measure the
+  parent, never the element, or the output feeds back into the input) — reintroduced one level up
+  by the new wrapper. Unit tests cannot catch it: the truncation helpers are pure and passed
+  throughout, and jsdom reports zero widths, so only a real browser shows it.
+
+- **New: `CopyableId` accepts `style`** for its outer container. Hosts need this to give the
+  control a width that does not derive from its own content (a `flexBasis`, a `width`, or
+  `flex: 1`) — without one, a shrink-to-fit parent reintroduces the feedback loop above at the
+  host level. Documented on the prop.
+
 ## 1.15.0
 
 - **New: `CopyableId`** — show a long machine identifier (a GUID, a reference, a correlation id)
