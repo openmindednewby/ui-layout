@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.16.0
+## 1.16.1
 
 **`Heading` supports levels 1-6 instead of `<h1>` only.**
 
