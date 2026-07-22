@@ -1,6 +1,6 @@
 {
   "name": "@dloizides/ui-layout",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "description": "Themable, brand-agnostic React Native (RN-web) layout primitives — Section, Heading, StatusBadge, UpgradePrompt, ModalDropdown — sharing the @dloizides/ui-feedback UI context.",
   "keywords": [
     "react",
@@ -75,7 +75,7 @@
     "version": "npm run build"
   },
   "dependencies": {
-    "@dloizides/a11y": "^1.0.1",
+    "@dloizides/a11y": "^1.3.0",
     "@dloizides/rn-web-hooks": "^1.0.2"
   },
   "peerDependencies": {

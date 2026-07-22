@@ -2,7 +2,7 @@ export { Section } from './Section/Section';
 export type { SectionProps } from './Section/Section';
 
 export { Heading } from './Heading/Heading';
-export type { HeadingProps } from './Heading/Heading';
+export type { HeadingProps, HeadingLevel } from './Heading/Heading';
 
 export { StatusBadge } from './StatusBadge/StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
