@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.16.0
+
+**`Heading` supports levels 1-6 instead of `<h1>` only.**
+
+`Heading` rendered `<h1>` unconditionally, so any screen needing sub-structure either
+shipped multiple `<h1>`s or avoided the component. The Digital Kin guide editor did the
+latter — styled `<Text>` instead — and shipped **zero headings**: measured on the live
+CMS, `document.querySelectorAll('h1,h2,h3,h4,h5,h6').length === 0` for the entire page.
+
+So there was no `<h1>` naming the guide being edited and nothing marking the steps
+section. Screen-reader users could not navigate by heading, and styling was standing in
+for structure.
+
+After: `h1` names the guide, `h2` marks the steps section, `h3` per step.
+
+
 ## 1.15.1
 
 - **Fix (`CopyableId` truncated the value with room to spare).** 1.15.0 gave the value wrapper
