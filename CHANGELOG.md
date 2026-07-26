@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.17.0
+
+**New `Tabs` primitive — a controlled tabbed section shell.**
+
+Adds `Tabs`: a wrapping/scrolling pill tab strip plus the active tab's panel, wired
+as a proper `tablist` / `tab` / `tabpanel` (aria-selected, aria-controls,
+aria-labelledby). Controlled (`activeKey` + `onChange`), so the selected tab can be
+driven from a route param or storage. Labels are pre-localized strings; colours read
+from the `@dloizides/ui-feedback` theme (no FM/router/store imports), consistent with
+the rest of the kit.
+
+Extracted so the seven portals share ONE tab shell instead of hand-rolling a bar per
+app — first consumer is the kefi-web organizer dashboard, split from one enormous page
+into menu tabs.
+
 ## 1.16.1
 
 **`Heading` supports levels 1-6 instead of `<h1>` only.**
