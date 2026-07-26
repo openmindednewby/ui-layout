@@ -10,6 +10,9 @@ export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/SegmentedControl';
 
+export { Tabs } from './Tabs/Tabs';
+export type { TabsProps, TabDescriptor } from './Tabs/Tabs';
+
 export { UpgradePrompt } from './UpgradePrompt/UpgradePrompt';
 export type { UpgradePromptProps } from './UpgradePrompt/UpgradePrompt';
 
