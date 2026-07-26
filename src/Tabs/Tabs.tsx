@@ -13,8 +13,17 @@
  * Contract discipline (same as the rest of `@dloizides/ui-layout`): NO FM /
  * router / store / icon imports. `label`s are pre-localized strings supplied by
  * the caller; every colour is read from the `@dloizides/ui-feedback` UiProvider
- * theme, so the strip re-skins on tenant swap. The tab row is horizontally
- * scrollable AND wraps, so 3 tabs or 15 tabs both lay out sensibly.
+ * theme, so the strip re-skins on tenant swap.
+ *
+ * RESPONSIVE ROW: the tab row is a SINGLE horizontally-scrollable line, never a
+ * wrapping pile. Pills sit on one `nowrap` row inside a horizontal `ScrollView`
+ * and do not shrink (`flexShrink: 0`), so on a phone the extra tabs scroll off to
+ * the right (swipeable) instead of wrapping into an unusable multi-row chip pile;
+ * on desktop the same row lays out cleanly and, when the tabs fit, simply doesn't
+ * scroll. A full-width underline lives on the outer wrapper so it spans the whole
+ * width in both cases. (An earlier version used `flexWrap: 'wrap'` INSIDE the
+ * scroller, which made the content wrap to the viewport so the scroller never
+ * scrolled — the classic "wrap defeats the horizontal scroll" trap.)
  */
 import React from 'react';
 
@@ -50,16 +59,25 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
   },
+  // The full-width rule under the row lives here (not on the strip) so it spans the
+  // whole width even when the tabs are narrower than the viewport (desktop) and is
+  // not clipped to the scroll content width.
+  stripOuter: {
+    width: '100%',
+    borderBottomWidth: BORDER_WIDTH,
+  },
   strip: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     alignItems: 'center',
     columnGap: COLUMN_GAP,
     rowGap: ROW_GAP,
     paddingVertical: ROW_PAD_V,
-    borderBottomWidth: BORDER_WIDTH,
   },
   pill: {
+    // Keep each pill at its natural size so the row scrolls instead of squashing
+    // the tabs when they don't all fit.
+    flexShrink: 0,
     paddingHorizontal: PILL_PAD_H,
     paddingVertical: PILL_PAD_V,
     borderRadius: PILL_RADIUS,
@@ -161,12 +179,13 @@ export const Tabs = ({
 
   return (
     <View style={[styles.root, style]} testID={testID}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View
-          accessibilityRole="tablist"
-          aria-label={accessibilityLabel}
-          style={[styles.strip, { borderBottomColor: colors.border }, stripStyle]}
-        >
+      <View style={[styles.stripOuter, { borderBottomColor: colors.border }]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View
+            accessibilityRole="tablist"
+            aria-label={accessibilityLabel}
+            style={[styles.strip, stripStyle]}
+          >
           {tabs.map((tab) => {
             const selected = tab.key === activeKey;
             const textColor = selected ? TEXT_ON_PRIMARY : colors.textSecondary;
@@ -189,8 +208,9 @@ export const Tabs = ({
               </Pressable>
             );
           })}
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
       <View accessibilityRole="none" style={[styles.panel, panelStyle]} {...panelAria}>
         {children}
       </View>
