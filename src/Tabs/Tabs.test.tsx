@@ -1,3 +1,14 @@
+// This is the WIDE-mode harness: pin a desktop viewport so `Tabs` renders the
+// horizontal tablist strip regardless of the jest DOM env's reported width. The
+// collapsed (mobile menu) behaviour is proven separately in Tabs.collapsed.test.tsx.
+jest.mock('react-native', () => {
+  const actual = jest.requireActual('react-native');
+  return {
+    ...actual,
+    useWindowDimensions: () => ({ width: 1280, height: 800, scale: 1, fontScale: 1 }),
+  };
+});
+
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { Tabs } from './Tabs';

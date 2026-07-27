@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.19.0
+
+**`Tabs` collapses to a real mobile menu below a breakpoint.**
+
+On a phone the horizontal pill strip "is not a real menu and not mobile friendly" — a
+scrolling chip row is hard to use with 7–8 tabs (the kefi organizer dashboard:
+Overview / Passes / Attendees / Promoters / Door / Ledger / Messaging / Settings). `Tabs`
+now renders responsively:
+
+- **Wide (>= `collapseBelow`, default 768, web only):** the existing horizontal
+  `role=tablist` / `role=tab` strip — unchanged, fully backward-compatible.
+- **Narrow (< breakpoint) or native:** a genuine menu — a trigger button showing the
+  active section that opens a vertical list of all sections. Delegates to the kit's
+  existing `ModalDropdown` (menu/listbox semantics, focus trap, dismiss backdrop, dual-
+  platform a11y) rather than reimplementing a dropdown.
+
+Backward-compatible: the public API is unchanged except one new optional prop,
+`collapseBelow?: number` (default = the shared kit breakpoint, 768; pass `0` to keep the
+row on any web width, or a large number to force the menu). The collapse threshold reuses
+the SAME viewport rule (`MENU_BREAKPOINT`) that `ModalDropdown` uses for its menu-vs-modal
+split, so the whole layout kit changes shape at one consistent breakpoint.
+
+**E2E survival:** per-tab selectors keep working in BOTH modes. Each collapsed menu row's
+`testID` is the tab descriptor's own `testID` when supplied, otherwise the same
+`{idPrefix}-tab-{key}` pattern the wide strip uses for its tab element ids (the menu must
+be opened first, as with any select). Requires one new host i18n key,
+`common.tabsMenuHint` (the accessible hint on the collapsed trigger).
+
 ## 1.17.0
 
 **New `Tabs` primitive — a controlled tabbed section shell.**

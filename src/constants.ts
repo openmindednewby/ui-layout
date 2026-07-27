@@ -30,6 +30,11 @@ export const DEFAULT_BILLING_ROUTE = '/settings/billing';
 export const LAYOUT_I18N = {
   /** Placeholder shown by `ModalDropdown` when no option matches the current value. */
   selectPlaceholder: 'common.selectPlaceholder',
+  /**
+   * Accessible hint on the collapsed (mobile) `Tabs` menu trigger — the button
+   * that shows the active section and opens the vertical list of sections.
+   */
+  tabsMenuHint: 'common.tabsMenuHint',
   /** Accessible name + hint of the modal-variant dropdown's dismiss backdrop. */
   dismissDropdown: 'common.dismissDropdown',
   dismissDropdownHint: 'common.dismissDropdownHint',
