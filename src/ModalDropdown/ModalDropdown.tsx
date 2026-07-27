@@ -77,6 +77,16 @@ export interface ModalDropdownProps<T> {
    * its own visuals, affordance included.
    */
   showCaret?: boolean;
+  /**
+   * Present the DEFAULT trigger as a HAMBURGER (☰) menu: the universal mobile-nav glyph LEADING the
+   * active option's label, with the same bordered field box and ≥44dp hit target. Opt-in and OFF by
+   * default. When set it takes precedence over `showCaret` (a hamburger already IS the "this is a
+   * menu" cue, so the trailing caret is redundant), and — like `showCaret` — it is ignored when a
+   * custom `renderTrigger` is supplied. The glyph is a font character (U+2630), so no icon package
+   * enters this contract-pure kit, and it is decorative: the trigger's `aria-label` names the
+   * control, so screen readers do not announce it.
+   */
+  showHamburger?: boolean;
 }
 
 const BORDER_RADIUS = 8;
@@ -90,10 +100,14 @@ const CONTAINER_PADDING_V = 10;
 /** WCAG 2.5.5 minimum target size — the caret trigger must be comfortably tappable on a phone. */
 const MIN_TOUCH_TARGET = 44;
 const CARET_FONT_SIZE = 12;
-/** Gap between the label and the trailing caret. */
+/** Gap between the label and the trailing caret (also the gap after the leading hamburger). */
 const CARET_GAP = 8;
 /** ▾ (U+25BE) — a font glyph, so no icon package is imported into this contract-pure kit. */
 const CARET_GLYPH = '▾';
+/** ☰ (U+2630) — the hamburger menu glyph, likewise a font character (no icon package). */
+const HAMBURGER_GLYPH = '☰';
+/** The hamburger reads as an icon, so it sits a touch larger than the body label. */
+const HAMBURGER_FONT_SIZE = 18;
 /** Caret points up while the menu is open, down while closed. */
 const CARET_OPEN_ROTATION = '180deg';
 const CARET_CLOSED_ROTATION = '0deg';
@@ -125,10 +139,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     columnGap: CARET_GAP,
   },
+  // Hamburger variant: the ☰ glyph LEADS the label (icon-first, like a phone nav button), so the
+  // row packs to the start rather than pushing a trailing caret to the far edge. Same tap target.
+  containerHamburger: {
+    minHeight: MIN_TOUCH_TARGET,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    columnGap: CARET_GAP,
+  },
   selectedText: { fontSize: BODY_FONT_SIZE },
-  // The label may shrink/ellipsize; the caret never does.
+  // The label may shrink/ellipsize; the caret / hamburger glyph never does.
   selectedTextMenu: { flexShrink: 1 },
   caret: { fontSize: CARET_FONT_SIZE, flexShrink: 0 },
+  hamburger: { fontSize: HAMBURGER_FONT_SIZE, flexShrink: 0 },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -155,6 +179,7 @@ export const ModalDropdown = <T extends string | number>({
   optionTestID,
   menuMinWidth,
   showCaret = false,
+  showHamburger = false,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -199,18 +224,28 @@ export const ModalDropdown = <T extends string | number>({
     [onChange],
   );
 
+  // The hamburger is the stronger affordance, so it wins when both are set: a ☰ trigger has no
+  // reason to also carry a trailing caret.
+  const isHamburger = showHamburger;
+  const isCaret = showCaret && !isHamburger;
+
   // A custom trigger owns its own visuals, so the default bordered field box stands down. Otherwise
-  // the bordered field box renders, gaining the caret row layout + tap target when `showCaret` is on.
+  // the bordered field box renders, gaining the menu row layout + ≥44dp tap target when either the
+  // caret or the hamburger affordance is on.
   const containerStyle = useMemo(
     () =>
       renderTrigger !== undefined
         ? undefined
         : [
             styles.container,
-            showCaret ? styles.containerMenu : null,
+            isHamburger ? styles.containerHamburger : isCaret ? styles.containerMenu : null,
             { borderColor: colors.border, backgroundColor: colors.surface },
           ],
-    [colors.border, colors.surface, renderTrigger, showCaret],
+    [colors.border, colors.surface, renderTrigger, isHamburger, isCaret],
+  );
+  const hamburgerStyle = useMemo(
+    () => [styles.hamburger, { color: colors.textSecondary }],
+    [colors.textSecondary],
   );
   const caretStyle = useMemo(
     () => [
@@ -254,7 +289,16 @@ export const ModalDropdown = <T extends string | number>({
       <TouchableOpacity {...a11yProps} style={containerStyle} onPress={handleToggle}>
         {renderTrigger !== undefined ? (
           renderTrigger({ label: selectedLabel, isOpen })
-        ) : showCaret ? (
+        ) : isHamburger ? (
+          <>
+            {/* Decorative LEADING glyph: the trigger's aria-label already names the control, so
+                screen readers ignore it. It is the universal "open the menu" cue on mobile. */}
+            <Text style={hamburgerStyle}>{HAMBURGER_GLYPH}</Text>
+            <Text numberOfLines={1} style={[styles.selectedText, styles.selectedTextMenu, { color: colors.text }]}>
+              {selectedLabel}
+            </Text>
+          </>
+        ) : isCaret ? (
           <>
             <Text numberOfLines={1} style={[styles.selectedText, styles.selectedTextMenu, { color: colors.text }]}>
               {selectedLabel}

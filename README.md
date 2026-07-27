@@ -11,8 +11,9 @@ Read theme + translations from the shared `@dloizides/ui-feedback` context (`use
 | `Heading` | Themed section heading text. |
 | `StatusBadge` | Status pill — caller supplies `label`/`color`/`backgroundColor`. |
 | `UpgradePrompt` | Free-tier upgrade nudge; CTA navigates to the billing route via `useUi().navigate`. |
-| `Tabs` | Controlled tabbed section shell. **Responsive**: a horizontal `role=tablist` pill strip on wide web, collapsing to a real mobile MENU (a trigger + vertical section list, via `ModalDropdown`) below `collapseBelow` (default 768) or on native. Per-tab `testID`s survive in both modes. Requires the `common.tabsMenuHint` key. |
-| `ModalDropdown` | Generic dropdown selector. **Responsive by default**: an inline anchored menu on wide/desktop web, a modal on narrow/mobile — override per screen with `variant`. |
+| `Tabs` | Controlled tabbed section shell. **Responsive**: a horizontal `role=tablist` pill strip on wide web, collapsing to a real mobile MENU (a trigger + vertical section list, via `ModalDropdown`) below `collapseBelow` (default 768) or on native. The collapsed trigger presents as a caret field (default) or a ☰ hamburger via `collapsedTrigger`. Per-tab `testID`s survive in both modes. Requires the `common.tabsMenuHint` key. |
+| `TabsCollapsedTrigger` | Enum (`Caret` / `Hamburger`) selecting how the collapsed `Tabs` menu trigger presents. Defaults to `Caret`. |
+| `ModalDropdown` | Generic dropdown selector. **Responsive by default**: an inline anchored menu on wide/desktop web, a modal on narrow/mobile — override per screen with `variant`. Opt into a menu affordance on the default trigger with `showCaret` (trailing ▾) or `showHamburger` (leading ☰, wins over `showCaret`). |
 | `DropdownVariant` | Enum (`Menu` / `Modal`) to force a `ModalDropdown` rendering variant. |
 | `Accordion` / `AccordionItem` | Themed expand/collapse disclosure group (replaces hand-rolled `<details>`/expanders). Controlled or uncontrolled, single- or multi-open, animated, keyboard + screen-reader accessible. |
 | `useFocusTrap` | Web keyboard focus-trap hook (no-op on native). |

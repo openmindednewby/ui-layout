@@ -264,6 +264,94 @@ describe('ModalDropdown menu affordance (showCaret, 1.20.0)', () => {
   });
 });
 
+describe('ModalDropdown hamburger affordance (showHamburger, 1.21.0)', () => {
+  const HAMBURGER = '☰'; // ☰ U+2630 trigram/hamburger glyph
+  const CARET = '▾';
+
+  function renderWithHamburger(overrides?: { showHamburger?: boolean; showCaret?: boolean; value?: Value }) {
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={overrides?.value ?? ('a' as Value)}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+        showCaret={overrides?.showCaret ?? false}
+        showHamburger={overrides?.showHamburger ?? true}
+      />,
+    );
+  }
+
+  it('renders NO hamburger by default, so every existing field dropdown is visually unchanged', () => {
+    renderDropdown({ variant: DropdownVariant.Menu });
+    expect(screen.queryByText(HAMBURGER)).toBeNull();
+  });
+
+  it('renders a ☰ hamburger glyph on the default trigger when showHamburger is set', () => {
+    renderWithHamburger();
+    expect(screen.getByText(HAMBURGER)).toBeTruthy();
+  });
+
+  it('shows the active option label alongside the hamburger', () => {
+    renderWithHamburger({ value: 'b' as Value });
+    expect(screen.getByTestId('risk-select').textContent).toContain('Beta');
+  });
+
+  it('suppresses the caret when the hamburger wins (showHamburger takes precedence over showCaret)', () => {
+    renderWithHamburger({ showCaret: true, showHamburger: true });
+    expect(screen.getByText(HAMBURGER)).toBeTruthy();
+    expect(screen.queryByText(CARET)).toBeNull();
+  });
+
+  it('lets a custom renderTrigger own its visuals — showHamburger is ignored when one is supplied', () => {
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+        showHamburger
+        renderTrigger={({ label }) => <span>{label}</span>}
+      />,
+    );
+    expect(screen.queryByText(HAMBURGER)).toBeNull();
+  });
+
+  it('still opens the menu and selects an option when the hamburger trigger is pressed', () => {
+    const onChange = jest.fn();
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={onChange}
+        showHamburger
+      />,
+    );
+    fireEvent.click(screen.getByTestId('risk-select'));
+    fireEvent.click(screen.getByTestId('risk-select-option-b'));
+    expect(onChange).toHaveBeenCalledWith('b');
+  });
+
+  it('keeps the accessible contract (role=button, aria-label, aria-expanded) on the hamburger trigger', () => {
+    renderWithHamburger();
+    const trigger = screen.getByTestId('risk-select');
+    expect(trigger.getAttribute('role')).toBe('button');
+    expect(trigger.getAttribute('aria-label')).toBe('Risk');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    // The glyph is decorative — the aria-label carries the accessible name, not the ☰.
+    expect(trigger.getAttribute('tabindex')).not.toBe('-1');
+  });
+});
+
 describe('ModalDropdown keyboard selection with the trigger still focused (1.9.1 regression)', () => {
   // THE BUG: the trigger keeps DOM focus while the menu is open, and react-native-web maps Enter on
   // a focused Touchable to onPress. React dispatches that from its ROOT listener — below `document`

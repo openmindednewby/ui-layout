@@ -8,10 +8,13 @@
  * semantics, the focus trap, the dismiss backdrop and the dual-platform a11y
  * contract for free — no new dropdown behaviour is reimplemented here.
  *
- * It opts into `ModalDropdown`'s `showCaret` so the trigger reads unmistakably as
- * a section SWITCHER — a bordered field with a rotating ▾ caret and a ≥44dp tap
- * target — rather than a static chip that gives no hint it is tappable. That was
- * the live defect on the collapsed organizer nav: the trigger looked like a pill.
+ * By default it opts into `ModalDropdown`'s `showCaret` so the trigger reads
+ * unmistakably as a section SWITCHER — a bordered field with a rotating ▾ caret and
+ * a ≥44dp tap target — rather than a static chip that gives no hint it is tappable.
+ * That was the live defect on the collapsed organizer nav: the trigger looked like a
+ * pill. A consumer can instead pass `collapsedTrigger={TabsCollapsedTrigger.Hamburger}`
+ * to present the universal ☰ mobile-nav glyph (leading the active label); the opened
+ * list, the a11y contract and the testIDs are identical either way.
  *
  * E2E survival: each option row's `testID` is the tab descriptor's own `testID`
  * when supplied, otherwise the `{idPrefix}-tab-{key}` pattern the wide strip uses
@@ -24,6 +27,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useUi } from '@dloizides/ui-feedback';
 
 import type { TabDescriptor } from './Tabs';
+import { TabsCollapsedTrigger } from './TabsCollapsedTrigger';
 import { LAYOUT_I18N } from '../constants';
 import type { DropdownOption } from '../ModalDropdown/dropdownTypes';
 import { ModalDropdown } from '../ModalDropdown/ModalDropdown';
@@ -41,6 +45,12 @@ export interface TabsMenuProps {
   idPrefix: string;
   /** testID for the menu trigger. */
   testID: string;
+  /**
+   * How the collapsed trigger presents — a caret field (default) or a ☰ hamburger.
+   * See {@link TabsCollapsedTrigger}. Defaults to `Caret` so existing consumers are
+   * unchanged.
+   */
+  collapsedTrigger?: TabsCollapsedTrigger;
 }
 
 /** The collapsed tab menu. Renders the kit's `ModalDropdown` seeded from the tabs. */
@@ -51,6 +61,7 @@ export const TabsMenu = ({
   accessibilityLabel,
   idPrefix,
   testID,
+  collapsedTrigger = TabsCollapsedTrigger.Caret,
 }: TabsMenuProps): React.ReactElement => {
   const { t } = useUi();
 
@@ -67,13 +78,16 @@ export const TabsMenu = ({
     [tabs, idPrefix],
   );
 
+  const isHamburger = collapsedTrigger === TabsCollapsedTrigger.Hamburger;
+
   return (
     <ModalDropdown
       accessibilityHint={t(LAYOUT_I18N.tabsMenuHint)}
       accessibilityLabel={accessibilityLabel}
       optionTestID={optionTestID}
       options={options}
-      showCaret
+      showCaret={!isHamburger}
+      showHamburger={isHamburger}
       testID={testID}
       value={activeKey}
       onChange={onChange}

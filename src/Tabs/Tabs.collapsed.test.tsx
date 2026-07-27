@@ -14,6 +14,7 @@ jest.mock('react-native', () => {
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { Tabs } from './Tabs';
+import { TabsCollapsedTrigger } from './TabsCollapsedTrigger';
 
 const TABS = [
   { key: 'overview', label: 'Overview', testID: 'tab-overview' },
@@ -88,5 +89,60 @@ describe('Tabs — collapsed (mobile) menu', () => {
     render(<Tabs tabs={bare} activeKey="a" onChange={noop} accessibilityLabel="Sections" idPrefix="s" />);
     fireEvent.click(screen.getByTestId('s-menu'));
     expect(screen.getByTestId('s-tab-b')).toBeTruthy();
+  });
+});
+
+describe('Tabs — collapsed trigger presentation (caret vs hamburger)', () => {
+  const noop = (): void => undefined;
+  const HAMBURGER = '☰';
+  const CARET = '▾';
+
+  it('defaults to the caret affordance (no hamburger) when collapsedTrigger is omitted', () => {
+    render(
+      <Tabs tabs={TABS} activeKey="door" onChange={noop} accessibilityLabel="Organizer sections" idPrefix="org" />,
+    );
+    const trigger = screen.getByTestId('org-menu');
+    expect(trigger.textContent).toContain(CARET);
+    expect(trigger.textContent).not.toContain(HAMBURGER);
+  });
+
+  it('renders a ☰ hamburger (and no caret) when collapsedTrigger=Hamburger', () => {
+    render(
+      <Tabs
+        tabs={TABS}
+        activeKey="door"
+        onChange={noop}
+        accessibilityLabel="Organizer sections"
+        idPrefix="org"
+        collapsedTrigger={TabsCollapsedTrigger.Hamburger}
+      />,
+    );
+    const trigger = screen.getByTestId('org-menu');
+    expect(trigger.textContent).toContain(HAMBURGER);
+    expect(trigger.textContent).not.toContain(CARET);
+    // The active section label still rides alongside the hamburger.
+    expect(trigger.textContent).toContain('Door');
+  });
+
+  it('keeps the menu behaviour (opens the list, resolves per-tab testIDs, emits keys) as a hamburger', () => {
+    const onChange = jest.fn();
+    render(
+      <Tabs
+        tabs={TABS}
+        activeKey="overview"
+        onChange={onChange}
+        accessibilityLabel="Organizer sections"
+        idPrefix="org"
+        collapsedTrigger={TabsCollapsedTrigger.Hamburger}
+      />,
+    );
+    const trigger = screen.getByTestId('org-menu');
+    // Still keyboard-reachable and a real menu button.
+    expect(trigger.getAttribute('role')).toBe('button');
+    expect(trigger.getAttribute('tabindex')).not.toBe('-1');
+    fireEvent.click(trigger);
+    expect(screen.getByTestId('tab-passes')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('tab-passes'));
+    expect(onChange).toHaveBeenCalledWith('passes');
   });
 });

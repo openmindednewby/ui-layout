@@ -36,6 +36,7 @@ import {
 
 import { useUi } from '@dloizides/ui-feedback';
 
+import { TabsCollapsedTrigger } from './TabsCollapsedTrigger';
 import { TabsMenu } from './TabsMenu';
 import { TABS_COLLAPSE_BREAKPOINT, useTabsCollapsed } from './tabsResponsive';
 
@@ -150,6 +151,13 @@ export interface TabsProps {
    * force the menu, or `0` to keep the row on any web width.
    */
   collapseBelow?: number;
+  /**
+   * How the COLLAPSED (mobile) menu trigger presents — a caret field (default) or a
+   * ☰ hamburger. See {@link TabsCollapsedTrigger}. Defaults to `Caret`, so existing
+   * consumers are unchanged; a phone-first nav opts into `Hamburger`. Only affects the
+   * collapsed form — the wide pill strip is identical either way.
+   */
+  collapsedTrigger?: TabsCollapsedTrigger;
   /** Style override merged onto the root container. */
   style?: StyleProp<ViewStyle>;
   /** Style override merged onto the tab strip (wide mode only). */
@@ -228,6 +236,7 @@ export const Tabs = ({
   children,
   idPrefix = 'tabs',
   collapseBelow = TABS_COLLAPSE_BREAKPOINT,
+  collapsedTrigger = TabsCollapsedTrigger.Caret,
   style,
   stripStyle,
   panelStyle,
@@ -247,6 +256,7 @@ export const Tabs = ({
         <TabsMenu
           accessibilityLabel={accessibilityLabel}
           activeKey={activeKey}
+          collapsedTrigger={collapsedTrigger}
           idPrefix={idPrefix}
           tabs={tabs}
           testID={`${idPrefix}-menu`}

@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.21.0
+
+**The collapsed `Tabs` menu can now present as a HAMBURGER (☰) — the universal mobile-nav affordance.**
+
+The collapsed organizer nav reads better on a phone as a ☰ hamburger than as a caret field.
+This adds an opt-in so a consumer can choose either presentation; the default is unchanged.
+
+- **New opt-in prop `ModalDropdown.showHamburger?: boolean` (default `false`).** When set, the
+  DEFAULT trigger renders a ☰ glyph LEADING the active option's label, with the same bordered
+  field box, theme tokens and ≥44dp (`MIN_TOUCH_TARGET`) hit target as the caret variant. It
+  **takes precedence over `showCaret`** (a hamburger already IS the "this is a menu" cue, so the
+  trailing caret would be redundant) and, like `showCaret`, is ignored when a custom `renderTrigger`
+  is supplied. The glyph is a font character (U+2630) — no icon package enters this contract-pure
+  kit — and its colour comes from `colors.textSecondary` (no raw literals). It is decorative: the
+  trigger's `aria-label` still names the control, so screen readers do not announce the glyph.
+- **New exported enum `TabsCollapsedTrigger { Caret, Hamburger }`** + new optional prop
+  **`Tabs.collapsedTrigger` / `TabsMenu.collapsedTrigger` (default `Caret`).** Selects how the
+  COLLAPSED (mobile) tab menu trigger presents; only affects the collapsed form, the wide pill
+  strip is identical either way. Exported as a regular (runtime) enum for the same reason as
+  `DropdownVariant` — a `const enum` cannot cross the published-package boundary under
+  `isolatedModules`.
+
+Backward-compatible: two new optional props + one new enum, all defaulting to the prior behaviour;
+no testID/selector changes. Per-tab E2E selectors (`{idPrefix}-menu` trigger, `{idPrefix}-tab-{key}`
+/ descriptor option testIDs) are untouched. No new i18n keys (the existing `common.tabsMenuHint`
+serves both presentations). Covered by component tests (`ModalDropdown.test.tsx`,
+`Tabs.collapsed.test.tsx`).
+
 ## 1.20.0
 
 **The collapsed `Tabs` menu now READS as a menu — a caret affordance + guaranteed focus.**

@@ -12,6 +12,7 @@ export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/
 
 export { Tabs } from './Tabs/Tabs';
 export type { TabsProps, TabDescriptor } from './Tabs/Tabs';
+export { TabsCollapsedTrigger } from './Tabs/TabsCollapsedTrigger';
 
 export { UpgradePrompt } from './UpgradePrompt/UpgradePrompt';
 export type { UpgradePromptProps } from './UpgradePrompt/UpgradePrompt';
