@@ -39,6 +39,19 @@ describe('Tabs — collapsed (mobile) menu', () => {
     expect(screen.getByTestId('org-menu').textContent).toContain('Passes');
   });
 
+  it('presents the collapsed trigger as a focusable menu control with a caret, not a static chip', () => {
+    render(
+      <Tabs tabs={TABS} activeKey="passes" onChange={noop} accessibilityLabel="Organizer sections" idPrefix="org" />,
+    );
+    const trigger = screen.getByTestId('org-menu');
+    // The caret is the menu affordance the live chip was missing.
+    expect(trigger.textContent).toContain('▾');
+    // A primary nav control MUST be keyboard-reachable — the live defect rendered tabindex="-1".
+    expect(trigger.getAttribute('tabindex')).not.toBe('-1');
+    // role=button so Enter/Space activate it (native <button> element under react-native-web).
+    expect(trigger.getAttribute('role')).toBe('button');
+  });
+
   it('keeps the descriptor per-tab testIDs resolvable once the menu is open', () => {
     render(
       <Tabs tabs={TABS} activeKey="overview" onChange={noop} accessibilityLabel="Organizer sections" idPrefix="org" />,

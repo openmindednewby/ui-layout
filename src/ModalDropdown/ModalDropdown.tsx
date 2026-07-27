@@ -68,6 +68,15 @@ export interface ModalDropdownProps<T> {
    * a floor only: a wider trigger still wins. Omit to keep the trigger-width behaviour.
    */
   menuMinWidth?: number;
+  /**
+   * Show a MENU affordance on the DEFAULT trigger: a caret (▾) pinned to the trailing edge that
+   * rotates to point up while the menu is open, and a ≥44dp hit target. Opt-in and OFF by default,
+   * so every existing field-style dropdown in the kit renders unchanged; a control that must read
+   * as a tappable menu rather than a static chip (the collapsed {@link import('../Tabs/Tabs').Tabs}
+   * section switcher) sets it. Ignored when a custom `renderTrigger` is supplied — that caller owns
+   * its own visuals, affordance included.
+   */
+  showCaret?: boolean;
 }
 
 const BORDER_RADIUS = 8;
@@ -78,6 +87,16 @@ const MODAL_MIN_WIDTH = 200;
 const MODAL_MAX_HEIGHT = 300;
 const CONTAINER_PADDING_H = 12;
 const CONTAINER_PADDING_V = 10;
+/** WCAG 2.5.5 minimum target size — the caret trigger must be comfortably tappable on a phone. */
+const MIN_TOUCH_TARGET = 44;
+const CARET_FONT_SIZE = 12;
+/** Gap between the label and the trailing caret. */
+const CARET_GAP = 8;
+/** ▾ (U+25BE) — a font glyph, so no icon package is imported into this contract-pure kit. */
+const CARET_GLYPH = '▾';
+/** Caret points up while the menu is open, down while closed. */
+const CARET_OPEN_ROTATION = '180deg';
+const CARET_CLOSED_ROTATION = '0deg';
 
 /*
  * The hint used to be threaded by a private `buildHintProps` helper plus a hand-rolled
@@ -96,7 +115,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: CONTAINER_PADDING_H,
     paddingVertical: CONTAINER_PADDING_V,
   },
+  // Caret variant: a row with the label leading and the caret pinned to the trailing edge, at a
+  // phone-friendly minimum height. Only applied when `showCaret` is set, so field dropdowns are
+  // untouched.
+  containerMenu: {
+    minHeight: MIN_TOUCH_TARGET,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    columnGap: CARET_GAP,
+  },
   selectedText: { fontSize: BODY_FONT_SIZE },
+  // The label may shrink/ellipsize; the caret never does.
+  selectedTextMenu: { flexShrink: 1 },
+  caret: { fontSize: CARET_FONT_SIZE, flexShrink: 0 },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -122,6 +154,7 @@ export const ModalDropdown = <T extends string | number>({
   renderTrigger,
   optionTestID,
   menuMinWidth,
+  showCaret = false,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -166,13 +199,25 @@ export const ModalDropdown = <T extends string | number>({
     [onChange],
   );
 
-  // A custom trigger owns its own visuals, so the default bordered field box stands down.
+  // A custom trigger owns its own visuals, so the default bordered field box stands down. Otherwise
+  // the bordered field box renders, gaining the caret row layout + tap target when `showCaret` is on.
   const containerStyle = useMemo(
     () =>
       renderTrigger !== undefined
         ? undefined
-        : [styles.container, { borderColor: colors.border, backgroundColor: colors.surface }],
-    [colors.border, colors.surface, renderTrigger],
+        : [
+            styles.container,
+            showCaret ? styles.containerMenu : null,
+            { borderColor: colors.border, backgroundColor: colors.surface },
+          ],
+    [colors.border, colors.surface, renderTrigger, showCaret],
+  );
+  const caretStyle = useMemo(
+    () => [
+      styles.caret,
+      { color: colors.textSecondary, transform: [{ rotate: isOpen ? CARET_OPEN_ROTATION : CARET_CLOSED_ROTATION }] },
+    ],
+    [colors.textSecondary, isOpen],
   );
 
   const optionTestIDFor = useCallback(
@@ -209,6 +254,15 @@ export const ModalDropdown = <T extends string | number>({
       <TouchableOpacity {...a11yProps} style={containerStyle} onPress={handleToggle}>
         {renderTrigger !== undefined ? (
           renderTrigger({ label: selectedLabel, isOpen })
+        ) : showCaret ? (
+          <>
+            <Text numberOfLines={1} style={[styles.selectedText, styles.selectedTextMenu, { color: colors.text }]}>
+              {selectedLabel}
+            </Text>
+            {/* Decorative: the trigger's aria-label already names the control, so screen readers
+                ignore this glyph. It exists to make the control read as a menu, not a chip. */}
+            <Text style={caretStyle}>{CARET_GLYPH}</Text>
+          </>
         ) : (
           <Text style={[styles.selectedText, { color: colors.text }]}>{selectedLabel}</Text>
         )}

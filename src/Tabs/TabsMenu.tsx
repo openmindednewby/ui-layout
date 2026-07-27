@@ -8,6 +8,11 @@
  * semantics, the focus trap, the dismiss backdrop and the dual-platform a11y
  * contract for free — no new dropdown behaviour is reimplemented here.
  *
+ * It opts into `ModalDropdown`'s `showCaret` so the trigger reads unmistakably as
+ * a section SWITCHER — a bordered field with a rotating ▾ caret and a ≥44dp tap
+ * target — rather than a static chip that gives no hint it is tappable. That was
+ * the live defect on the collapsed organizer nav: the trigger looked like a pill.
+ *
  * E2E survival: each option row's `testID` is the tab descriptor's own `testID`
  * when supplied, otherwise the `{idPrefix}-tab-{key}` pattern the wide strip uses
  * for its tab element ids — so a selector that targets a tab keeps resolving the
@@ -68,6 +73,7 @@ export const TabsMenu = ({
       accessibilityLabel={accessibilityLabel}
       optionTestID={optionTestID}
       options={options}
+      showCaret
       testID={testID}
       value={activeKey}
       onChange={onChange}

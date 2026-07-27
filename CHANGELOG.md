@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.20.0
+
+**The collapsed `Tabs` menu now READS as a menu — a caret affordance + guaranteed focus.**
+
+On the live phone-width organizer nav (`app.kefi.dloizides.com/organizer/passes`) the
+collapsed trigger showed only the active label ("Passes") with no menu cue — styled like a
+static chip/pill — so users could not tell it was a section switcher. This adds a clear
+menu affordance and locks in keyboard focusability.
+
+- **New opt-in prop `ModalDropdown.showCaret?: boolean` (default `false`).** When set, the
+  DEFAULT trigger renders a ▾ caret pinned to its trailing edge that rotates to point up
+  while the menu is open, with a ≥44dp (`MIN_TOUCH_TARGET`) hit target and the existing
+  bordered field box + theme tokens. **Every existing field-style dropdown in the kit is
+  unchanged** because the caret is off by default, and it is ignored when a custom
+  `renderTrigger` is supplied (that caller owns its own visuals). The caret is a font glyph
+  (U+25BE), so no icon package enters this contract-pure kit, and its colour comes from
+  `colors.textSecondary` (no raw literals). It is decorative — the trigger's `aria-label`
+  still names the control, so screen readers do not announce the glyph.
+- **`TabsMenu` opts into `showCaret`**, so the collapsed `Tabs` section switcher now looks
+  like a proper control instead of a chip. No change to the public `Tabs` / `TabsMenu` API.
+- **Focusability:** under react-native-web the trigger renders as a native `<button>`
+  (role=button, no `tabindex="-1"`), so it is keyboard-reachable and Enter/Space activate
+  it. A regression test asserts the collapsed trigger is not `tabindex="-1"`. (The
+  `tabindex="-1"` seen on the live DOM came from the older deployed version; it does not
+  reproduce on this source — proven by the rendered-DOM assertion, not assumed.)
+
+Backward-compatible: one new optional prop, no testID/selector changes. Per-tab E2E
+selectors (`{idPrefix}-menu` trigger, `{idPrefix}-tab-{key}` / descriptor option testIDs)
+are untouched. No new i18n keys.
+
+`ui-showcase` does not yet import `Tabs`/`ModalDropdown` (only `SegmentedControl`,
+`CopyableId`, `TruncatedText`), so this is covered by component tests
+(`ModalDropdown.test.tsx`, `Tabs.collapsed.test.tsx`); a showcase specimen is a follow-up.
+
 ## 1.19.0
 
 **`Tabs` collapses to a real mobile menu below a breakpoint.**

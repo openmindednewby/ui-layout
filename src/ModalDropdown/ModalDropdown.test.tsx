@@ -192,6 +192,78 @@ describe('ModalDropdown custom trigger + option testIDs (1.8.0)', () => {
   });
 });
 
+describe('ModalDropdown menu affordance (showCaret, 1.20.0)', () => {
+  const CARET = '▾'; // ▾ down-pointing caret
+
+  function renderWithCaret(overrides?: { showCaret?: boolean }) {
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+        showCaret={overrides?.showCaret ?? true}
+      />,
+    );
+  }
+
+  it('renders NO caret by default, so every existing field dropdown is visually unchanged', () => {
+    renderDropdown({ variant: DropdownVariant.Menu });
+    expect(screen.queryByText(CARET)).toBeNull();
+  });
+
+  it('renders a caret on the default trigger when showCaret is set', () => {
+    renderWithCaret();
+    expect(screen.getByText(CARET)).toBeTruthy();
+  });
+
+  it('rotates the caret up (180deg) while the menu is open and back down (0deg) when closed', () => {
+    renderWithCaret();
+    expect(screen.getByText(CARET).style.transform).toBe('rotate(0deg)');
+    fireEvent.click(screen.getByTestId('risk-select'));
+    expect(screen.getByText(CARET).style.transform).toBe('rotate(180deg)');
+  });
+
+  it('lets a custom renderTrigger own its visuals — showCaret is ignored when one is supplied', () => {
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={jest.fn()}
+        showCaret
+        renderTrigger={({ label }) => <span>{label}</span>}
+      />,
+    );
+    expect(screen.queryByText(CARET)).toBeNull();
+  });
+
+  it('still opens the menu and selects an option when the caret trigger is pressed', () => {
+    const onChange = jest.fn();
+    render(
+      <ModalDropdown
+        testID="risk-select"
+        accessibilityLabel="Risk"
+        accessibilityHint="Pick a risk level"
+        value={'a' as Value}
+        variant={DropdownVariant.Menu}
+        options={OPTIONS}
+        onChange={onChange}
+        showCaret
+      />,
+    );
+    fireEvent.click(screen.getByTestId('risk-select'));
+    fireEvent.click(screen.getByTestId('risk-select-option-b'));
+    expect(onChange).toHaveBeenCalledWith('b');
+  });
+});
+
 describe('ModalDropdown keyboard selection with the trigger still focused (1.9.1 regression)', () => {
   // THE BUG: the trigger keeps DOM focus while the menu is open, and react-native-web maps Enter on
   // a focused Touchable to onPress. React dispatches that from its ROOT listener — below `document`
