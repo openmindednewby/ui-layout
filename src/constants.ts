@@ -7,6 +7,10 @@ export const LAYOUT_TEST_IDS = {
   upgradePromptDismiss: 'upgrade-prompt-dismiss',
   modalShell: 'template-modal',
   modalShellClose: 'cancel-button',
+  /** Default base testID for the centered `Modal`; ✕ is `modal-close`, backdrop `modal-backdrop`. */
+  modal: 'modal',
+  /** Default base testID for `ConfirmDialog`; Confirm/Cancel are `confirm-dialog-{confirm,cancel}`. */
+  confirmDialog: 'confirm-dialog',
   accordion: 'accordion',
 } as const;
 
@@ -52,6 +56,14 @@ export const LAYOUT_I18N = {
   close: 'quizTemplates.cancel',
   /** `ModalShell`: heading fallback when no title is supplied. */
   closeHeading: 'close',
+  /** `Modal`: accessible name + web tooltip of the top-right ✕ close button. */
+  dialogClose: 'common.close',
+  /** `ConfirmDialog`: default Confirm button label (overridable via `confirmLabel`) + its hint. */
+  confirm: 'common.confirm',
+  confirmHint: 'common.confirmHint',
+  /** `ConfirmDialog`: default Cancel button label (overridable via `cancelLabel`) + its hint. */
+  cancel: 'common.cancel',
+  cancelHint: 'common.cancelHint',
   upgradePromptTitle: 'settings.billing.upgradePrompt.title',
   /** Body copy, parameterised: "…requires {{p1}}, you are on {{p2}}." */
   upgradePromptMessage: 'settings.billing.upgradePrompt.message',

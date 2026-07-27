@@ -25,6 +25,13 @@ export { DropdownVariant } from './ModalDropdown/DropdownVariant';
 export { ModalShell } from './ModalShell/ModalShell';
 export type { ModalShellProps } from './ModalShell/ModalShell';
 
+export { Modal } from './Modal/Modal';
+export type { ModalProps } from './Modal/Modal';
+export type { ModalSize } from './Modal/ModalSize';
+
+export { ConfirmDialog } from './Modal/ConfirmDialog';
+export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
+
 export { Accordion } from './Accordion/Accordion';
 export type { AccordionProps } from './Accordion/Accordion';
 export { AccordionItem } from './Accordion/AccordionItem';

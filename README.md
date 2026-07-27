@@ -15,8 +15,43 @@ Read theme + translations from the shared `@dloizides/ui-feedback` context (`use
 | `TabsCollapsedTrigger` | Enum (`Caret` / `Hamburger`) selecting how the collapsed `Tabs` menu trigger presents. Defaults to `Caret`. |
 | `ModalDropdown` | Generic dropdown selector. **Responsive by default**: an inline anchored menu on wide/desktop web, a modal on narrow/mobile — override per screen with `variant`. Opt into a menu affordance on the default trigger with `showCaret` (trailing ▾) or `showHamburger` (leading ☰, wins over `showCaret`). |
 | `DropdownVariant` | Enum (`Menu` / `Modal`) to force a `ModalDropdown` rendering variant. |
+| `ModalShell` | Full-screen **slide-up sheet** with a themed header (title + close). For a page-covering editor. Dismiss via `onCancel`. |
+| `Modal` | Themed **centered dialog overlay**: scrim + rounded card, optional header with a top-right ✕ close, scrollable body, optional footer. Dismiss via ✕ / backdrop / Escape (web) / hardware back (native); focus-trapped + scroll-locked. `size` = `sm`/`md`/`lg`. |
+| `ConfirmDialog` | Confirm/cancel popup built on `Modal`. Cancel + Confirm buttons (from `@dloizides/ui-buttons`); `destructive` paints the Confirm red. Cancel is focus-default (safe), and is disabled while `busy` (Confirm shows a spinner). Cancel / backdrop / Escape → `onCancel`. |
 | `Accordion` / `AccordionItem` | Themed expand/collapse disclosure group (replaces hand-rolled `<details>`/expanders). Controlled or uncontrolled, single- or multi-open, animated, keyboard + screen-reader accessible. |
 | `useFocusTrap` | Web keyboard focus-trap hook (no-op on native). |
+
+### `Modal` & `ConfirmDialog`
+
+```tsx
+import { Modal, ConfirmDialog } from '@dloizides/ui-layout';
+
+// A centered edit dialog with a top-right ✕:
+<Modal visible={editing} title="Edit details" onClose={() => setEditing(false)} footer={<SaveRow />}>
+  <AttendeeForm />
+</Modal>
+
+// A destructive confirmation popup:
+<ConfirmDialog
+  visible={confirming}
+  destructive
+  title="Remove attendee?"
+  message="This can't be undone."
+  busy={isDeleting}
+  onConfirm={remove}
+  onCancel={() => setConfirming(false)}
+/>
+```
+
+- **Dismissal** — `Modal`: ✕ button, backdrop press, Escape (web), hardware back (native), all → `onClose`.
+  `ConfirmDialog`: Cancel, backdrop, Escape → `onCancel`; it hides the ✕ so the focus trap lands on the safe Cancel action.
+- **testIDs** — `Modal` (default `modal`): `${testID}-close`, `${testID}-backdrop`.
+  `ConfirmDialog` (default `confirm-dialog`): `${testID}-confirm`, `${testID}-cancel`, `${testID}-message`.
+- **i18n keys** the host must provide: `common.close` (✕ label), `common.closeDialogHint`, `common.dialog`
+  (fallback dialog name), and for `ConfirmDialog` defaults `common.confirm` / `common.confirmHint` /
+  `common.cancel` / `common.cancelHint`. Pass `confirmLabel`/`cancelLabel` (already-localized) to override.
+- **a11y** — `role="dialog"` + `aria-modal`; focus trapped on web and restored to the opener on close.
+  Note (RN-web): `accessibilityHint` does not reach the DOM, so the ✕'s hover `tooltip` carries the visible helper text.
 
 ### `Accordion`
 

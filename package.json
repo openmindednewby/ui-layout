@@ -1,7 +1,7 @@
 {
   "name": "@dloizides/ui-layout",
   "version": "1.21.0",
-  "description": "Themable, brand-agnostic React Native (RN-web) layout primitives — Section, Heading, StatusBadge, UpgradePrompt, ModalDropdown — sharing the @dloizides/ui-feedback UI context.",
+  "description": "Themable, brand-agnostic React Native (RN-web) layout primitives — Section, Heading, StatusBadge, UpgradePrompt, ModalDropdown, Modal, ConfirmDialog — sharing the @dloizides/ui-feedback UI context.",
   "keywords": [
     "react",
     "react-native",
@@ -79,6 +79,7 @@
     "@dloizides/rn-web-hooks": "^1.0.2"
   },
   "peerDependencies": {
+    "@dloizides/ui-buttons": ">=1.8.0",
     "@dloizides/ui-feedback": ">=1.1.0",
     "@dloizides/ui-icons": ">=1.0.1",
     "react": ">=18.0.0",
@@ -93,6 +94,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
+    "@dloizides/ui-buttons": "^1.8.0",
     "@dloizides/ui-feedback": "^1.2.0",
     "@dloizides/ui-icons": "^1.0.1",
     "@react-native/babel-preset": "^0.81.6",

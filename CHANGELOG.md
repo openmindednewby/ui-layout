@@ -1,5 +1,46 @@
 # Changelog
 
+## 1.22.0
+
+**Two shared modal primitives: a themed centered `Modal` dialog and a `ConfirmDialog` popup.**
+
+Until now the kit had no shared centered dialog — only `ModalShell` (a full-screen slide-up sheet)
+and `ModalDropdown` (a selector). Each portal hand-rolled its own edit dialog (e.g. kefi-web's
+`PromoterActionModal`) and confirmed destructive actions with an ugly inline table row. These two
+primitives replace both, so all 7 portals share one accessible, themed implementation.
+
+- **New component `Modal`** — a centered dialog overlay for RN + RN-web: a scrim, a rounded themed
+  surface, an optional header (`title` + a top-right **✕ close** — a 44dp `IconButton` with a web
+  `tooltip`/aria-label "Close"), a scrollable body (`children`), and an optional `footer`. Dismissal
+  funnels to `onClose` from four routes: the ✕, a **backdrop** press, **Escape** on web
+  (`useEscapeKey`), and the hardware back button on native (RN `Modal`'s `onRequestClose`). It is
+  `role="dialog"` + `aria-modal` (`accessibilityViewIsModal`), **focus-trapped** on web
+  (`useFocusTrap`, restoring focus to the opener on close) and **scroll-locked** (`useScrollLock`).
+  Props: `visible`, `onClose`, `title?`, `children?`, `footer?`, `size?` (`sm`/`md`/`lg`, default
+  `md`), `showClose?` (default `true`), `testID?` (default `modal`), `accessibilityLabel?`. testIDs:
+  `${testID}-close`, `${testID}-backdrop`. All colours read from `useUi()` — no raw literals.
+- **New component `ConfirmDialog`** — built ON `Modal`, for confirmations. Renders the `message`
+  plus a Cancel + Confirm button row (from `@dloizides/ui-buttons`). `destructive` paints the
+  Confirm with the `danger` (red) variant for irreversible actions. **Cancel is first in the DOM so
+  the focus trap lands on the SAFE action**; the ✕ is hidden (Cancel is the explicit dismiss). While
+  `busy`, Confirm shows a spinner and Cancel is disabled. Cancel / backdrop / Escape → `onCancel`.
+  Props: `visible`, `title`, `message`, `confirmLabel?`, `cancelLabel?`, `destructive?`, `onConfirm`,
+  `onCancel`, `busy?`, `testID?` (default `confirm-dialog`). testIDs: `${testID}-confirm`,
+  `${testID}-cancel`, `${testID}-message`.
+- **New exported type `ModalSize`** (`'sm' | 'md' | 'lg'`) — a plain string union (matching the
+  kit's `ButtonSize` convention; no `const enum` crosses the package boundary).
+- **New i18n keys** the host must provide: `common.close` (✕ label), plus for `ConfirmDialog`
+  defaults `common.confirm` / `common.confirmHint` / `common.cancel` / `common.cancelHint`. Reuses the
+  existing `common.closeDialogHint`, `common.dialog`, `common.dismissDropdown(Hint)` keys.
+- **New peer dependency `@dloizides/ui-buttons` (`>=1.8.0`)** — `ConfirmDialog` reuses its `Button`,
+  `Modal` reuses its `IconButton` for the ✕, rather than reinventing button chrome.
+
+Additive: `ModalShell`, `ModalDropdown` and every existing export/selector are untouched. Covered by
+`Modal.test.tsx`, `ConfirmDialog.test.tsx`, `useEscapeKey.test.ts`, `useScrollLock.test.ts`.
+
+> Note: `@dloizides/ui-feedback` also exports a lighter `ConfirmDialog` (no ✕ / Escape / focus-trap,
+> own buttons). This ui-layout one is the richer, `Modal`-based dialog the portals should adopt.
+
 ## 1.21.0
 
 **The collapsed `Tabs` menu can now present as a HAMBURGER (☰) — the universal mobile-nav affordance.**
