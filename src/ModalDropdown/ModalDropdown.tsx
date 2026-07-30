@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useA11y } from '@dloizides/a11y';
+import { useA11y, MIN_TOUCH_TARGET_PX } from '@dloizides/a11y';
 import { useUi, MODAL_OVERLAY_COLOR } from '@dloizides/ui-feedback';
 
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -128,6 +128,11 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS,
     paddingHorizontal: CONTAINER_PADDING_H,
     paddingVertical: CONTAINER_PADDING_V,
+    // Match the shared control height used by @dloizides/ui-forms inputs (same MIN_TOUCH_TARGET_PX
+    // floor from @dloizides/a11y), so a select trigger and a text/typeahead field sitting side by
+    // side in a filter bar are exactly the same height. Centre the label within that floor.
+    minHeight: MIN_TOUCH_TARGET_PX,
+    justifyContent: 'center',
   },
   // Caret variant: a row with the label leading and the caret pinned to the trailing edge, at a
   // phone-friendly minimum height. Only applied when `showCaret` is set, so field dropdowns are
