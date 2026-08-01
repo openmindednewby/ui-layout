@@ -76,7 +76,8 @@
   },
   "dependencies": {
     "@dloizides/a11y": "^1.3.0",
-    "@dloizides/rn-web-hooks": "^1.0.2"
+    "@dloizides/rn-web-hooks": "^1.0.2",
+    "@dloizides/ui-motion": "^1.0.1"
   },
   "peerDependencies": {
     "@dloizides/ui-buttons": ">=1.8.0",

@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.23.0
+
+**Modals, the dropdown popover and the accordion body now ANIMATE on web — adopts `@dloizides/ui-motion`.**
+
+On react-native-web, RN's `Modal animationType` and `LayoutAnimation` are effectively no-ops, so
+`Modal`, `ModalShell`, the `ModalDropdown` popover and the `Accordion` body all SNAPPED open/closed
+on the web build (all 7 portals). This wires those surfaces to `@dloizides/ui-motion`, which drives
+enter/exit with RN `Animated` (works on web AND native) and collapses every animation to instant
+under the OS "reduce motion" preference. **No public APIs changed** — every prop, testID and a11y
+attribute is identical; this is a purely visual upgrade.
+
+- **`Modal`** — the backdrop now **fades** (opacity) and the panel **fades + scales in** (0.96→1) on
+  open, reversing on close, via `useEnterExit`. The RN `Modal` host is kept **mounted through the
+  exit** (driven by `useEnterExit`'s `mounted` flag, not `visible`) so the close animation can play
+  instead of the host unmounting instantly — the trick that made `animationType` a no-op on web. The
+  scrim moved to its own animated layer behind the tap-catcher; close-on-backdrop, Escape, focus
+  trap, scroll-lock and every testID are unchanged.
+- **`ModalShell`** — the full-screen sheet **fades + scales in** on open (replacing the native-only
+  `animationType="slide"`), mounted through the exit the same way.
+- **`ModalDropdown`** — the popover (the inline anchored menu on web-desktop, the centered modal on
+  mobile/native) **fades + scales in** from the anchor on open (`transformOrigin: top`), with a snappy
+  ~120ms curve so the close reads as near-instant. `useAnchorTracking`, the web portal, keyboard nav
+  and outside-click detection are untouched (the fade/scale rides an INNER wrapper so the popover's
+  own DOM node — which the outside-click/portal logic depends on — is unchanged).
+- **`Accordion`** — the item body now renders inside ui-motion's **`<Collapse>`** (measured, animated
+  height) instead of RN `LayoutAnimation`, so the body animates on web too. The chevron rotation is
+  unchanged. Behaviour note: `<Collapse>` keeps the body **mounted at all times** (clipped to height 0
+  when closed) so `aria-controls` always resolves and screen readers reach the content — the open
+  state is conveyed by the header's `aria-expanded` (the value handed to `<Collapse open>`). The
+  internal `accordionAnimation.ts` (`LayoutAnimation` helper) was removed.
+- **New dependency `@dloizides/ui-motion` (`^1.0.1`)** — the shared RN/RN-web motion kit
+  (`useEnterExit`, `Collapse`, reduced-motion-aware).
+
+Additive and back-compatible for consumers. Covered by the existing `Modal`, `ModalShell`,
+`ModalDropdown` (web + native) and `Accordion` suites; the accordion tests now assert open state via
+`aria-expanded`/the `Collapse` container rather than body-text presence (the body is always mounted).
+The Jest env is pinned to reduced-motion so enter/exit resolve synchronously in tests.
+
 ## 1.22.0
 
 **Two shared modal primitives: a themed centered `Modal` dialog and a `ConfirmDialog` popup.**

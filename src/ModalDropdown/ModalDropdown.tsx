@@ -11,10 +11,11 @@
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useA11y, MIN_TOUCH_TARGET_PX } from '@dloizides/a11y';
 import { useUi, MODAL_OVERLAY_COLOR } from '@dloizides/ui-feedback';
+import { useEnterExit } from '@dloizides/ui-motion';
 
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { DropdownVariant } from './DropdownVariant';
@@ -111,6 +112,10 @@ const HAMBURGER_FONT_SIZE = 18;
 /** Caret points up while the menu is open, down while closed. */
 const CARET_OPEN_ROTATION = '180deg';
 const CARET_CLOSED_ROTATION = '0deg';
+/** The open popover fades + scales in from just under its natural size (subtle, anchor-origin). */
+const POPOVER_ENTER_SCALE = 0.96;
+/** A snappy popover duration — the open eases in, the close reads as near-instant. */
+const POPOVER_MOTION_MS = 120;
 
 /*
  * The hint used to be threaded by a private `buildHintProps` helper plus a hand-rolled
@@ -212,6 +217,21 @@ export const ModalDropdown = <T extends string | number>({
   const anchorRef = useRef<View>(null);
   const dialogRef = useRef<View>(null);
   useFocusTrap(dialogRef, isOpen && !isMenu);
+
+  // The popover (inline menu on web-desktop, centered modal on mobile/native) fades + scales in
+  // on open and reverses on close. `mounted` keeps the node in the tree through the exit fade —
+  // without it the popover would snap out (the RN `Modal` `animationType` is a no-op on web).
+  // Under reduced-motion the enter/exit collapse to instant, so the close reads as immediate.
+  const menuAnim = useEnterExit({
+    visible: isMenu && isOpen,
+    fromScale: POPOVER_ENTER_SCALE,
+    duration: POPOVER_MOTION_MS,
+  });
+  const modalAnim = useEnterExit({
+    visible: !isMenu && isOpen,
+    fromScale: POPOVER_ENTER_SCALE,
+    duration: POPOVER_MOTION_MS,
+  });
 
   const selectedLabel = useMemo(() => {
     const found = options.find((opt) => opt.value === value);
@@ -321,9 +341,10 @@ export const ModalDropdown = <T extends string | number>({
         {hintNode}
       </TouchableOpacity>
 
-      {isMenu && isOpen ? (
+      {isMenu && menuAnim.mounted ? (
         <InlineMenu
           accessibilityLabel={accessibilityLabel}
+          animatedStyle={menuAnim.style}
           containerRef={anchorRef}
           menuMinWidth={menuMinWidth}
           optionTestID={optionTestIDFor}
@@ -336,7 +357,7 @@ export const ModalDropdown = <T extends string | number>({
       ) : null}
 
       {!isMenu ? (
-        <Modal transparent animationType="fade" visible={isOpen} onRequestClose={handleClose}>
+        <Modal transparent visible={modalAnim.mounted} onRequestClose={handleClose}>
           {/* The dismiss backdrop is a SIBLING behind the dialog, not its parent — a wrapping
               pressable would nest the option buttons inside a button (invalid DOM: "<button>
               cannot contain a nested <button>"). Absolute-fill catches taps outside the dialog. */}
@@ -351,15 +372,15 @@ export const ModalDropdown = <T extends string | number>({
               testID={`${testID}-backdrop`}
               onPress={handleClose}
             />
-            <View
+            <Animated.View
               ref={dialogRef}
               accessibilityViewIsModal
               aria-label={accessibilityLabel}
               role="dialog"
-              style={modalContentStyle}
+              style={[modalContentStyle, modalAnim.style]}
             >
               <FlatList data={[...options]} keyExtractor={keyExtractor} renderItem={renderModalOption} />
-            </View>
+            </Animated.View>
           </View>
         </Modal>
       ) : null}

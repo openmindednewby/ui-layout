@@ -4,17 +4,21 @@
  */
 import React from 'react';
 
-import { Modal, ScrollView, StyleSheet, TouchableOpacity, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Modal, ScrollView, StyleSheet, TouchableOpacity, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
+import { useEnterExit } from '@dloizides/ui-motion';
 
 import { Heading } from '../Heading/Heading';
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
 const CLOSE_ICON_SIZE = 18;
+/** The sheet enters scaled slightly down (and fades in), settling to its natural size. */
+const PANEL_ENTER_SCALE = 0.96;
 
 const styles = StyleSheet.create({
+  animatedFill: { flex: 1 },
   container: {
     flex: 1,
     padding: 16,
@@ -49,6 +53,11 @@ export const ModalShell = ({
 }: ModalShellProps): React.ReactElement => {
   const { theme, t } = useUi();
 
+  // The sheet fades + scales in on open and reverses on close; `mounted` keeps the RN `Modal`
+  // host in the tree through the exit fade, replacing the native-only `animationType="slide"`
+  // (a no-op on react-native-web, where the sheet used to snap).
+  const { style: sheetStyle, mounted } = useEnterExit({ visible, fromScale: PANEL_ENTER_SCALE });
+
   const containerStyle = React.useMemo(
     () => [styles.container, { backgroundColor: theme.colors.background }, contentStyle],
     [theme.colors.background, contentStyle],
@@ -58,17 +67,18 @@ export const ModalShell = ({
 
   return (
     <Modal
-      animationType="slide"
+      transparent
       testID={LAYOUT_TEST_IDS.modalShell}
-      visible={visible}
+      visible={mounted}
       onRequestClose={onCancel}
     >
-      <ScrollView
-        accessibilityViewIsModal
-        aria-label={accessibleTitle}
-        role="dialog"
-        style={containerStyle}
-      >
+      <Animated.View style={[styles.animatedFill, sheetStyle]}>
+        <ScrollView
+          accessibilityViewIsModal
+          aria-label={accessibleTitle}
+          role="dialog"
+          style={containerStyle}
+        >
         <View style={styles.headerRow}>
           <Heading>{title ?? t(LAYOUT_I18N.closeHeading)}</Heading>
           {showClose ? (
@@ -86,7 +96,8 @@ export const ModalShell = ({
         </View>
 
         {children}
-      </ScrollView>
+        </ScrollView>
+      </Animated.View>
     </Modal>
   );
 };

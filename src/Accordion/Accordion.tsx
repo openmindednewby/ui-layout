@@ -17,7 +17,6 @@ import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { AccordionContext, type AccordionContextValue } from './AccordionContext';
 import type { AccordionItemProps } from './AccordionItem';
 import type { AccordionVariant } from './AccordionVariant';
-import { animateNextLayout } from './accordionAnimation';
 
 const BOXED_GAP = 12;
 
@@ -87,7 +86,8 @@ export const Accordion = ({
 
   const toggle = useCallback(
     (id: string) => {
-      animateNextLayout();
+      // The per-item body height is animated by `Collapse` (@dloizides/ui-motion), which works on
+      // web + native; there is no longer a `LayoutAnimation` to prime here.
       const next = new Set(openSet);
       const willOpen = !next.has(id);
       if (!allowMultiple) next.clear();

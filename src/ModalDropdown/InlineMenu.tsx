@@ -25,10 +25,11 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
 import { createPortal } from 'react-dom';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import type { View as RNView } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
+import type { UseEnterExitResult } from '@dloizides/ui-motion';
 
 import type { DropdownOption } from './dropdownTypes';
 import {
@@ -65,6 +66,10 @@ const styles = StyleSheet.create({
     boxShadow: MENU_BOX_SHADOW,
     elevation: MENU_ELEVATION,
   },
+  // The enter/exit fade+scale lives on an INNER wrapper so the outer popover keeps its raw DOM
+  // node (the `menuRef` outside-click / keyboard logic and the web portal target depend on it).
+  // `transformOrigin: 'top'` makes the scale grow downward FROM the anchor rather than the centre.
+  animated: { transformOrigin: 'top' },
 });
 
 export interface InlineMenuProps<T> {
@@ -77,6 +82,8 @@ export interface InlineMenuProps<T> {
   optionTestID?: (value: T) => string;
   /** Minimum popover width — a floor for COMPACT anchors, whose width cannot fit an option label. */
   menuMinWidth?: number;
+  /** Enter/exit fade+scale style from the owner's `useEnterExit`, applied to the inner wrapper. */
+  animatedStyle?: UseEnterExitResult['style'];
   onSelect: (value: T) => void;
   onClose: () => void;
 }
@@ -89,6 +96,7 @@ export const InlineMenu = <T extends string | number>({
   containerRef,
   optionTestID,
   menuMinWidth = 0,
+  animatedStyle,
   onSelect,
   onClose,
 }: InlineMenuProps<T>): React.ReactElement | null => {
@@ -150,20 +158,22 @@ export const InlineMenu = <T extends string | number>({
       style={popoverStyle}
       testID={`${testID}-menu`}
     >
-      <ScrollView keyboardShouldPersistTaps="handled">
-        {options.map((option, index) => (
-          <OptionRow
-            key={String(option.value)}
-            isHighlighted={index === highlightedIndex}
-            isSelected={option.value === value}
-            label={option.label}
-            testID={
-              optionTestID !== undefined ? optionTestID(option.value) : `${testID}-option-${String(option.value)}`
-            }
-            onSelect={() => onSelect(option.value)}
-          />
-        ))}
-      </ScrollView>
+      <Animated.View style={[styles.animated, animatedStyle]}>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          {options.map((option, index) => (
+            <OptionRow
+              key={String(option.value)}
+              isHighlighted={index === highlightedIndex}
+              isSelected={option.value === value}
+              label={option.label}
+              testID={
+                optionTestID !== undefined ? optionTestID(option.value) : `${testID}-option-${String(option.value)}`
+              }
+              onSelect={() => onSelect(option.value)}
+            />
+          ))}
+        </ScrollView>
+      </Animated.View>
     </View>
   );
 

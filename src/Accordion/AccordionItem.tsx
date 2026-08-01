@@ -15,6 +15,7 @@ import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View, type Vie
 import { useReducedMotion } from '@dloizides/rn-web-hooks';
 import { useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
+import { Collapse } from '@dloizides/ui-motion';
 
 import { useAccordionContext } from './AccordionContext';
 
@@ -245,7 +246,12 @@ export const AccordionItem = ({
         </View>
       </Pressable>
 
-      {expanded ? (
+      {/* `Collapse` (from @dloizides/ui-motion) animates the body height on web AND native —
+          RN `LayoutAnimation` (the previous approach) is a no-op under react-native-web, so the
+          body used to SNAP open/closed on the web build. The body stays mounted at all times
+          (clipped to height 0 when collapsed), so `aria-controls` always resolves and the open
+          state is conveyed by the header's `aria-expanded`. */}
+      <Collapse open={expanded} testID={`${headerTestID}-collapse`}>
         <View
           accessibilityLabel={resolvedLabel}
           nativeID={bodyTestID}
@@ -255,7 +261,7 @@ export const AccordionItem = ({
         >
           {children}
         </View>
-      ) : null}
+      </Collapse>
     </View>
   );
 };

@@ -23,11 +23,12 @@
  */
 import React, { useMemo, useRef } from 'react';
 
-import { Modal as RNModal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal as RNModal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { IconButton } from '@dloizides/ui-buttons';
 import { MODAL_OVERLAY_COLOR, useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
+import { useEnterExit } from '@dloizides/ui-motion';
 
 import { Heading } from '../Heading/Heading';
 import { useEscapeKey } from '../hooks/useEscapeKey';
@@ -44,6 +45,8 @@ const FOOTER_MARGIN = 16;
 const HEADER_MARGIN = 12;
 /** The dialog never grows past most of the viewport height; its body scrolls instead. */
 const DIALOG_MAX_HEIGHT = '90%';
+/** The panel enters scaled slightly down (and fades in), settling to its natural size. */
+const PANEL_ENTER_SCALE = 0.96;
 
 /** Max width per size preset. A floor-less card otherwise stretches to the full viewport on web. */
 const SIZE_MAX_WIDTH: Record<ModalSize, number> = { sm: 360, md: 480, lg: 640 };
@@ -54,8 +57,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: OVERLAY_PADDING,
-    backgroundColor: MODAL_OVERLAY_COLOR,
   },
+  // The scrim is its OWN animated layer (behind the tap-catcher and the panel) so its opacity
+  // can fade independently of the panel's fade+scale. `animationType` is a native-only no-op on
+  // react-native-web, which is why the fade is driven by `Animated` instead. `pointerEvents` lives
+  // in style (not the deprecated prop) so taps fall through to the sibling tap-catcher below.
+  scrim: { backgroundColor: MODAL_OVERLAY_COLOR, pointerEvents: 'none' },
   dialog: {
     width: '100%',
     borderRadius: DIALOG_RADIUS,
@@ -112,6 +119,14 @@ export const Modal = ({
   const { theme, t } = useUi();
   const dialogRef = useRef<View>(null);
 
+  // Backdrop fades opacity only; the panel fades AND scales in from 0.96. Both share `visible`,
+  // so they enter/exit in lock-step. `panel.mounted` keeps the whole RN `Modal` host (and thus
+  // the backdrop) in the tree through the exit fade — RN `Modal` unmounting on `visible=false`
+  // is exactly what makes the native-only `animationType` snap on web, so we drive it ourselves.
+  const backdrop = useEnterExit({ visible });
+  const panel = useEnterExit({ visible, fromScale: PANEL_ENTER_SCALE });
+  const mounted = panel.mounted || backdrop.mounted;
+
   useFocusTrap(dialogRef, visible);
   useEscapeKey(visible, onClose);
   useScrollLock(visible);
@@ -127,8 +142,12 @@ export const Modal = ({
   const hasHeader = title !== undefined || showClose;
 
   return (
-    <RNModal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
+    <RNModal transparent visible={mounted} onRequestClose={onClose}>
       <View style={styles.overlay}>
+        {/* Animated scrim layer — fades independently, behind the tap-catcher and the panel. */}
+        <Animated.View
+          style={[StyleSheet.absoluteFill, styles.scrim, { opacity: backdrop.style.opacity }]}
+        />
         {/* Backdrop is a SIBLING behind the dialog, not its parent: a wrapping pressable would nest
             the footer's action buttons inside a button (invalid DOM). Absolute-fill catches taps
             outside the dialog surface. */}
@@ -142,12 +161,12 @@ export const Modal = ({
           testID={`${testID}-backdrop`}
           onPress={onClose}
         />
-        <View
+        <Animated.View
           ref={dialogRef}
           accessibilityViewIsModal
           aria-label={accessibleName}
           role="dialog"
-          style={dialogStyle}
+          style={[dialogStyle, panel.style]}
           testID={testID}
         >
           {hasHeader ? (
@@ -174,7 +193,7 @@ export const Modal = ({
           <ScrollView>{children}</ScrollView>
 
           {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
-        </View>
+        </Animated.View>
       </View>
     </RNModal>
   );
