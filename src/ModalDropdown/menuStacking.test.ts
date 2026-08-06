@@ -1,6 +1,7 @@
 import {
   ANCHOR_OPEN_Z_INDEX,
   MENU_TOP_GAP,
+  MENU_VIEWPORT_MARGIN,
   MENU_Z_INDEX,
   buildAnchorStackStyle,
   buildPortalPopoverStyle,
@@ -59,6 +60,37 @@ describe('buildPortalPopoverStyle — compact-anchor width floor (1.9.0)', () =>
 
   it('defaults to the trigger width when no floor is given (unchanged for existing callers)', () => {
     expect(buildPortalPopoverStyle(compact).width).toBe(compact.width);
+  });
+});
+
+describe('buildPortalPopoverStyle — viewport clamp (a floored menu must not spill off-screen)', () => {
+  const VIEWPORT = 1440;
+  // The "More ▾" overflow trigger: a compact 60px pill sitting near the right of the bar, floored
+  // to a readable 200px. Anchored at its own left (1360) the menu would end at 1560, 120px past the
+  // 1440 viewport — the exact "some of them get hidden" case.
+  const overflowTrigger = { top: 12, left: 1360, width: 60, bottom: 52 };
+
+  it('slides a floored menu left so its right edge clears the margin (right-aligns to the trigger)', () => {
+    const style = buildPortalPopoverStyle(overflowTrigger, 200, VIEWPORT);
+    expect(style.width).toBe(200);
+    // right edge = left + width must sit within the viewport minus the margin
+    expect((style.left as number) + 200).toBeLessThanOrEqual(VIEWPORT - MENU_VIEWPORT_MARGIN);
+    expect(style.left).toBe(VIEWPORT - 200 - MENU_VIEWPORT_MARGIN);
+  });
+
+  it('leaves a menu that already fits anchored at the trigger (no needless shift)', () => {
+    const fits = { top: 12, left: 40, width: 60, bottom: 52 };
+    expect(buildPortalPopoverStyle(fits, 200, VIEWPORT).left).toBe(40);
+  });
+
+  it('never pushes the menu past the left margin, even when it is wider than the viewport', () => {
+    const style = buildPortalPopoverStyle(overflowTrigger, 2000, 600);
+    expect(style.left).toBe(MENU_VIEWPORT_MARGIN);
+  });
+
+  it('does not clamp when the viewport width is unknown (0) — native/pure path unchanged', () => {
+    expect(buildPortalPopoverStyle(overflowTrigger, 200).left).toBe(overflowTrigger.left);
+    expect(buildPortalPopoverStyle(overflowTrigger, 200, 0).left).toBe(overflowTrigger.left);
   });
 });
 

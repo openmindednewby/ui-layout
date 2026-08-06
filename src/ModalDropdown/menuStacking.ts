@@ -36,6 +36,8 @@ const BORDER_WIDTH = 1;
 const MENU_PADDING = 4;
 /** Soft drop shadow so the popover reads as floating above the page (web). */
 export const MENU_BOX_SHADOW = '0px 2px 8px rgba(0, 0, 0, 0.15)';
+/** Keep the popover at least this far from the viewport's left/right edge when it must be clamped. */
+export const MENU_VIEWPORT_MARGIN = 8;
 
 /** The trigger's viewport-space rect (from `getBoundingClientRect`) needed to place a fixed menu. */
 export interface AnchorRect {
@@ -53,15 +55,28 @@ export interface AnchorRect {
  * The popover matches the trigger's width — right for a full-width field, but a COMPACT anchor (a
  * locale pill, an avatar chip, an icon button) would then get a menu too narrow to read its own
  * option labels. `minWidth` sets a floor for exactly that case; it never shrinks a menu.
+ *
+ * A floored menu can be WIDER than its (compact) trigger, so anchoring its left edge to the
+ * trigger would push it off the right of the viewport — the widened "More ▾" overflow menu, whose
+ * trigger sits near the right of the bar, is exactly that case. When `viewportWidth` is given the
+ * left is clamped so the menu's right edge clears the margin (sliding it left, right-aligning it to
+ * the trigger in the limit) without ever crossing the left margin. `viewportWidth = 0` (unknown, or
+ * the pure/native path) keeps the original trigger-anchored behaviour untouched.
  */
-export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0): ViewStyle {
+export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0, viewportWidth = 0): ViewStyle {
+  const width = Math.max(rect.width, minWidth);
+  let left = rect.left;
+  if (viewportWidth > 0) {
+    const maxLeft = viewportWidth - width - MENU_VIEWPORT_MARGIN;
+    left = Math.max(MENU_VIEWPORT_MARGIN, Math.min(rect.left, maxLeft));
+  }
   return {
     // RN's ViewStyle union omits 'fixed', but react-native-web honours it at runtime.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- web-only position value
     position: 'fixed' as unknown as ViewStyle['position'],
     top: rect.bottom + MENU_TOP_GAP,
-    left: rect.left,
-    width: Math.max(rect.width, minWidth),
+    left,
+    width,
     zIndex: MENU_Z_INDEX,
     borderWidth: BORDER_WIDTH,
     borderRadius: BORDER_RADIUS,

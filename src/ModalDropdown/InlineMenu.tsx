@@ -141,11 +141,16 @@ export const InlineMenu = <T extends string | number>({
   const popoverStyle = useMemo(() => {
     const themed = { borderColor: colors.border, backgroundColor: colors.surface };
     // Web: fixed-positioned in a portal at the measured trigger rect (escapes stacking + clipping).
-    if (IS_WEB)
+    // Pass the viewport width so a floored menu wider than its trigger is clamped inside the edge
+    // rather than spilling off-screen. `rect` is a memo dep and re-measures on scroll/resize, so the
+    // width is re-read then too.
+    if (IS_WEB) {
+      const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
       return [
-        buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }, menuMinWidth),
+        buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }, menuMinWidth, viewportWidth),
         themed,
       ];
+    }
     // Native: in-tree absolute popover under the trigger (stretched to the anchor, floored the same).
     return [styles.popover, { minWidth: menuMinWidth }, themed];
   }, [colors.border, colors.surface, menuMinWidth, rect]);

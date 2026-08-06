@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.24.0
+
+**The inline dropdown popover now stays inside the viewport — a floored menu can no longer spill off the right edge.**
+
+`buildPortalPopoverStyle` positioned the fixed popover at `left: rect.left` with no horizontal
+clamp. That was fine while the menu matched its trigger's width, but a COMPACT trigger with a
+`menuMinWidth` floor (e.g. the `@dloizides/ui-nav` "More ▾" overflow menu, whose trigger sits near
+the right of the bar) opens a menu WIDER than its trigger — which then extended past the right edge
+of the viewport and clipped its lower/right content ("some items get hidden").
+
+- **`buildPortalPopoverStyle(rect, minWidth, viewportWidth?)`** takes an optional `viewportWidth`.
+  When given, the popover's `left` is clamped so its right edge clears `MENU_VIEWPORT_MARGIN` (8px) —
+  sliding it left, right-aligning it to the trigger in the limit — while never crossing the left
+  margin. `viewportWidth = 0` (the default, and the native/pure path) keeps the exact prior
+  trigger-anchored behaviour, so every existing caller is unchanged.
+- **`InlineMenu`** passes `window.innerWidth` on web (re-read whenever the tracked trigger rect
+  re-measures on scroll/resize); native is untouched.
+- New export `MENU_VIEWPORT_MARGIN`.
+
 ## 1.23.0
 
 **Modals, the dropdown popover and the accordion body now ANIMATE on web — adopts `@dloizides/ui-motion`.**
