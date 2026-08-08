@@ -36,6 +36,7 @@ import {
   MENU_BOX_SHADOW,
   MENU_ELEVATION,
   MENU_MAX_HEIGHT,
+  MENU_SCROLL_MAX_HEIGHT,
   MENU_TOP_GAP,
   MENU_Z_INDEX,
   buildPortalPopoverStyle,
@@ -70,6 +71,9 @@ const styles = StyleSheet.create({
   // node (the `menuRef` outside-click / keyboard logic and the web portal target depend on it).
   // `transformOrigin: 'top'` makes the scale grow downward FROM the anchor rather than the centre.
   animated: { transformOrigin: 'top' },
+  // Bound the scroll viewport so a list longer than the popover scrolls (with a scrollbar) instead of
+  // overflowing the frame — the popover's own maxHeight cannot do this (see MENU_SCROLL_MAX_HEIGHT).
+  scroll: { maxHeight: MENU_SCROLL_MAX_HEIGHT },
 });
 
 export interface InlineMenuProps<T> {
@@ -164,7 +168,7 @@ export const InlineMenu = <T extends string | number>({
       testID={`${testID}-menu`}
     >
       <Animated.View style={[styles.animated, animatedStyle]}>
-        <ScrollView keyboardShouldPersistTaps="handled">
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
           {options.map((option, index) => (
             <OptionRow
               key={String(option.value)}

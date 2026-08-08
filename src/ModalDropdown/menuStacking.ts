@@ -34,6 +34,16 @@ export const MENU_MAX_HEIGHT = 300;
 const BORDER_RADIUS = 8;
 const BORDER_WIDTH = 1;
 const MENU_PADDING = 4;
+
+/**
+ * The height cap for the option list's SCROLL VIEWPORT — the popover's own `maxHeight` cannot make a
+ * long list scroll on its own: react-native-web gives Views `flex-shrink: 0`, so the inner ScrollView
+ * grows to full content height and spills PAST the popover frame instead of scrolling inside it.
+ * Capping the ScrollView makes it the scroll boundary, so a long list (e.g. a 20+ option category
+ * filter) scrolls with a scrollbar. It sits just inside the popover, discounting the border + padding
+ * on both edges, so it is strictly below {@link MENU_MAX_HEIGHT}.
+ */
+export const MENU_SCROLL_MAX_HEIGHT = MENU_MAX_HEIGHT - (BORDER_WIDTH + MENU_PADDING) * 2;
 /** Soft drop shadow so the popover reads as floating above the page (web). */
 export const MENU_BOX_SHADOW = '0px 2px 8px rgba(0, 0, 0, 0.15)';
 /** Keep the popover at least this far from the viewport's left/right edge when it must be clamped. */

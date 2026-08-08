@@ -1,5 +1,7 @@
 import {
   ANCHOR_OPEN_Z_INDEX,
+  MENU_MAX_HEIGHT,
+  MENU_SCROLL_MAX_HEIGHT,
   MENU_TOP_GAP,
   MENU_VIEWPORT_MARGIN,
   MENU_Z_INDEX,
@@ -8,6 +10,15 @@ import {
   MIN_VISIBLE_PX,
   isAnchorHidden,
 } from './menuStacking';
+
+describe('MENU_SCROLL_MAX_HEIGHT — the option-list scroll cap (long-list scrollbar regression)', () => {
+  it('caps the scroll viewport strictly BELOW the popover frame so a long list scrolls, not spills', () => {
+    // The popover maxHeight alone cannot scroll the list (RN-web Views are flex-shrink:0); the
+    // ScrollView must carry its own bound, and it must sit inside the frame (border + padding).
+    expect(MENU_SCROLL_MAX_HEIGHT).toBeLessThan(MENU_MAX_HEIGHT);
+    expect(MENU_SCROLL_MAX_HEIGHT).toBeGreaterThan(0);
+  });
+});
 
 describe('buildPortalPopoverStyle', () => {
   const rect = { top: 100, left: 40, width: 220, bottom: 130 };
