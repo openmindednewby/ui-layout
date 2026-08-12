@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.26.0
+
+**New `BuildInfoFooter` — a small, themable "which build am I running?" caption for the portals.**
+
+The FE half of the "know what's deployed" work: every RN-web portal can now show a compact,
+unobtrusive footer like `v<buildVersion>` (optionally `· api <sha7>`). `@dloizides/pwa-sw` already
+stamps a per-build `BUILD_VERSION` into the generated service worker, but that value lives only
+inside `service-worker.js` and is not exposed to page runtime — so the component stays dumb and
+takes the build id as a prop (each app inlines it at build time, e.g. `EXPO_PUBLIC_BUILD_VERSION`).
+
+- **`BuildInfoFooter`** — props `buildVersion` (required), optional `apiBaseUrl` (best-effort GET
+  `${base}/version` → `.commit`, appended as `· api <sha7>`; any failure silently shows the version
+  alone), optional `apiCommit` (skip the fetch), `fetchImpl` (test seam), plus the usual `testID` /
+  `accessibilityLabel` / `accessibilityHint` / `style`. Muted caption via the theme's
+  `textSecondary` — no raw colours.
+- New exports: `formatBuildInfo`, `shortenCommit`, `trimTrailingSlash`, `useApiCommit`,
+  `BUILD_INFO_PREFIX`, `API_COMMIT_SEPARATOR`, `VersionResponse`.
+- New kit i18n key `LAYOUT_I18N.buildInfoHint` (`common.buildInfoHint`) and testID
+  `LAYOUT_TEST_IDS.buildInfoFooter` (`build-info-footer`).
+
 ## 1.24.0
 
 **The inline dropdown popover now stays inside the viewport — a floored menu can no longer spill off the right edge.**

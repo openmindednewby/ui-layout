@@ -49,6 +49,18 @@ export { useCopyToClipboard, COPY_FEEDBACK_MS } from './CopyableId/useCopyToClip
 export type { CopyToClipboard } from './CopyableId/useCopyToClipboard';
 export { copyText } from './CopyableId/copyText';
 
+export { BuildInfoFooter } from './BuildInfoFooter/BuildInfoFooter';
+export type { BuildInfoFooterProps } from './BuildInfoFooter/BuildInfoFooter';
+export {
+  formatBuildInfo,
+  shortenCommit,
+  trimTrailingSlash,
+  BUILD_INFO_PREFIX,
+  API_COMMIT_SEPARATOR,
+} from './BuildInfoFooter/formatBuildInfo';
+export { useApiCommit } from './BuildInfoFooter/useApiCommit';
+export type { VersionResponse } from './BuildInfoFooter/useApiCommit';
+
 export { useFocusTrap } from './hooks/useFocusTrap';
 
 export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';

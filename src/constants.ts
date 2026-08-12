@@ -12,6 +12,8 @@ export const LAYOUT_TEST_IDS = {
   /** Default base testID for `ConfirmDialog`; Confirm/Cancel are `confirm-dialog-{confirm,cancel}`. */
   confirmDialog: 'confirm-dialog',
   accordion: 'accordion',
+  /** Default testID for the `BuildInfoFooter` caption (`v<version>`). */
+  buildInfoFooter: 'build-info-footer',
 } as const;
 
 /** Route the UpgradePrompt CTA navigates to by default (the apps' billing settings path). */
@@ -83,4 +85,6 @@ export const LAYOUT_I18N = {
   copyFailed: 'common.copyFailed',
   /** `CopyableId`: hint on the value itself, explaining it is shortened for display. */
   copyableIdHint: 'common.copyableIdHint',
+  /** `BuildInfoFooter`: accessible hint on the version caption (the visible `v<version>` is the label). */
+  buildInfoHint: 'common.buildInfoHint',
 } as const;
