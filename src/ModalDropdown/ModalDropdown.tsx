@@ -346,6 +346,7 @@ export const ModalDropdown = <T extends string | number>({
           accessibilityLabel={accessibilityLabel}
           animatedStyle={menuAnim.style}
           containerRef={anchorRef}
+          isOpen={isOpen}
           menuMinWidth={menuMinWidth}
           optionTestID={optionTestIDFor}
           options={options}

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.26.1
+
+### Fixed
+
+- **`ModalDropdown` (popover variant) — a CLOSING menu no longer swallows the next keystroke.**
+  `InlineMenu` hard-coded `enabled: true` for `useMenuKeyboard`, so its DOCUMENT-CAPTURE keydown
+  listener lived as long as the component was MOUNTED — and `ModalDropdown` deliberately keeps it
+  mounted past logical close so the exit fade can play. For that whole window the trigger already
+  reported `aria-expanded="false"` while a live handler `preventDefault()`ed and
+  `stopPropagation()`ed the user's Enter, so react-native-web's `<button>` never received the
+  browser-synthesised click and the menu could not be reopened from the keyboard.
+
+  The menu's keyboard now follows the owner's LOGICAL open state, threaded down as a new required
+  `isOpen` prop on `InlineMenu`, rather than its mount. MOUNTED IS NOT OPEN.
+
+  Note for anyone extending this: passing `menuAnim.mounted` as `isOpen` reproduces the same bug
+  one level up, and there is a test that fails if you do.
+
+
 ## 1.26.0
 
 **New `BuildInfoFooter` — a small, themable "which build am I running?" caption for the portals.**

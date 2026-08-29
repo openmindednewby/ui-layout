@@ -20,6 +20,14 @@
  * `position: fixed` is viewport-relative, so the measured rect goes stale the moment anything moves
  * the trigger. {@link useAnchorTracking} owns keeping the two together — and closes the menu once
  * the trigger has left the viewport, rather than leaving it orphaned over unrelated content.
+ *
+ * MOUNTED IS NOT OPEN. ModalDropdown keeps this component mounted PAST logical close so the exit
+ * fade can play (`useEnterExit`'s `mounted`). Anything here keyed on mount therefore outlives the
+ * menu by the length of that animation — and {@link useMenuKeyboard} installs a DOCUMENT-CAPTURE
+ * keydown listener that `preventDefault()`s Enter/Escape/Arrows. Left keyed on mount, a closing
+ * menu swallows the user's next keystroke for the whole exit window: the trigger already reports
+ * `aria-expanded="false"`, yet Enter never reaches it and the browser never synthesises the click
+ * that would re-open it. `isOpen` is that distinction, threaded down from the owner.
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
@@ -82,6 +90,12 @@ export interface InlineMenuProps<T> {
   value: T;
   options: ReadonlyArray<DropdownOption<T>>;
   containerRef: RefObject<RNView | null>;
+  /**
+   * The owner's LOGICAL open state — not "is this component mounted". Gates the document-capture
+   * keyboard listener so a menu that is closing (still mounted for its exit fade) stops claiming
+   * keys the moment it is logically closed. See the file header.
+   */
+  isOpen: boolean;
   /** Custom testID per option row. Defaults to `` `${testID}-option-${value}` ``. */
   optionTestID?: (value: T) => string;
   /** Minimum popover width — a floor for COMPACT anchors, whose width cannot fit an option label. */
@@ -98,6 +112,7 @@ export const InlineMenu = <T extends string | number>({
   value,
   options,
   containerRef,
+  isOpen,
   optionTestID,
   menuMinWidth = 0,
   animatedStyle,
@@ -135,7 +150,7 @@ export const InlineMenu = <T extends string | number>({
   useMenuKeyboard({
     containerRef,
     menuRef,
-    enabled: true,
+    enabled: isOpen,
     itemCount: options.length,
     onHighlightChange: setHighlightedIndex,
     onSelectHighlighted: selectHighlighted,
