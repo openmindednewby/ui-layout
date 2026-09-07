@@ -115,6 +115,24 @@ function observeLayout(node: HTMLElement | null, onChange: () => void): ResizeOb
  * @param onOutOfView called once the anchor has left the viewport — the caller closes the menu.
  *   Must be referentially stable (a `useCallback` with no deps), or the listeners re-subscribe.
  */
+/**
+ * Field-wise rect equality. `readAnchorRect` builds a FRESH object every measurement, so an
+ * identity check (`Object.is`, React's own bail-out) NEVER matches and every scheduled measurement
+ * re-rendered the menu — including the ones that found the anchor exactly where it already was.
+ *
+ * That is not a performance nicety. `rect` feeds `InlineMenu`'s `popoverStyle` memo, so a new
+ * identity rewrites the portalled menu's DOM and re-creates its option rows; and the hook's own
+ * `ResizeObserver` observes `document.body`, which the menu is portalled INTO — so a re-render
+ * could re-arm the observer that caused it. The loop is self-sustaining: this test harness hits
+ * "Maximum update depth exceeded", and a real browser instead shows a menu whose box never settles,
+ * which is what Playwright reports as "element is not stable" and then "element was detached".
+ * Comparing by VALUE is what breaks the cycle.
+ */
+function isSameRect(a: AnchorRect | null, b: AnchorRect | null): boolean {
+  if (a === null || b === null) return a === b;
+  return a.top === b.top && a.left === b.left && a.width === b.width && a.bottom === b.bottom;
+}
+
 export function useAnchorTracking(
   containerRef: RefObject<RNView | null>,
   onOutOfView: () => void,
@@ -131,7 +149,8 @@ export function useAnchorTracking(
       frame = null;
       if (isDisposed) return;
       const next = readAnchorRect(containerRef);
-      setRect(next);
+      // Value-equal measurement ⇒ no state write, so an unmoved anchor cannot re-render the menu.
+      setRect((previous) => (isSameRect(previous, next) ? previous : next));
       // Never close on the FIRST measurement. Opening a dropdown whose trigger is already partly
       // clipped must still work; only movement AFTER the menu is open may close it.
       const isHidden =

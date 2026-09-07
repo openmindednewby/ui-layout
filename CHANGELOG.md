@@ -1,5 +1,19 @@
 # Changelog
 
+
+## 1.26.2
+
+### Fixed
+- **`useAnchorTracking` no longer re-renders an open menu whose anchor has not moved.** `readAnchorRect`
+  returns a fresh object on every measurement, and the hook wrote it to state unconditionally, so
+  `Object.is` never matched and React re-rendered on every scheduled measurement. Because the hook's
+  own `ResizeObserver` watches `document.body` — which the menu is portalled into — the re-render
+  could re-arm the observer that caused it, giving a self-sustaining loop (`Maximum update depth
+  exceeded` under test). In a browser the menu's box never settled, which Playwright reports as
+  "element is not stable" and then "element was detached from the DOM"; it broke every click on a
+  `navbar-overflow-menu` option. The rect is now compared BY VALUE, so an unmoved anchor writes no
+  state. Pinned by `src/ModalDropdown/useAnchorTracking.stability.test.tsx`.
+
 ## 1.26.1
 
 ### Fixed
