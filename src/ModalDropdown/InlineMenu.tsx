@@ -28,6 +28,16 @@
  * menu swallows the user's next keystroke for the whole exit window: the trigger already reports
  * `aria-expanded="false"`, yet Enter never reaches it and the browser never synthesises the click
  * that would re-open it. `isOpen` is that distinction, threaded down from the owner.
+ *
+ * The same window had a second, worse half: the options themselves stayed CLICKABLE and
+ * SCREEN-READER-VISIBLE for the whole fade. A fast second click could therefore activate an option
+ * from a menu the user had already dismissed — on every dropdown in every portal, not just a nav
+ * overflow. `isOpen` now also makes the popover inert the instant it goes false: `aria-hidden` on
+ * the menu node takes the whole subtree out of the accessibility tree, `pointerEvents: 'none'` on
+ * the animated wrapper stops the browser routing a click into it, and `handleSelect` refuses the
+ * selection outright — belt and braces, because pointer-events cannot stop a click DISPATCHED at
+ * the node (focus-driven activation, assistive tech, a test), and neither attribute is retroactive
+ * for an event already in flight. The fade itself is untouched; only its interactivity ends early.
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
@@ -79,6 +89,8 @@ const styles = StyleSheet.create({
   // node (the `menuRef` outside-click / keyboard logic and the web portal target depend on it).
   // `transformOrigin: 'top'` makes the scale grow downward FROM the anchor rather than the centre.
   animated: { transformOrigin: 'top' },
+  // Exit fade only: the dying popover must not receive the next click. See the file header.
+  inert: { pointerEvents: 'none' },
   // Bound the scroll viewport so a list longer than the popover scrolls (with a scrollbar) instead of
   // overflowing the frame — the popover's own maxHeight cannot do this (see MENU_SCROLL_MAX_HEIGHT).
   scroll: { maxHeight: MENU_SCROLL_MAX_HEIGHT },
@@ -134,12 +146,18 @@ export const InlineMenu = <T extends string | number>({
   // Lazy init: start the keyboard highlight on the currently-selected option.
   const [highlightedIndex, setHighlightedIndex] = useState<number>(() => selectedIndex);
 
+  // Refuses a selection from a menu that is logically closed but still fading. See the file header.
+  const handleSelect = useCallback(
+    (optionValue: T) => { if (isOpen) onSelect(optionValue); },
+    [isOpen, onSelect],
+  );
+
   const selectAt = useCallback(
     (index: number) => {
       const option = options[index];
-      if (option !== undefined) onSelect(option.value);
+      if (option !== undefined) handleSelect(option.value);
     },
-    [options, onSelect],
+    [options, handleSelect],
   );
 
   const selectHighlighted = useCallback(
@@ -178,11 +196,15 @@ export const InlineMenu = <T extends string | number>({
     <View
       ref={menuRef}
       accessibilityRole="menu"
+      aria-hidden={!isOpen}
       aria-label={accessibilityLabel}
       style={popoverStyle}
       testID={`${testID}-menu`}
     >
-      <Animated.View style={[styles.animated, animatedStyle]}>
+      <Animated.View
+        pointerEvents={isOpen ? 'auto' : 'none'}
+        style={[styles.animated, animatedStyle, isOpen ? null : styles.inert]}
+      >
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
           {options.map((option, index) => (
             <OptionRow
@@ -193,7 +215,7 @@ export const InlineMenu = <T extends string | number>({
               testID={
                 optionTestID !== undefined ? optionTestID(option.value) : `${testID}-option-${String(option.value)}`
               }
-              onSelect={() => onSelect(option.value)}
+              onSelect={() => handleSelect(option.value)}
             />
           ))}
         </ScrollView>

@@ -1,6 +1,18 @@
 # Changelog
 
 
+## 1.26.3
+
+### Fixed
+
+- `ModalDropdown` / `InlineMenu`: a closed-but-still-fading popover was INTERACTIVE for the whole
+  120ms exit animation — no `pointerEvents`, no `aria-hidden` — so a fast second click could select
+  an option from a menu the user had already dismissed, and screen readers still saw the options.
+  The popover now goes inert the instant `isOpen` goes false (`aria-hidden` on the menu node,
+  `pointerEvents: 'none'` on the animated wrapper, and the select handler refuses a closed menu).
+  The fade is unchanged. Covered by `ModalDropdown.openState.test.tsx` — the fade is held open
+  deliberately, since the reduced-motion test harness collapses it to 0ms.
+
 ## 1.26.2
 
 ### Fixed
