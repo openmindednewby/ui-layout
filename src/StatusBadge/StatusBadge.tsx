@@ -21,10 +21,13 @@ const styles = StyleSheet.create({
     paddingVertical: DEFAULT_PADDING_V,
     borderRadius: DEFAULT_BORDER_RADIUS,
     alignSelf: 'flex-start',
+    // Never wider than the container: a long label wraps inside the pill instead of being clipped.
+    maxWidth: '100%',
   },
   text: {
     fontSize: DEFAULT_FONT_SIZE,
     fontWeight: '600',
+    flexShrink: 1,
   },
 });
 
