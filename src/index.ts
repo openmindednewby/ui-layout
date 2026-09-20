@@ -64,3 +64,10 @@ export type { VersionResponse } from './BuildInfoFooter/useApiCommit';
 export { useFocusTrap } from './hooks/useFocusTrap';
 
 export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';
+export {
+  TYPE_SCALE_BREAKPOINT,
+  LAYOUT_COLLAPSE_BREAKPOINT,
+  MIN_TARGET_PX,
+} from './constants';
+
+export { isWideWebViewport } from './responsive';

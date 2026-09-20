@@ -14,17 +14,15 @@
  */
 import { Platform, useWindowDimensions } from 'react-native';
 
-import { MENU_BREAKPOINT } from '../ModalDropdown/resolveDropdownVariant';
+import { LAYOUT_COLLAPSE_BREAKPOINT } from '../constants';
+import { isWideWebViewport } from '../responsive';
 
 /**
  * Default collapse threshold — the shared kit breakpoint. At or above this
  * viewport width (web only) `Tabs` stays a row; below it — or on any native
  * platform — it collapses to the menu.
  */
-export const TABS_COLLAPSE_BREAKPOINT = MENU_BREAKPOINT;
-
-/** The web platform key that {@link Platform.OS} reports under react-native-web. */
-const WEB_PLATFORM = 'web';
+export const TABS_COLLAPSE_BREAKPOINT = LAYOUT_COLLAPSE_BREAKPOINT;
 
 /**
  * Pure resolver: collapse to the menu unless we are on a WIDE WEB viewport. On
@@ -36,8 +34,7 @@ export function shouldCollapseTabs(
   platformOS: string,
   breakpoint: number,
 ): boolean {
-  const isWideWeb = platformOS === WEB_PLATFORM && width >= breakpoint;
-  return !isWideWeb;
+  return !isWideWebViewport(width, platformOS, breakpoint);
 }
 
 /** Hook wrapper that reads the live viewport width + platform and resolves collapse. */

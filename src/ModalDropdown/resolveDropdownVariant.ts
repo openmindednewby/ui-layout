@@ -7,16 +7,19 @@
  */
 import { Platform, useWindowDimensions } from 'react-native';
 
+import { LAYOUT_COLLAPSE_BREAKPOINT } from '../constants';
+import { isWideWebViewport } from '../responsive';
+
 import { DropdownVariant } from './DropdownVariant';
 
 /**
  * At or above this viewport width (web only) the dropdown defaults to the inline
  * anchored menu; below it — or on any native platform — it defaults to the modal.
+ *
+ * Kept as an alias of the kit-wide {@link LAYOUT_COLLAPSE_BREAKPOINT} so existing
+ * importers keep compiling; new code should import the shared name.
  */
-export const MENU_BREAKPOINT = 768;
-
-/** The web platform key that {@link Platform.OS} reports under react-native-web. */
-const WEB_PLATFORM = 'web';
+export const MENU_BREAKPOINT = LAYOUT_COLLAPSE_BREAKPOINT;
 
 /**
  * Pure resolver. An explicit `variant` always wins; otherwise the inline
@@ -30,8 +33,9 @@ export function resolveDropdownVariant(
 ): DropdownVariant {
   if (explicit !== undefined) return explicit;
 
-  const isWideWeb = platformOS === WEB_PLATFORM && width >= MENU_BREAKPOINT;
-  return isWideWeb ? DropdownVariant.Menu : DropdownVariant.Modal;
+  return isWideWebViewport(width, platformOS, MENU_BREAKPOINT)
+    ? DropdownVariant.Menu
+    : DropdownVariant.Modal;
 }
 
 /** Hook wrapper that reads the live viewport width + platform and resolves the variant. */

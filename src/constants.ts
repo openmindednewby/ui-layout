@@ -88,3 +88,47 @@ export const LAYOUT_I18N = {
   /** `BuildInfoFooter`: accessible hint on the version caption (the visible `v<version>` is the label). */
   buildInfoHint: 'common.buildInfoHint',
 } as const;
+
+/*
+ * ---------------------------------------------------------------------------
+ * Responsive breakpoints + the minimum touch target (mobile-first.md rule 7).
+ *
+ * These are the ONE source for the numbers the kit and the seven portals change
+ * shape at. Before this, four literals existed with no shared source:
+ * `MENU_BREAKPOINT` (here), `RAIL_FULL_BREAKPOINT` and
+ * `DEFAULT_SEARCH_BREAKPOINT` (`@dloizides/ui-nav`) and `MOBILE_BREAKPOINT`
+ * (nextgame-web's D1 theme). Three of them agreed at 768 by coincidence rather
+ * than by reference, and each was named after its CALL SITE, which is exactly
+ * why nobody noticed they were the same rule.
+ *
+ * The two breakpoints are deliberately DIFFERENT numbers and must stay so: they
+ * answer different questions. Collapsing them into one would move type on every
+ * portal.
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * Viewport width (px) below which the TYPE ramp drops to its mobile sizes.
+ *
+ * Typography, not layout. A type scale steps down earlier than a column layout
+ * collapses because a 44px display line is unreadable on a phone long before a
+ * two-column grid stops fitting. nextgame-web's D1 ramp (`typeStyle`) is the
+ * only implementation today; the number lives here so the next one reuses it.
+ */
+export const TYPE_SCALE_BREAKPOINT = 600;
+
+/**
+ * Viewport width (px) at/above which LAYOUT keeps its wide form: the inline
+ * anchored dropdown menu, the horizontal tab row, the persistent nav rail, the
+ * inline sidebar search field. Below it each collapses to its phone affordance.
+ *
+ * This is the value `MENU_BREAKPOINT`, `RAIL_FULL_BREAKPOINT` and
+ * `DEFAULT_SEARCH_BREAKPOINT` each hard-coded independently.
+ */
+export const LAYOUT_COLLAPSE_BREAKPOINT = 768;
+
+/**
+ * Minimum interactive hit box, in CSS px, on BOTH axes — measured on the box,
+ * never on the glyph inside it. WCAG 2.5.5 / mobile-first.md.
+ */
+export const MIN_TARGET_PX = 44;
