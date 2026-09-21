@@ -23,7 +23,7 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { LAYOUT_I18N } from '../constants';
+import { LAYOUT_I18N, MIN_TARGET_PX } from '../constants';
 import { TruncatedText } from '../TruncatedText/TruncatedText';
 import { CopyStatus } from './CopyStatus';
 import { useCopyToClipboard } from './useCopyToClipboard';
@@ -69,6 +69,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: ACTION_PADDING_H,
     paddingVertical: ACTION_PADDING_V,
     borderRadius: ACTION_RADIUS,
+    // 44x44 hit box on the rendered box (it measured 40x20). `lineHeight` = the floor keeps the
+    // label vertically centred without wrapping the Text in another element.
+    minHeight: MIN_TARGET_PX,
+    minWidth: MIN_TARGET_PX,
+    lineHeight: MIN_TARGET_PX,
+    textAlign: 'center',
   },
 });
 

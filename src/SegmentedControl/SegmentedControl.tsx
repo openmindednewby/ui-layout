@@ -25,6 +25,8 @@ import {
 
 import { useUi } from '@dloizides/ui-feedback';
 
+import { MIN_TARGET_PX } from '../constants';
+
 const TRACK_PADDING = 3;
 const TRACK_RADIUS = 999;
 const SEGMENT_RADIUS = 999;
@@ -55,6 +57,8 @@ const styles = StyleSheet.create({
     borderWidth: BORDER_WIDTH,
   },
   segment: {
+    minHeight: MIN_TARGET_PX,
+    justifyContent: 'center',
     paddingHorizontal: SEGMENT_PAD_H,
     paddingVertical: SEGMENT_PAD_V,
     borderRadius: SEGMENT_RADIUS,

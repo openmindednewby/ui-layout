@@ -19,7 +19,7 @@ import { Collapse } from '@dloizides/ui-motion';
 
 import { useAccordionContext } from './AccordionContext';
 
-import { LAYOUT_I18N } from '../constants';
+import { LAYOUT_I18N, MIN_TARGET_PX } from '../constants';
 
 const HEADER_PADDING_H = 16;
 const HEADER_PADDING_V = 12;
@@ -57,6 +57,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // Hit box floor on the pressable header box itself (mobile-first.md); padding alone gave 35px.
+    minHeight: MIN_TARGET_PX,
     paddingHorizontal: HEADER_PADDING_H,
     paddingVertical: HEADER_PADDING_V,
   },

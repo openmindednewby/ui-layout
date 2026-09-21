@@ -8,7 +8,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { LAYOUT_I18N, LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE } from '../constants';
+import { LAYOUT_I18N, LAYOUT_TEST_IDS, DEFAULT_BILLING_ROUTE, MIN_TARGET_PX } from '../constants';
 
 const PROMPT_PADDING = 20;
 const PROMPT_BORDER_RADIUS = 12;
@@ -31,9 +31,16 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: TITLE_FONT_SIZE, fontWeight: '700', marginBottom: TITLE_MARGIN_BOTTOM },
   message: { fontSize: MESSAGE_FONT_SIZE, marginBottom: MESSAGE_MARGIN_BOTTOM },
-  cta: { paddingVertical: BUTTON_PADDING_V, borderRadius: BUTTON_BORDER_RADIUS, alignItems: 'center', marginBottom: CTA_MARGIN_BOTTOM },
+  cta: {
+    minHeight: MIN_TARGET_PX,
+    paddingVertical: BUTTON_PADDING_V,
+    borderRadius: BUTTON_BORDER_RADIUS,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: CTA_MARGIN_BOTTOM,
+  },
   ctaText: { fontSize: BUTTON_FONT_SIZE, fontWeight: '700' },
-  dismiss: { alignItems: 'center', paddingVertical: BUTTON_PADDING_V },
+  dismiss: { minHeight: MIN_TARGET_PX, alignItems: 'center', justifyContent: 'center', paddingVertical: BUTTON_PADDING_V },
   dismissText: { fontSize: DISMISS_FONT_SIZE },
 });
 
