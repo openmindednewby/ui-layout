@@ -20,8 +20,14 @@
  */
 import type { ViewStyle } from 'react-native';
 
-/** z-index for the open menu popover — high enough to clear app chrome (tables, cards, fields). */
-export const MENU_Z_INDEX = 1000;
+/**
+ * react-native-web's Modal mounts in a body-level `position: fixed` container with this zIndex
+ * (`react-native-web/dist/exports/Modal/ModalAnimation.js`). The portaled menu is a sibling of that
+ * container, so a dropdown INSIDE a Modal is only visible and clickable if it out-ranks it.
+ */
+const RN_WEB_MODAL_Z_INDEX = 9999;
+/** z-index for the open menu popover — above app chrome AND above an open RN-web Modal. */
+export const MENU_Z_INDEX = RN_WEB_MODAL_Z_INDEX + 1;
 /** z-index lifted onto the anchor WRAPPER while the menu is open (native/defence-in-depth). */
 export const ANCHOR_OPEN_Z_INDEX = 1000;
 /** Native drop shadow depth so the popover reads as floating above the page. */

@@ -165,3 +165,22 @@ describe('isAnchorHidden (1.10.1)', () => {
     expect(isAnchorHidden(onScreen, { top: 0, left: 0, bottom: 0, right: 0 }, MIN_VISIBLE_PX)).toBe(false);
   });
 });
+
+describe('MENU_Z_INDEX inside a Modal (menu painted under the Edit Attendee dialog at 1280)', () => {
+  // The shared Modal renders RN-web's Modal, whose fixed container carries its own zIndex. The
+  // portaled menu is a body-level sibling of that container, so it must out-rank it to be visible.
+  const readRnWebModalZIndex = (): number => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require('fs') as typeof import('fs');
+    const file = require.resolve('react-native-web/dist/exports/Modal/ModalAnimation.js');
+    const match = /zIndex:\s*(\d+)/.exec(fs.readFileSync(file, 'utf8'));
+    if (match === null) throw new Error('react-native-web Modal zIndex not found');
+    return Number(match[1]);
+  };
+
+  it('paints the open menu above the react-native-web Modal container', () => {
+    const modalZIndex = readRnWebModalZIndex();
+    expect(modalZIndex).toBeGreaterThan(0);
+    expect(MENU_Z_INDEX).toBeGreaterThan(modalZIndex);
+  });
+});
