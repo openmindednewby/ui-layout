@@ -18,18 +18,16 @@
  * These builders are pure so the stacking behaviour is unit-testable without RN-web's
  * class-name-based styling (which does not surface as inline DOM styles).
  */
+import { Z_INDEX } from '@dloizides/design-tokens';
 import type { ViewStyle } from 'react-native';
 
 /**
- * react-native-web's Modal mounts in a body-level `position: fixed` container with this zIndex
- * (`react-native-web/dist/exports/Modal/ModalAnimation.js`). The portaled menu is a sibling of that
- * container, so a dropdown INSIDE a Modal is only visible and clickable if it out-ranks it.
+ * z-index for the open menu popover — above app chrome AND above an open RN-web Modal, whose
+ * body-level fixed container (`Z_INDEX.modal`) is a sibling of the portaled menu.
  */
-const RN_WEB_MODAL_Z_INDEX = 9999;
-/** z-index for the open menu popover — above app chrome AND above an open RN-web Modal. */
-export const MENU_Z_INDEX = RN_WEB_MODAL_Z_INDEX + 1;
+export const MENU_Z_INDEX = Z_INDEX.popover;
 /** z-index lifted onto the anchor WRAPPER while the menu is open (native/defence-in-depth). */
-export const ANCHOR_OPEN_Z_INDEX = 1000;
+export const ANCHOR_OPEN_Z_INDEX = Z_INDEX.dropdown;
 /** Native drop shadow depth so the popover reads as floating above the page. */
 export const MENU_ELEVATION = 8;
 /** Gap between the trigger's bottom edge and the popover's top edge. */

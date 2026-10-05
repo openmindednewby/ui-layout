@@ -1,5 +1,7 @@
 import * as fs from 'fs';
 
+import { RN_WEB_MODAL_Z_INDEX, Z_INDEX } from '@dloizides/design-tokens';
+
 import {
   ANCHOR_OPEN_Z_INDEX,
   MENU_MAX_HEIGHT,
@@ -182,5 +184,12 @@ describe('MENU_Z_INDEX inside a Modal', () => {
     const modalZIndex = readRnWebModalZIndex();
     expect(modalZIndex).toBeGreaterThan(0);
     expect(MENU_Z_INDEX).toBeGreaterThan(modalZIndex);
+  });
+
+  it('takes its layers from the shared design-tokens scale', () => {
+    expect(RN_WEB_MODAL_Z_INDEX).toBe(readRnWebModalZIndex());
+    expect(MENU_Z_INDEX).toBe(Z_INDEX.popover);
+    expect(ANCHOR_OPEN_Z_INDEX).toBe(Z_INDEX.dropdown);
+    expect(MENU_Z_INDEX).toBeLessThan(Z_INDEX.toast);
   });
 });
