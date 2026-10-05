@@ -8,7 +8,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { LAYOUT_I18N } from '../constants';
+import { LAYOUT_I18N, MIN_TARGET_PX } from '../constants';
 
 const OPTION_BORDER_RADIUS = 4;
 const BODY_FONT_SIZE = 14;
@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
   option: {
     paddingHorizontal: OPTION_PADDING_H,
     paddingVertical: OPTION_PADDING_V,
+    minHeight: MIN_TARGET_PX,
+    justifyContent: 'center',
     borderRadius: OPTION_BORDER_RADIUS,
   },
   optionText: { fontSize: BODY_FONT_SIZE },
