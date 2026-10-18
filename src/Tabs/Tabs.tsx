@@ -36,6 +36,7 @@ import {
 
 import { useUi } from '@dloizides/ui-feedback';
 
+import { MIN_TARGET_PX } from '../constants';
 import { TabsCollapsedTrigger } from './TabsCollapsedTrigger';
 import { TabsMenu } from './TabsMenu';
 import { TABS_COLLAPSE_BREAKPOINT, useTabsCollapsed } from './tabsResponsive';
@@ -43,7 +44,7 @@ import { TABS_COLLAPSE_BREAKPOINT, useTabsCollapsed } from './tabsResponsive';
 const PILL_RADIUS = 999;
 const PILL_PAD_H = 16;
 const PILL_PAD_V = 8;
-const PILL_MIN_HEIGHT = 40;
+const PILL_MIN_HEIGHT = MIN_TARGET_PX;
 const PILL_FONT = 14;
 const PILL_WEIGHT = '600';
 const ROW_GAP = 8;
