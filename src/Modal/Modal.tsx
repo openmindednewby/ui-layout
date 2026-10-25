@@ -103,6 +103,8 @@ export interface ModalProps {
   testID?: string;
   /** Accessible name of the dialog. Falls back to `title`, then the neutral "dialog" key. */
   accessibilityLabel?: string;
+  /** testID of the control focused on open (web). Default: an autoFocus child, else the first focusable. */
+  initialFocusTestID?: string;
 }
 
 export const Modal = ({
@@ -115,6 +117,7 @@ export const Modal = ({
   showClose = true,
   testID = LAYOUT_TEST_IDS.modal,
   accessibilityLabel,
+  initialFocusTestID,
 }: ModalProps): React.ReactElement => {
   const { theme, t } = useUi();
   const dialogRef = useRef<View>(null);
@@ -127,7 +130,7 @@ export const Modal = ({
   const panel = useEnterExit({ visible, fromScale: PANEL_ENTER_SCALE });
   const mounted = panel.mounted || backdrop.mounted;
 
-  useFocusTrap(dialogRef, visible);
+  useFocusTrap(dialogRef, visible, initialFocusTestID);
   useEscapeKey(visible, onClose);
   useScrollLock(visible);
 

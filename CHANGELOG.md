@@ -1,6 +1,19 @@
 # Changelog
 
 
+## 1.29.0
+
+### Added
+
+- `Modal` `initialFocusTestID`: the testID of the control focused when the dialog opens (web), for
+  FOCUS-1 "Every screen names its initial focus". `useFocusTrap` takes it as an optional 3rd argument.
+
+### Fixed
+
+- `useFocusTrap` no longer steals focus from a child that set `autoFocus`: the first-focusable
+  fallback runs only when focus is not already inside the dialog (kefi-web create-attendee modal
+  opened on its close button). Focus restore on close skips an element that lives inside the dialog.
+
 ## 1.26.3
 
 ### Fixed

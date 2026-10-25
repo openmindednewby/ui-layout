@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { Modal } from './Modal';
 
@@ -90,5 +90,44 @@ describe('Modal', () => {
     expect(screen.getByTestId('edit-attendee')).toBeTruthy();
     expect(screen.getByTestId('edit-attendee-close')).toBeTruthy();
     expect(screen.getByTestId('edit-attendee-backdrop')).toBeTruthy();
+  });
+});
+
+describe('Modal initial focus', () => {
+  it('with an autoFocus child, keeps focus on that child', async () => {
+    render(
+      <Modal visible title="Add attendee" onClose={jest.fn()}>
+        <input autoFocus data-testid="attendee-name" />
+      </Modal>,
+    );
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('attendee-name'));
+  });
+
+  it('with initialFocusTestID, focuses the element carrying that testID', async () => {
+    render(
+      <Modal visible initialFocusTestID="attendee-email" title="Add attendee" onClose={jest.fn()}>
+        <input data-testid="attendee-name" />
+        <input data-testid="attendee-email" />
+      </Modal>,
+    );
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('attendee-email'));
+  });
+
+  it('with no autoFocus child and no initialFocusTestID, focuses the first focusable element', async () => {
+    render(
+      <Modal visible title="Add attendee" onClose={jest.fn()}>
+        <input data-testid="attendee-name" />
+      </Modal>,
+    );
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('modal-close'));
   });
 });

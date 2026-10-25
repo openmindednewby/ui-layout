@@ -2,7 +2,8 @@
  * Traps keyboard focus within a container element on web.
  * No-op on native platforms where `<Modal>` handles focus containment.
  *
- * On enable: saves the previously focused element and focuses the first focusable child.
+ * On enable: saves the previously focused element and focuses `initialFocusTestID`, else keeps a
+ * child that already took focus (autoFocus), else the first focusable child.
  * Tab wraps from last to first; Shift+Tab wraps from first to last. On disable/unmount:
  * restores focus to the saved element.
  */
@@ -27,6 +28,19 @@ function getFocusableElements(container: HTMLElement): HTMLElement[] {
 
 function savePreviousFocus(): HTMLElement | null {
   return document.activeElement instanceof HTMLElement ? document.activeElement : null;
+}
+
+function focusInitial(domNode: HTMLElement, initialFocusTestID: string | undefined): void {
+  const named =
+    initialFocusTestID === undefined
+      ? null
+      : domNode.querySelector<HTMLElement>(`[data-testid="${initialFocusTestID}"]`);
+  if (named) {
+    named.focus();
+    return;
+  }
+  if (domNode.contains(document.activeElement)) return;
+  getFocusableElements(domNode)[0]?.focus();
 }
 
 function handleKeyDown(domNode: HTMLElement, event: KeyboardEvent): void {
@@ -55,7 +69,11 @@ function handleKeyDown(domNode: HTMLElement, event: KeyboardEvent): void {
   }
 }
 
-export function useFocusTrap(containerRef: RefObject<View | null>, enabled: boolean): void {
+export function useFocusTrap(
+  containerRef: RefObject<View | null>,
+  enabled: boolean,
+  initialFocusTestID?: string,
+): void {
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -65,8 +83,9 @@ export function useFocusTrap(containerRef: RefObject<View | null>, enabled: bool
     const domNode = containerRef.current as unknown as HTMLElement | null;
     if (!domNode) return;
 
-    previousFocusRef.current = savePreviousFocus();
-    queueMicrotask(() => getFocusableElements(domNode)[0]?.focus());
+    const previous = savePreviousFocus();
+    previousFocusRef.current = previous !== null && domNode.contains(previous) ? null : previous;
+    queueMicrotask(() => focusInitial(domNode, initialFocusTestID));
 
     const listener = (e: KeyboardEvent): void => handleKeyDown(domNode, e);
     domNode.addEventListener('keydown', listener);
@@ -76,5 +95,5 @@ export function useFocusTrap(containerRef: RefObject<View | null>, enabled: bool
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
     };
-  }, [containerRef, enabled]);
+  }, [containerRef, enabled, initialFocusTestID]);
 }
