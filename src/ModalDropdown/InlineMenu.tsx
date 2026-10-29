@@ -61,6 +61,7 @@ import {
 } from './menuStacking';
 import { MenuHeading } from './MenuHeading';
 import { OptionRow } from './OptionRow';
+import type { SelectedMarker } from './SelectedMarker';
 import { useAnchorTracking } from './useAnchorTracking';
 import { useMenuKeyboard } from './useMenuKeyboard';
 
@@ -117,6 +118,7 @@ export interface InlineMenuProps<T> {
   menuHeading?: string;
   /** Enter/exit fade+scale style from the owner's `useEnterExit`, applied to the inner wrapper. */
   animatedStyle?: UseEnterExitResult['style'];
+  selectedMarker?: SelectedMarker;
   onSelect: (value: T) => void;
   onClose: () => void;
 }
@@ -132,6 +134,7 @@ export const InlineMenu = <T extends string | number>({
   menuMinWidth = 0,
   menuHeading,
   animatedStyle,
+  selectedMarker,
   onSelect,
   onClose,
 }: InlineMenuProps<T>): React.ReactElement | null => {
@@ -214,9 +217,11 @@ export const InlineMenu = <T extends string | number>({
           {options.map((option, index) => (
             <OptionRow
               key={String(option.value)}
+              asMenuItem
               isHighlighted={index === highlightedIndex}
               isSelected={option.value === value}
               label={option.label}
+              selectedMarker={selectedMarker}
               testID={
                 optionTestID !== undefined ? optionTestID(option.value) : `${testID}-option-${String(option.value)}`
               }

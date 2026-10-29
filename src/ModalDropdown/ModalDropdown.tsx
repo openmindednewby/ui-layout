@@ -24,6 +24,7 @@ import { InlineMenu } from './InlineMenu';
 import { MenuHeading } from './MenuHeading';
 import { buildAnchorStackStyle } from './menuStacking';
 import { OptionRow } from './OptionRow';
+import type { SelectedMarker } from './SelectedMarker';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
 
 import { LAYOUT_I18N } from '../constants';
@@ -91,6 +92,8 @@ export interface ModalDropdownProps<T> {
   showHamburger?: boolean;
   /** Visible, non-focusable heading at the top of the open menu; it also names the menu. */
   menuHeading?: string;
+  /** How the selected option is marked; `AccentCheck` = accent left bar + check. */
+  selectedMarker?: SelectedMarker;
 }
 
 const BORDER_RADIUS = 8;
@@ -185,6 +188,7 @@ export const ModalDropdown = <T extends string | number>({
   showCaret = false,
   showHamburger = false,
   menuHeading,
+  selectedMarker,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -192,16 +196,6 @@ export const ModalDropdown = <T extends string | number>({
   const isMenu = resolvedVariant === DropdownVariant.Menu;
 
   const [isOpen, setIsOpen] = useState(false);
-  /*
-   * The trigger's accessible contract, emitted per-platform by the shared adapter:
-   * `aria-label`/`aria-describedby`/`role`/`aria-expanded` on web, the `accessibility*`
-   * props on native. `hintNode` is the visually-hidden description element — `null` on
-   * native, where the hint is a first-class prop — and MUST be rendered inside the same
-   * host component, which is why it sits among the trigger's children below.
-   *
-   * The hint id is no longer derived from `testID`: `useA11y` generates it from React's
-   * `useId()`, which stays unique even if two dropdowns are ever handed the same testID.
-   */
   const { a11yProps, hintNode } = useA11y({
     label: accessibilityLabel,
     hint: accessibilityHint,
@@ -210,6 +204,8 @@ export const ModalDropdown = <T extends string | number>({
     testID,
   });
   const anchorRef = useRef<View>(null);
+  const triggerRef = useRef<View>(null);
+  const popupProps = { 'aria-haspopup': isMenu ? 'menu' : 'dialog' } as object;
   const dialogRef = useRef<View>(null);
   useFocusTrap(dialogRef, isOpen && !isMenu);
 
@@ -240,6 +236,7 @@ export const ModalDropdown = <T extends string | number>({
     (optionValue: T) => {
       onChange(optionValue);
       setIsOpen(false);
+      triggerRef.current?.focus();
     },
     [onChange],
   );
@@ -296,17 +293,18 @@ export const ModalDropdown = <T extends string | number>({
       <OptionRow
         isSelected={item.value === value}
         label={item.label}
+        selectedMarker={selectedMarker}
         testID={optionTestIDFor(item.value)}
         onSelect={() => handleSelect(item.value)}
       />
     ),
-    [handleSelect, optionTestIDFor, value],
+    [handleSelect, optionTestIDFor, selectedMarker, value],
   );
   const keyExtractor = useCallback((item: DropdownOption<T>) => String(item.value), []);
 
   return (
     <View ref={anchorRef} style={anchorStyle}>
-      <TouchableOpacity {...a11yProps} style={containerStyle} onPress={handleToggle}>
+      <TouchableOpacity {...a11yProps} {...popupProps} ref={triggerRef} style={containerStyle} onPress={handleToggle}>
         {renderTrigger !== undefined ? (
           renderTrigger({ label: selectedLabel, isOpen })
         ) : isHamburger ? (
@@ -328,9 +326,6 @@ export const ModalDropdown = <T extends string | number>({
         ) : (
           <Text style={[styles.selectedText, { color: colors.text }]}>{selectedLabel}</Text>
         )}
-        {/* The hidden description node the trigger's `aria-describedby` points at. A DESCENDANT
-            rather than a sibling, so it cannot outlive the trigger and leave the attribute
-            dangling. `null` on native, where the hint is a first-class prop. */}
         {hintNode}
       </TouchableOpacity>
 
@@ -344,6 +339,7 @@ export const ModalDropdown = <T extends string | number>({
           menuMinWidth={menuMinWidth}
           optionTestID={optionTestIDFor}
           options={options}
+          selectedMarker={selectedMarker}
           testID={testID}
           value={value}
           onClose={handleClose}

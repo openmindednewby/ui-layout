@@ -21,6 +21,7 @@ export { ModalDropdown } from './ModalDropdown/ModalDropdown';
 export type { ModalDropdownProps, DropdownTriggerState } from './ModalDropdown/ModalDropdown';
 export type { DropdownOption } from './ModalDropdown/dropdownTypes';
 export { DropdownVariant } from './ModalDropdown/DropdownVariant';
+export { SelectedMarker } from './ModalDropdown/SelectedMarker';
 
 export { ModalShell } from './ModalShell/ModalShell';
 export type { ModalShellProps } from './ModalShell/ModalShell';
