@@ -59,6 +59,7 @@ import {
   MENU_Z_INDEX,
   buildPortalPopoverStyle,
 } from './menuStacking';
+import { MenuHeading } from './MenuHeading';
 import { OptionRow } from './OptionRow';
 import { useAnchorTracking } from './useAnchorTracking';
 import { useMenuKeyboard } from './useMenuKeyboard';
@@ -112,6 +113,8 @@ export interface InlineMenuProps<T> {
   optionTestID?: (value: T) => string;
   /** Minimum popover width — a floor for COMPACT anchors, whose width cannot fit an option label. */
   menuMinWidth?: number;
+  /** Visible heading at the top of the menu; also becomes the menu's accessible name. */
+  menuHeading?: string;
   /** Enter/exit fade+scale style from the owner's `useEnterExit`, applied to the inner wrapper. */
   animatedStyle?: UseEnterExitResult['style'];
   onSelect: (value: T) => void;
@@ -127,6 +130,7 @@ export const InlineMenu = <T extends string | number>({
   isOpen,
   optionTestID,
   menuMinWidth = 0,
+  menuHeading,
   animatedStyle,
   onSelect,
   onClose,
@@ -197,7 +201,7 @@ export const InlineMenu = <T extends string | number>({
       ref={menuRef}
       accessibilityRole="menu"
       aria-hidden={!isOpen}
-      aria-label={accessibilityLabel}
+      aria-label={menuHeading ?? accessibilityLabel}
       style={popoverStyle}
       testID={`${testID}-menu`}
     >
@@ -205,6 +209,7 @@ export const InlineMenu = <T extends string | number>({
         pointerEvents={isOpen ? 'auto' : 'none'}
         style={[styles.animated, animatedStyle, isOpen ? null : styles.inert]}
       >
+        {menuHeading !== undefined ? <MenuHeading testID={testID} text={menuHeading} /> : null}
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
           {options.map((option, index) => (
             <OptionRow

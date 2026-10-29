@@ -21,6 +21,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap';
 import { DropdownVariant } from './DropdownVariant';
 import type { DropdownOption } from './dropdownTypes';
 import { InlineMenu } from './InlineMenu';
+import { MenuHeading } from './MenuHeading';
 import { buildAnchorStackStyle } from './menuStacking';
 import { OptionRow } from './OptionRow';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
@@ -88,6 +89,8 @@ export interface ModalDropdownProps<T> {
    * control, so screen readers do not announce it.
    */
   showHamburger?: boolean;
+  /** Visible, non-focusable heading at the top of the open menu; it also names the menu. */
+  menuHeading?: string;
 }
 
 const BORDER_RADIUS = 8;
@@ -116,15 +119,6 @@ const CARET_CLOSED_ROTATION = '0deg';
 const POPOVER_ENTER_SCALE = 0.96;
 /** A snappy popover duration — the open eases in, the close reads as near-instant. */
 const POPOVER_MOTION_MS = 120;
-
-/*
- * The hint used to be threaded by a private `buildHintProps` helper plus a hand-rolled
- * `srOnly` visually-hidden <Text>, both living in this file. That was a verbatim
- * reimplementation of `@dloizides/a11y`'s `useA11y` + `A11yHint` — same platform branch,
- * same 1x1-clip technique, same `aria-describedby` wiring — so it was a second place for
- * the SAME bug to regress, with none of that package's dual-platform test gate behind it.
- * It now delegates. See `useA11y` in the render below.
- */
 
 const styles = StyleSheet.create({
   anchor: { position: 'relative' },
@@ -190,6 +184,7 @@ export const ModalDropdown = <T extends string | number>({
   menuMinWidth,
   showCaret = false,
   showHamburger = false,
+  menuHeading,
 }: ModalDropdownProps<T>): React.ReactElement => {
   const { theme, t } = useUi();
   const { colors } = theme;
@@ -316,8 +311,6 @@ export const ModalDropdown = <T extends string | number>({
           renderTrigger({ label: selectedLabel, isOpen })
         ) : isHamburger ? (
           <>
-            {/* Decorative LEADING glyph: the trigger's aria-label already names the control, so
-                screen readers ignore it. It is the universal "open the menu" cue on mobile. */}
             <Text style={hamburgerStyle}>{HAMBURGER_GLYPH}</Text>
             <Text numberOfLines={1} style={[styles.selectedText, styles.selectedTextMenu, { color: colors.text }]}>
               {selectedLabel}
@@ -347,6 +340,7 @@ export const ModalDropdown = <T extends string | number>({
           animatedStyle={menuAnim.style}
           containerRef={anchorRef}
           isOpen={isOpen}
+          menuHeading={menuHeading}
           menuMinWidth={menuMinWidth}
           optionTestID={optionTestIDFor}
           options={options}
@@ -376,11 +370,16 @@ export const ModalDropdown = <T extends string | number>({
             <Animated.View
               ref={dialogRef}
               accessibilityViewIsModal
-              aria-label={accessibilityLabel}
+              aria-label={menuHeading ?? accessibilityLabel}
               role="dialog"
               style={[modalContentStyle, modalAnim.style]}
             >
-              <FlatList data={[...options]} keyExtractor={keyExtractor} renderItem={renderModalOption} />
+              <FlatList
+                data={[...options]}
+                keyExtractor={keyExtractor}
+                ListHeaderComponent={menuHeading !== undefined ? <MenuHeading testID={testID} text={menuHeading} /> : null}
+                renderItem={renderModalOption}
+              />
             </Animated.View>
           </View>
         </Modal>

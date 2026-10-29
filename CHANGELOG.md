@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 1.30.0
+
+### Added
+
+- `ModalDropdown` `menuHeading`: a visible, non-focusable heading (role heading) at the top of the open
+  menu or modal; it also becomes the menu's accessible name. KEFI-EDITOR-HEADER-1 "Compact the landing editor header".
+
 ## 1.29.0
 
 ### Added
