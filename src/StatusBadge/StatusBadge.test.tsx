@@ -28,4 +28,20 @@ describe('StatusBadge', () => {
 
     expect(badge.children).toHaveLength(1);
   });
+
+  it('when dashed, draws a dashed border in the label colour', () => {
+    render(<StatusBadge backgroundColor="transparent" color="rgb(0, 170, 0)" dashed label="Draft" testID={TEST_ID} />);
+
+    const style = getComputedStyle(screen.getByTestId(TEST_ID));
+
+    expect([style.borderTopStyle, style.borderTopColor]).toEqual(['dashed', 'rgb(0, 170, 0)']);
+  });
+
+  it('by default, draws no border', () => {
+    render(<StatusBadge backgroundColor="transparent" color="rgb(0, 170, 0)" label="Active" testID={TEST_ID} />);
+
+    const style = getComputedStyle(screen.getByTestId(TEST_ID));
+
+    expect(style.borderTopStyle).not.toBe('dashed');
+  });
 });
