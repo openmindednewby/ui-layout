@@ -7,6 +7,11 @@ export type { HeadingProps, HeadingLevel } from './Heading/Heading';
 export { StatusBadge } from './StatusBadge/StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
 
+export { StickyPreview } from './StickyPreview/StickyPreview';
+export type { StickyPreviewProps } from './StickyPreview/StickyPreview';
+export { useVisibleViewport, isKeyboardOpen } from './StickyPreview/hooks/useVisibleViewport';
+export type { VisibleViewport } from './StickyPreview/hooks/useVisibleViewport';
+
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/SegmentedControl';
 

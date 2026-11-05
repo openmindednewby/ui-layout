@@ -14,6 +14,7 @@ const DEFAULT_PADDING_H = 10;
 const DEFAULT_PADDING_V = 4;
 const DEFAULT_BORDER_RADIUS = 12;
 const DEFAULT_FONT_SIZE = 12;
+const ICON_GAP = 4;
 
 const styles = StyleSheet.create({
   badge: {
@@ -23,6 +24,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     // Never wider than the container: a long label wraps inside the pill instead of being clipped.
     maxWidth: '100%',
+  },
+  badgeWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: ICON_GAP,
   },
   text: {
     fontSize: DEFAULT_FONT_SIZE,
@@ -35,6 +41,7 @@ export interface StatusBadgeProps {
   label: string;
   color: string;
   backgroundColor: string;
+  icon?: React.ReactNode;
   testID?: string;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -44,6 +51,7 @@ export const StatusBadge = ({
   label,
   color,
   backgroundColor,
+  icon,
   testID = LAYOUT_TEST_IDS.statusLabel,
   accessibilityLabel,
   accessibilityHint,
@@ -52,14 +60,16 @@ export const StatusBadge = ({
 
   const dynamicBadge = useMemo(() => ({ backgroundColor }), [backgroundColor]);
   const dynamicText = useMemo(() => ({ color }), [color]);
+  const hasIcon = icon !== undefined && icon !== null;
 
   return (
     <View
       accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.statusBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? label}
-      style={[styles.badge, dynamicBadge]}
+      style={[styles.badge, hasIcon && styles.badgeWithIcon, dynamicBadge]}
       testID={testID}
     >
+      {hasIcon ? <View aria-hidden>{icon}</View> : null}
       <Text style={[styles.text, dynamicText]}>{label}</Text>
     </View>
   );

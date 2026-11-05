@@ -1,6 +1,14 @@
 # Changelog
 
 
+## 1.32.0
+
+### Added
+
+- `StatusBadge` `icon`: an optional decorative slot before the label. INVOICE-3 "Invoice interface over a user-chosen folder".
+- `StickyPreview`: sticks to the top of the visible viewport; shows its `full` slot, or its `compact` slot once scrolled past, while the on-screen keyboard is open, or on `forceCompact`.
+- `useVisibleViewport`, `isKeyboardOpen`: read the Visual Viewport offset and keyboard state.
+
 ## 1.30.0
 
 ### Added
