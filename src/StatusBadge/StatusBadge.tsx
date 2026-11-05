@@ -15,7 +15,6 @@ const DEFAULT_PADDING_V = 4;
 const DEFAULT_BORDER_RADIUS = 12;
 const DEFAULT_FONT_SIZE = 12;
 const ICON_GAP = 4;
-const DASHED_BORDER = 'dashed';
 
 const styles = StyleSheet.create({
   badge: {
@@ -30,6 +29,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: ICON_GAP,
+  },
+  badgeDashed: {
+    borderWidth: 1,
+    borderStyle: 'dashed',
   },
   text: {
     fontSize: DEFAULT_FONT_SIZE,
@@ -62,7 +65,7 @@ export const StatusBadge = ({
   const { t } = useUi();
 
   const dynamicBadge = useMemo(() => ({ backgroundColor }), [backgroundColor]);
-  const dashedBorder = useMemo(() => (dashed ? { borderWidth: 1, borderStyle: DASHED_BORDER, borderColor: color } : null), [color, dashed]);
+  const dashedColor = useMemo(() => ({ borderColor: color }), [color]);
   const dynamicText = useMemo(() => ({ color }), [color]);
   const hasIcon = icon !== undefined && icon !== null;
 
@@ -70,7 +73,7 @@ export const StatusBadge = ({
     <View
       accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.statusBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? label}
-      style={[styles.badge, hasIcon && styles.badgeWithIcon, dynamicBadge, dashedBorder]}
+      style={[styles.badge, hasIcon && styles.badgeWithIcon, dynamicBadge, dashed && styles.badgeDashed, dashed && dashedColor]}
       testID={testID}
     >
       {hasIcon ? <View aria-hidden>{icon}</View> : null}
