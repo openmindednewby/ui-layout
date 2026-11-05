@@ -23,6 +23,7 @@ export interface StickyPreviewProps {
   forceCompact?: boolean;
   topOffset?: number;
   accessibilityLabel: string;
+  accessibilityHint?: string;
   testID?: string;
 }
 
@@ -33,6 +34,7 @@ export const StickyPreview = ({
   forceCompact = false,
   topOffset = 0,
   accessibilityLabel,
+  accessibilityHint,
   testID = LAYOUT_TEST_IDS.stickyPreview,
 }: StickyPreviewProps): React.ReactElement => {
   const { theme } = useUi();
@@ -49,6 +51,7 @@ export const StickyPreview = ({
     <>
       <View aria-hidden ref={sentinelRef} style={styles.sentinel} />
       <View
+        accessibilityHint={accessibilityHint}
         accessibilityLabel={accessibilityLabel}
         role="region"
         style={[
