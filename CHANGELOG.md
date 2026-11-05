@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.34.0
+
+INVOICE-3 "Invoice interface over a user-chosen folder": extracted from invoice-web.
+
+- New `AppText` + `TextKind`: text in six fixed sizes.
+- New `ScreenColumn`: the bounded, centred column a screen sits in.
+- New `useIsWideViewport`: the hook form of `isWideWebViewport`.
+- `Section` gains `variant` (`SectionVariant.Card`), `testID`, and `style` widened to `StyleProp<ViewStyle>`. Default look unchanged.
+
 
 ## 1.32.0
 

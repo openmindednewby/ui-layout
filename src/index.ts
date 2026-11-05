@@ -1,5 +1,13 @@
 export { Section } from './Section/Section';
 export type { SectionProps } from './Section/Section';
+export { SectionVariant } from './Section/SectionVariant';
+
+export { AppText } from './AppText/AppText';
+export type { AppTextProps } from './AppText/AppText';
+export { TextKind } from './AppText/TextKind';
+
+export { ScreenColumn } from './ScreenColumn/ScreenColumn';
+export type { ScreenColumnProps } from './ScreenColumn/ScreenColumn';
 
 export { Heading } from './Heading/Heading';
 export type { HeadingProps, HeadingLevel } from './Heading/Heading';
@@ -68,6 +76,7 @@ export { useApiCommit } from './BuildInfoFooter/useApiCommit';
 export type { VersionResponse } from './BuildInfoFooter/useApiCommit';
 
 export { useFocusTrap } from './hooks/useFocusTrap';
+export { useIsWideViewport } from './hooks/useIsWideViewport';
 
 export { LAYOUT_TEST_IDS, LAYOUT_I18N, DEFAULT_BILLING_ROUTE } from './constants';
 export {
