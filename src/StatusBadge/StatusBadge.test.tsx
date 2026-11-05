@@ -34,7 +34,7 @@ describe('StatusBadge', () => {
 
     const style = getComputedStyle(screen.getByTestId(TEST_ID));
 
-    expect([style.borderTopStyle, style.borderTopColor]).toEqual(['dashed', 'rgb(0, 170, 0)']);
+    expect([style.borderTopStyle, style.borderTopColor]).toEqual(['dashed', 'rgba(0,170,0,1.00)']);
   });
 
   it('by default, draws no border', () => {
