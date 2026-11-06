@@ -3,6 +3,7 @@ export const LAYOUT_TEST_IDS = {
   headingText: 'heading-text',
   statusLabel: 'status-label',
   stickyPreview: 'sticky-preview',
+  pageFrame: 'page-frame',
   upgradePrompt: 'upgrade-prompt',
   upgradePromptCta: 'upgrade-prompt-cta',
   upgradePromptDismiss: 'upgrade-prompt-dismiss',

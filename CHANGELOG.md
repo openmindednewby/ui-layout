@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.37.0
+
+INVOICE-FU-9 "INVOICE-5 shared look leftovers", AC-PAGE-1.
+
+- New `PageFrame`: lays children out at a fixed page size (`A4_PAGE` 794x1123 by default, `pageSize` configurable) and scales the page down to the container width, never up, so line breaks match the printed page.
+- New `pageScale` / `scaledFrame` helpers for the scale math.
+
 ## 1.34.0
 
 INVOICE-3 "Invoice interface over a user-chosen folder": extracted from invoice-web.

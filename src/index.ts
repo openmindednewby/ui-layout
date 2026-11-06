@@ -20,6 +20,11 @@ export type { StickyPreviewProps } from './StickyPreview/StickyPreview';
 export { useVisibleViewport, isKeyboardOpen } from './StickyPreview/hooks/useVisibleViewport';
 export type { VisibleViewport } from './StickyPreview/hooks/useVisibleViewport';
 
+export { PageFrame } from './PageFrame/PageFrame';
+export type { PageFrameProps } from './PageFrame/PageFrame';
+export { A4_PAGE, pageScale, scaledFrame } from './PageFrame/utils/pageScale';
+export type { PageSize, ScaledFrame } from './PageFrame/utils/pageScale';
+
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/SegmentedControl';
 
