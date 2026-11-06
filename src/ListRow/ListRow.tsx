@@ -10,6 +10,7 @@ import { CheckMark } from './components/CheckMark';
 import { ListRowToneContext } from './hooks/useListRowTone';
 import { useRowPalette } from './hooks/useRowPalette';
 import { RowSelectedStyle } from './RowSelectedStyle';
+import { isFocusVisible } from './utils/focusVisible';
 import { resolveRowLook } from './utils/rowLook';
 
 const FONT = 15;
@@ -59,6 +60,10 @@ function pressedProps(selected: boolean): PressableProps & { 'aria-pressed': boo
   return { 'aria-pressed': selected };
 }
 
+function focusTarget(event: unknown): unknown {
+  return (event as { nativeEvent?: { target?: unknown } } | undefined)?.nativeEvent?.target;
+}
+
 function slot(node: React.ReactNode, color: string, strong: boolean): React.ReactNode {
   if (typeof node !== 'string') return node;
   return <Text style={[styles.shrink, strong ? styles.strong : null, { color }]}>{node}</Text>;
@@ -100,8 +105,8 @@ export const ListRow = ({
         onBlur={() => {
           setFocused(false);
         }}
-        onFocus={() => {
-          setFocused(true);
+        onFocus={(event) => {
+          setFocused(isFocusVisible(focusTarget(event)));
         }}
         onPress={onPress}
         {...pressedProps(selected)}

@@ -89,4 +89,9 @@ describe('resolveRowLook', () => {
 
     expect(look.container.boxShadow).toBe('inset 0px 0px 0px 2px white, inset 0px 0px 0px 4px blue, inset 0px 0px 0px 2px navy');
   });
+  it('with accent-bar, a selected row and no keyboard focus, draws no outline', () => {
+    const look = resolveRowLook(RowSelectedStyle.AccentBar, { ...REST, selected: true }, PALETTE);
+
+    expect([look.container.boxShadow, look.container.borderWidth, look.container.borderTopWidth]).toEqual([undefined, undefined, undefined]);
+  });
 });
