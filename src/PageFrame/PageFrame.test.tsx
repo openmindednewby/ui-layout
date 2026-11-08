@@ -34,6 +34,34 @@ describe('PageFrame', () => {
     expect(page.style.transform).toBe('');
   });
 
+  it('with the overlay open, the page never shrinks below its page width', () => {
+    render(
+      <PageFrame enlargeable pageSize={PAGE} testID="pf">
+        <span>Page</span>
+      </PageFrame>,
+    );
+
+    fireEvent.click(screen.getByTestId('pf-enlarge'));
+
+    const page = screen.getByTestId('pf-overlay-page');
+    expect(page.style.flexShrink).toBe('0');
+    expect(page.style.minWidth).toBe(`${PAGE.width}px`);
+  });
+
+  it('with the overlay open, the page is centred in the dialog body', () => {
+    render(
+      <PageFrame enlargeable pageSize={PAGE} testID="pf">
+        <span>Page</span>
+      </PageFrame>,
+    );
+
+    fireEvent.click(screen.getByTestId('pf-enlarge'));
+
+    const row = screen.getByTestId('pf-overlay-page').parentElement;
+    expect(row?.style.flexGrow).toBe('1');
+    expect(row?.style.justifyContent).toBe('center');
+  });
+
   it('with enlargeable, the preview is a focusable native button, so Enter opens it', () => {
     render(
       <PageFrame enlargeable pageSize={PAGE} testID="pf">
