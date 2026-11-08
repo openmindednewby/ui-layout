@@ -62,6 +62,9 @@ export const LAYOUT_I18N = {
   closeHeading: 'close',
   /** `Modal`: accessible name + web tooltip of the top-right ✕ close button. */
   dialogClose: 'common.close',
+  /** `PageFrame` (`enlargeable`): accessible name + hint of the preview that opens the full-size page. */
+  pageEnlarge: 'common.pageEnlarge',
+  pageEnlargeHint: 'common.pageEnlargeHint',
   /** `ConfirmDialog`: default Confirm button label (overridable via `confirmLabel`) + its hint. */
   confirm: 'common.confirm',
   confirmHint: 'common.confirmHint',

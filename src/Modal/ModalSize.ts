@@ -8,5 +8,6 @@
  *  - `sm` — compact confirmations / short forms.
  *  - `md` (default) — the general dialog.
  *  - `lg` — wide editors.
+ *  - `xl` — a full document page (an A4 sheet at scale 1).
  */
-export type ModalSize = 'sm' | 'md' | 'lg';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';

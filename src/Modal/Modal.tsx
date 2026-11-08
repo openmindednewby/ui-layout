@@ -49,7 +49,7 @@ const DIALOG_MAX_HEIGHT = '90%';
 const PANEL_ENTER_SCALE = 0.96;
 
 /** Max width per size preset. A floor-less card otherwise stretches to the full viewport on web. */
-const SIZE_MAX_WIDTH: Record<ModalSize, number> = { sm: 360, md: 480, lg: 640 };
+const SIZE_MAX_WIDTH: Record<ModalSize, number> = { sm: 360, md: 480, lg: 640, xl: 880 };
 
 const styles = StyleSheet.create({
   overlay: {
