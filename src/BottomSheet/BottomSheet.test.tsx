@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { Platform } from 'react-native';
 
 import { BottomSheet } from './BottomSheet';
 import type { BottomSheetProps } from './BottomSheet';
@@ -18,8 +19,26 @@ const renderSheet = (overrides: Partial<BottomSheetProps> = {}): ReturnType<type
     </BottomSheet>,
   );
 
+const pressAndReleaseEscape = (): void => {
+  fireEvent.keyDown(document, { key: 'Escape' });
+  fireEvent.keyUp(document, { key: 'Escape' });
+};
+
 afterEach(() => {
   document.body.style.overflow = '';
+  jest.restoreAllMocks();
+});
+
+describe('BottomSheet off web', () => {
+  it('with a close request from the modal, calls onClose once', () => {
+    jest.replaceProperty(Platform, 'OS', 'ios');
+    const onClose = jest.fn();
+    renderSheet({ onClose });
+
+    fireEvent.keyUp(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('BottomSheet open state', () => {
@@ -65,6 +84,15 @@ describe('BottomSheet closing', () => {
     renderSheet({ onClose });
 
     fireEvent.click(screen.getByTestId(BACKDROP_ID));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('with one Escape press and release, calls onClose once', () => {
+    const onClose = jest.fn();
+    renderSheet({ onClose });
+
+    pressAndReleaseEscape();
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });

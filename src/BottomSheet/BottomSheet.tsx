@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { Animated, Modal as RNModal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, Modal as RNModal, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { MIN_TOUCH_TARGET_PX } from '@dloizides/a11y';
 import { MODAL_OVERLAY_COLOR, useUi } from '@dloizides/ui-feedback';
@@ -79,8 +79,10 @@ export const BottomSheet = ({
   useEscapeKey(visible, onClose);
   useScrollLock(visible);
 
+  const hardwareBackClose = Platform.OS === 'web' ? undefined : onClose;
+
   return (
-    <RNModal transparent visible={panel.mounted || backdrop.mounted} onRequestClose={onClose}>
+    <RNModal transparent visible={panel.mounted || backdrop.mounted} onRequestClose={hardwareBackClose}>
       <View style={styles.root}>
         <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, { opacity: backdrop.style.opacity }]} />
         <Pressable
