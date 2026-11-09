@@ -64,7 +64,7 @@ export const SideSheet = ({
   const panel = useEnterExit({ visible, translateY: isWide ? 0 : PHONE_ENTER_OFFSET });
   const edges = { borderColor: theme.colors.border };
 
-  useFocusTrap(sheetRef, visible, initialFocusTestID);
+  useFocusTrap(sheetRef, visible && panel.mounted, initialFocusTestID);
   useEscapeKey(visible, onClose);
   useScrollLock(visible);
 
@@ -83,6 +83,7 @@ export const SideSheet = ({
         <Animated.View
           ref={sheetRef}
           accessibilityViewIsModal
+          aria-modal
           aria-label={accessibilityLabel ?? title}
           role="dialog"
           style={[
