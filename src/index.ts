@@ -51,6 +51,9 @@ export type { ModalSize } from './Modal/ModalSize';
 export { SideSheet } from './SideSheet/SideSheet';
 export type { SideSheetProps } from './SideSheet/SideSheet';
 
+export { BottomSheet } from './BottomSheet/BottomSheet';
+export type { BottomSheetProps } from './BottomSheet/BottomSheet';
+
 export { ConfirmDialog } from './Modal/ConfirmDialog';
 export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
 
