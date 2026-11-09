@@ -1,8 +1,13 @@
+import React, { useState } from 'react';
+
+import { Platform } from 'react-native';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { SideSheet } from './SideSheet';
 
 const OPENER_TEST_ID = 'sheet-opener';
+const MENU_TRIGGER_TEST_ID = 'sheet-menu-trigger';
 
 const flushFocus = async (): Promise<void> => {
   await act(async () => Promise.resolve());
@@ -32,6 +37,7 @@ const sheet = (visible: boolean, onClose: () => void, initialFocusTestID?: strin
 afterEach(() => {
   screen.queryByTestId(OPENER_TEST_ID)?.remove();
   document.body.style.overflow = '';
+  jest.restoreAllMocks();
 });
 
 describe('SideSheet open state', () => {
@@ -94,6 +100,68 @@ describe('SideSheet dismissal', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
 
     expect(onClose).not.toHaveBeenCalled();
+  });
+});
+
+const SheetWithMenu = ({ onClose }: { onClose: () => void }): React.ReactElement => {
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  return (
+    <SideSheet footer={null} title="Details" visible onClose={() => onClose()}>
+      <button
+        aria-expanded={isMenuOpen}
+        aria-haspopup="listbox"
+        data-testid={MENU_TRIGGER_TEST_ID}
+        onKeyDown={() => setIsMenuOpen(false)}
+      />
+    </SideSheet>
+  );
+};
+
+const pressAndReleaseEscape = (target: Element): void => {
+  fireEvent.keyDown(target, { key: 'Escape' });
+  fireEvent.keyUp(target, { key: 'Escape' });
+};
+
+describe('SideSheet Escape with a menu inside', () => {
+  it('with a menu open, Escape closes the menu and leaves the sheet open', () => {
+    const onClose = jest.fn();
+    render(<SheetWithMenu onClose={onClose} />);
+
+    pressAndReleaseEscape(screen.getByTestId(MENU_TRIGGER_TEST_ID));
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(screen.getByTestId(MENU_TRIGGER_TEST_ID).getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('after the menu closed, a second Escape calls onClose once', () => {
+    const onClose = jest.fn();
+    render(<SheetWithMenu onClose={onClose} />);
+    pressAndReleaseEscape(screen.getByTestId(MENU_TRIGGER_TEST_ID));
+
+    pressAndReleaseEscape(screen.getByTestId(MENU_TRIGGER_TEST_ID));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('with no menu open, one Escape press and release calls onClose once', () => {
+    const onClose = jest.fn();
+    render(sheet(true, onClose));
+
+    pressAndReleaseEscape(screen.getByTestId('sheet-first'));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('SideSheet off web', () => {
+  it('with a close request from the modal, calls onClose once', () => {
+    jest.replaceProperty(Platform, 'OS', 'ios');
+    const onClose = jest.fn();
+    render(sheet(true, onClose));
+
+    fireEvent.keyUp(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
 

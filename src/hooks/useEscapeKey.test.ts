@@ -30,6 +30,19 @@ describe('useEscapeKey', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it('with an expanded control and no menu on screen, calls onClose', () => {
+    const onClose = jest.fn();
+    const disclosure = document.createElement('button');
+    disclosure.setAttribute('aria-expanded', 'true');
+    document.body.appendChild(disclosure);
+    renderHook(() => useEscapeKey(true, onClose));
+
+    fireEvent.keyDown(disclosure, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    disclosure.remove();
+  });
+
   it('removes the listener on unmount', () => {
     const onClose = jest.fn();
     const { unmount } = renderHook(() => useEscapeKey(true, onClose));

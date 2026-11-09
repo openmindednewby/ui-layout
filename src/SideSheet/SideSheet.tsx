@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { Animated, Modal as RNModal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Platform, Modal as RNModal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { MODAL_OVERLAY_COLOR, useUi } from '@dloizides/ui-feedback';
 import { useEnterExit } from '@dloizides/ui-motion';
@@ -68,8 +68,10 @@ export const SideSheet = ({
   useEscapeKey(visible, onClose);
   useScrollLock(visible);
 
+  const hardwareBackClose = Platform.OS === 'web' ? undefined : onClose;
+
   return (
-    <RNModal transparent visible={panel.mounted || backdrop.mounted} onRequestClose={onClose}>
+    <RNModal transparent visible={panel.mounted || backdrop.mounted} onRequestClose={hardwareBackClose}>
       <View style={styles.root}>
         <Animated.View style={[StyleSheet.absoluteFill, styles.scrim, { opacity: backdrop.style.opacity }]} />
         <Pressable
