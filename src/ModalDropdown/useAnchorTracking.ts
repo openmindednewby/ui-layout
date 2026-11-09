@@ -38,7 +38,7 @@ import { MIN_VISIBLE_PX, isAnchorHidden, type AnchorRect, type ClipBounds } from
 const IS_WEB = Platform.OS === 'web';
 
 /** The RN-web `View` ref is an `HTMLElement` at runtime; native refs are not. */
-function toDomNode(containerRef: RefObject<RNView | null>): HTMLElement | null {
+export function toDomNode(containerRef: RefObject<RNView | null>): HTMLElement | null {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- RN web ref is an HTMLElement at runtime
   const node = containerRef.current as unknown as HTMLElement | null;
   if (node === null || typeof node.getBoundingClientRect !== 'function') return null;

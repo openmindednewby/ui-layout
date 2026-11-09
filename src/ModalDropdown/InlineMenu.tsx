@@ -58,12 +58,14 @@ import {
   MENU_TOP_GAP,
   MENU_Z_INDEX,
   buildPortalPopoverStyle,
+  menuScrollMaxHeight,
 } from './menuStacking';
 import { MenuHeading } from './MenuHeading';
 import { OptionRow } from './OptionRow';
 import type { SelectedMarker } from './SelectedMarker';
 import { useAnchorTracking } from './useAnchorTracking';
 import { useMenuKeyboard } from './useMenuKeyboard';
+import { useMenuPlacement } from './useMenuPlacement';
 
 const IS_WEB = Platform.OS === 'web';
 
@@ -90,7 +92,8 @@ const styles = StyleSheet.create({
   // The enter/exit fade+scale lives on an INNER wrapper so the outer popover keeps its raw DOM
   // node (the `menuRef` outside-click / keyboard logic and the web portal target depend on it).
   // `transformOrigin: 'top'` makes the scale grow downward FROM the anchor rather than the centre.
-  animated: { transformOrigin: 'top' },
+  animated: { transformOrigin: 'top', flexShrink: 1 },
+  animatedAbove: { transformOrigin: 'bottom' },
   // Exit fade only: the dying popover must not receive the next click. See the file header.
   inert: { pointerEvents: 'none' },
   // Bound the scroll viewport so a list longer than the popover scrolls (with a scrollbar) instead of
@@ -145,6 +148,8 @@ export const InlineMenu = <T extends string | number>({
   // Tracks the trigger while open, and closes rather than orphaning the menu once the trigger
   // has scrolled out of the viewport entirely.
   const rect = useAnchorTracking(containerRef, onClose);
+  const placement = useMenuPlacement(rect, menuRef, options.length);
+  const opensAbove = placement.bottom !== undefined;
 
   const selectedIndex = useMemo(
     () => Math.max(0, options.findIndex((opt) => opt.value === value)),
@@ -191,13 +196,15 @@ export const InlineMenu = <T extends string | number>({
     if (IS_WEB) {
       const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
       return [
-        buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }, menuMinWidth, viewportWidth),
+        buildPortalPopoverStyle(rect ?? { top: 0, left: 0, width: 0, bottom: 0 }, menuMinWidth, viewportWidth, placement),
         themed,
       ];
     }
     // Native: in-tree absolute popover under the trigger (stretched to the anchor, floored the same).
     return [styles.popover, { minWidth: menuMinWidth }, themed];
-  }, [colors.border, colors.surface, menuMinWidth, rect]);
+  }, [colors.border, colors.surface, menuMinWidth, placement, rect]);
+
+  const scrollStyle = IS_WEB ? { maxHeight: menuScrollMaxHeight(placement.maxHeight) } : styles.scroll;
 
   const menu = (
     <View
@@ -210,10 +217,10 @@ export const InlineMenu = <T extends string | number>({
     >
       <Animated.View
         pointerEvents={isOpen ? 'auto' : 'none'}
-        style={[styles.animated, animatedStyle, isOpen ? null : styles.inert]}
+        style={[styles.animated, opensAbove ? styles.animatedAbove : null, animatedStyle, isOpen ? null : styles.inert]}
       >
         {menuHeading !== undefined ? <MenuHeading testID={testID} text={menuHeading} /> : null}
-        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
+        <ScrollView style={scrollStyle} keyboardShouldPersistTaps="handled">
           {options.map((option, index) => (
             <OptionRow
               key={String(option.value)}

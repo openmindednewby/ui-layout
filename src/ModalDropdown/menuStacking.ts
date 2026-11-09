@@ -48,6 +48,12 @@ const MENU_PADDING = 4;
  * on both edges, so it is strictly below {@link MENU_MAX_HEIGHT}.
  */
 export const MENU_SCROLL_MAX_HEIGHT = MENU_MAX_HEIGHT - (BORDER_WIDTH + MENU_PADDING) * 2;
+
+/** The option list's scroll cap for a popover capped at `popoverMaxHeight`, inside its border and padding. */
+export function menuScrollMaxHeight(popoverMaxHeight: number): number {
+  return Math.max(0, popoverMaxHeight - (BORDER_WIDTH + MENU_PADDING) * 2);
+}
+
 /** Soft drop shadow so the popover reads as floating above the page (web). */
 export const MENU_BOX_SHADOW = '0px 2px 8px rgba(0, 0, 0, 0.15)';
 /** Keep the popover at least this far from the viewport's left/right edge when it must be clamped. */
@@ -69,6 +75,26 @@ export interface AnchorRect {
   bottom: number;
 }
 
+/** Where the open menu sits vertically: `top` when below the trigger, `bottom` when above it. */
+export interface MenuPlacement {
+  top?: number;
+  bottom?: number;
+  maxHeight: number;
+}
+
+/** Opens below unless the menu does not fit there and more room exists above; capped to the room on its side. */
+export function resolveMenuPlacement(rect: AnchorRect, viewportHeight: number, menuHeight: number): MenuPlacement {
+  if (viewportHeight <= 0) return { top: rect.bottom + MENU_TOP_GAP, maxHeight: MENU_MAX_HEIGHT };
+  const top = Math.max(MENU_VIEWPORT_MARGIN, rect.bottom + MENU_TOP_GAP);
+  const bottom = Math.max(MENU_VIEWPORT_MARGIN, viewportHeight - rect.top + MENU_TOP_GAP);
+  const roomBelow = viewportHeight - top - MENU_VIEWPORT_MARGIN;
+  const roomAbove = viewportHeight - bottom - MENU_VIEWPORT_MARGIN;
+  const fitsBelow = roomBelow >= Math.min(menuHeight, MENU_MAX_HEIGHT);
+  const cap = (room: number): number => Math.max(0, Math.min(MENU_MAX_HEIGHT, room));
+  if (!fitsBelow && roomAbove > roomBelow) return { bottom, maxHeight: cap(roomAbove) };
+  return { top, maxHeight: cap(roomBelow) };
+}
+
 /**
  * Web portal popover style: `position: fixed` at the trigger rect with a high `zIndex`. Because
  * it is portalled to `document.body`, `fixed` positions it against the viewport, so it tracks the
@@ -85,7 +111,12 @@ export interface AnchorRect {
  * the trigger in the limit) without ever crossing the left margin. `viewportWidth = 0` (unknown, or
  * the pure/native path) keeps the original trigger-anchored behaviour untouched.
  */
-export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0, viewportWidth = 0): ViewStyle {
+export function buildPortalPopoverStyle(
+  rect: AnchorRect,
+  minWidth = 0,
+  viewportWidth = 0,
+  placement: MenuPlacement = resolveMenuPlacement(rect, 0, MENU_MAX_HEIGHT),
+): ViewStyle {
   const width = Math.max(rect.width, minWidth);
   let left = rect.left;
   if (viewportWidth > 0) {
@@ -96,14 +127,13 @@ export function buildPortalPopoverStyle(rect: AnchorRect, minWidth = 0, viewport
     // RN's ViewStyle union omits 'fixed', but react-native-web honours it at runtime.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- web-only position value
     position: 'fixed' as unknown as ViewStyle['position'],
-    top: rect.bottom + MENU_TOP_GAP,
+    ...placement,
     left,
     width,
     zIndex: MENU_Z_INDEX,
     borderWidth: BORDER_WIDTH,
     borderRadius: BORDER_RADIUS,
     padding: MENU_PADDING,
-    maxHeight: MENU_MAX_HEIGHT,
     boxShadow: MENU_BOX_SHADOW,
     elevation: MENU_ELEVATION,
   };
