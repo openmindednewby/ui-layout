@@ -6,6 +6,7 @@ import React from 'react';
 
 import { Animated, Modal, ScrollView, StyleSheet, TouchableOpacity, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { MIN_TOUCH_TARGET_PX } from '@dloizides/a11y';
 import { useUi } from '@dloizides/ui-feedback';
 import { SvgIcon } from '@dloizides/ui-icons';
 import { useEnterExit } from '@dloizides/ui-motion';
@@ -29,7 +30,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   closeButton: {
-    padding: 6,
+    minWidth: MIN_TOUCH_TARGET_PX,
+    minHeight: MIN_TOUCH_TARGET_PX,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 6,
   },
 });

@@ -15,6 +15,13 @@ describe('ModalShell', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
+  it('gives the close button a hit box of at least 44px', () => {
+    render(<ModalShell visible title="Edit item" onCancel={() => undefined} />);
+    const close = window.getComputedStyle(screen.getByTestId('cancel-button'));
+    expect(parseFloat(close.minWidth)).toBeGreaterThanOrEqual(44);
+    expect(parseFloat(close.minHeight)).toBeGreaterThanOrEqual(44);
+  });
+
   it('hides the close button when showClose is false', () => {
     render(<ModalShell visible showClose={false} title="No close" onCancel={() => undefined} />);
     expect(screen.queryByTestId('cancel-button')).toBeNull();
