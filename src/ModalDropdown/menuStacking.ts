@@ -52,6 +52,14 @@ export const MENU_SCROLL_MAX_HEIGHT = MENU_MAX_HEIGHT - (BORDER_WIDTH + MENU_PAD
 export const MENU_BOX_SHADOW = '0px 2px 8px rgba(0, 0, 0, 0.15)';
 /** Keep the popover at least this far from the viewport's left/right edge when it must be clamped. */
 export const MENU_VIEWPORT_MARGIN = 8;
+/** Menu width floor for a custom (compact) trigger whose caller set no `menuMinWidth`. */
+export const COMPACT_TRIGGER_MENU_MIN_WIDTH = 160;
+
+/** The caller's `menuMinWidth` when set; otherwise the compact floor for a custom trigger, else none. */
+export function resolveMenuMinWidth(menuMinWidth: number | undefined, hasCustomTrigger: boolean): number | undefined {
+  if (menuMinWidth !== undefined) return menuMinWidth;
+  return hasCustomTrigger ? COMPACT_TRIGGER_MENU_MIN_WIDTH : undefined;
+}
 
 /** The trigger's viewport-space rect (from `getBoundingClientRect`) needed to place a fixed menu. */
 export interface AnchorRect {

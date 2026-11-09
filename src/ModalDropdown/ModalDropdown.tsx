@@ -22,7 +22,7 @@ import { DropdownVariant } from './DropdownVariant';
 import type { DropdownOption } from './dropdownTypes';
 import { InlineMenu } from './InlineMenu';
 import { MenuHeading } from './MenuHeading';
-import { buildAnchorStackStyle } from './menuStacking';
+import { buildAnchorStackStyle, resolveMenuMinWidth } from './menuStacking';
 import { OptionRow } from './OptionRow';
 import type { SelectedMarker } from './SelectedMarker';
 import { useResolvedDropdownVariant } from './resolveDropdownVariant';
@@ -68,7 +68,7 @@ export interface ModalDropdownProps<T> {
    * Minimum width of the open inline menu. The menu otherwise matches the TRIGGER's width, which
    * is right for a full-width field but leaves a COMPACT anchor (a locale pill, an avatar chip, an
    * icon button — see `renderTrigger`) with a menu too narrow to read its own option labels. It is
-   * a floor only: a wider trigger still wins. Omit to keep the trigger-width behaviour.
+   * a floor only: a wider trigger still wins. Omit: a `renderTrigger` menu floors at 160, a field keeps its width.
    */
   menuMinWidth?: number;
   /**
@@ -336,7 +336,7 @@ export const ModalDropdown = <T extends string | number>({
           containerRef={anchorRef}
           isOpen={isOpen}
           menuHeading={menuHeading}
-          menuMinWidth={menuMinWidth}
+          menuMinWidth={resolveMenuMinWidth(menuMinWidth, renderTrigger !== undefined)}
           optionTestID={optionTestIDFor}
           options={options}
           selectedMarker={selectedMarker}

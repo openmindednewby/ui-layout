@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.38.2
+
+DROPDOWN-WIDTH-1 "A menu opened from a compact trigger is wide enough to read".
+
+- `ModalDropdown` with `renderTrigger` and no `menuMinWidth`: the inline menu is now at least 160px wide. An explicit `menuMinWidth` still wins; a default-trigger field keeps its trigger width.
+
 ## 1.37.0
 
 INVOICE-FU-9 "INVOICE-5 shared look leftovers", AC-PAGE-1.
