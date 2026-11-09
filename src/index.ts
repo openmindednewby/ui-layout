@@ -48,6 +48,9 @@ export { Modal } from './Modal/Modal';
 export type { ModalProps } from './Modal/Modal';
 export type { ModalSize } from './Modal/ModalSize';
 
+export { SideSheet } from './SideSheet/SideSheet';
+export type { SideSheetProps } from './SideSheet/SideSheet';
+
 export { ConfirmDialog } from './Modal/ConfirmDialog';
 export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
 

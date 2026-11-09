@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.39.0
+
+INVOICE-6 "Ready-to-send invoice emails with contacts and a sent log", UI-COMPOSE-1 "Extract shared UI from the start": extracted from invoice-web.
+
+- New `SideSheet`: a panel from the bottom on a phone and from the right at the wide breakpoint, with `title`, a scrollable body and a required `footer` slot. Closes on scrim, Escape and hardware back; traps focus, names the initial focus with `initialFocusTestID`, returns focus to the opener and locks page scroll.
+- New `LAYOUT_TEST_IDS.sideSheet`.
+
 ## 1.38.2
 
 DROPDOWN-WIDTH-1 "A menu opened from a compact trigger is wide enough to read".

@@ -11,6 +11,7 @@ export const LAYOUT_TEST_IDS = {
   modalShellClose: 'cancel-button',
   /** Default base testID for the centered `Modal`; ✕ is `modal-close`, backdrop `modal-backdrop`. */
   modal: 'modal',
+  sideSheet: 'side-sheet',
   /** Default base testID for `ConfirmDialog`; Confirm/Cancel are `confirm-dialog-{confirm,cancel}`. */
   confirmDialog: 'confirm-dialog',
   accordion: 'accordion',
