@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { Platform } from 'react-native';
 
 import { Modal } from './Modal';
 
@@ -90,6 +91,40 @@ describe('Modal', () => {
     expect(screen.getByTestId('edit-attendee')).toBeTruthy();
     expect(screen.getByTestId('edit-attendee-close')).toBeTruthy();
     expect(screen.getByTestId('edit-attendee-backdrop')).toBeTruthy();
+  });
+});
+
+describe('Modal Escape dismissal', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('with one Escape press and release on web, calls onClose once', () => {
+    const onClose = jest.fn();
+    render(
+      <Modal visible title="Edit" onClose={onClose}>
+        <span>Body</span>
+      </Modal>,
+    );
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyUp(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('with a close request off web, calls onClose once', () => {
+    jest.replaceProperty(Platform, 'OS', 'ios');
+    const onClose = jest.fn();
+    render(
+      <Modal visible title="Edit" onClose={onClose}>
+        <span>Body</span>
+      </Modal>,
+    );
+
+    fireEvent.keyUp(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
 

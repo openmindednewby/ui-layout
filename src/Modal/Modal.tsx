@@ -23,7 +23,7 @@
  */
 import React, { useMemo, useRef } from 'react';
 
-import { Animated, Modal as RNModal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, Modal as RNModal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { IconButton } from '@dloizides/ui-buttons';
 import { MODAL_OVERLAY_COLOR, useUi } from '@dloizides/ui-feedback';
@@ -144,8 +144,10 @@ export const Modal = ({
 
   const hasHeader = title !== undefined || showClose;
 
+  const hardwareBackClose = Platform.OS === 'web' ? undefined : onClose;
+
   return (
-    <RNModal transparent visible={mounted} onRequestClose={onClose}>
+    <RNModal transparent visible={mounted} onRequestClose={hardwareBackClose}>
       <View style={styles.overlay}>
         {/* Animated scrim layer — fades independently, behind the tap-catcher and the panel. */}
         <Animated.View
