@@ -135,6 +135,13 @@ export const TYPE_SCALE_BREAKPOINT = 600;
 export const LAYOUT_COLLAPSE_BREAKPOINT = 768;
 
 /**
+ * Viewport width (px) below which a header stacks its identity block (name,
+ * email, account) on its own full-width row under the bar, so long text wraps
+ * by word instead of in a narrow column (TEXT-FIT-1).
+ */
+export const HEADER_STACK_BREAKPOINT = 400;
+
+/**
  * Minimum interactive hit box, in CSS px, on BOTH axes — measured on the box,
  * never on the glyph inside it. WCAG 2.5.5 / mobile-first.md.
  */

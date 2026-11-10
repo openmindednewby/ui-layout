@@ -1,4 +1,4 @@
-import { LAYOUT_COLLAPSE_BREAKPOINT, MIN_TARGET_PX, TYPE_SCALE_BREAKPOINT } from './constants';
+import { HEADER_STACK_BREAKPOINT, LAYOUT_COLLAPSE_BREAKPOINT, MIN_TARGET_PX, TYPE_SCALE_BREAKPOINT } from './constants';
 import { isWideWebViewport } from './responsive';
 
 describe('shared breakpoints', () => {
@@ -6,6 +6,8 @@ describe('shared breakpoints', () => {
     expect(TYPE_SCALE_BREAKPOINT).toBe(600);
     expect(LAYOUT_COLLAPSE_BREAKPOINT).toBe(768);
     expect(TYPE_SCALE_BREAKPOINT).toBeLessThan(LAYOUT_COLLAPSE_BREAKPOINT);
+    expect(HEADER_STACK_BREAKPOINT).toBe(400);
+    expect(HEADER_STACK_BREAKPOINT).toBeLessThan(TYPE_SCALE_BREAKPOINT);
   });
 
   it('pins the minimum hit box at the WCAG 2.5.5 value', () => {
