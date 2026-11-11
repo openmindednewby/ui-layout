@@ -57,6 +57,9 @@ export type { BottomSheetProps } from './BottomSheet/BottomSheet';
 export { ConfirmDialog } from './Modal/ConfirmDialog';
 export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
 
+export { FormDialog } from './FormDialog/FormDialog';
+export type { FormDialogProps } from './FormDialog/FormDialog';
+
 export { Accordion } from './Accordion/Accordion';
 export type { AccordionProps } from './Accordion/Accordion';
 export { AccordionItem } from './Accordion/AccordionItem';
@@ -95,9 +98,10 @@ export {
   LAYOUT_COLLAPSE_BREAKPOINT,
   HEADER_STACK_BREAKPOINT,
   MIN_TARGET_PX,
+  MODAL_FOOTER_STACK_BELOW,
 } from './constants';
 
-export { isWideWebViewport } from './responsive';
+export { isWideWebViewport, isModalFooterStacked } from './responsive';
 
 export { ListRow } from './ListRow/ListRow';
 export type { ListRowProps } from './ListRow/ListRow';

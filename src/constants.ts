@@ -15,10 +15,15 @@ export const LAYOUT_TEST_IDS = {
   bottomSheet: 'bottom-sheet',
   /** Default base testID for `ConfirmDialog`; Confirm/Cancel are `confirm-dialog-{confirm,cancel}`. */
   confirmDialog: 'confirm-dialog',
+  /** Default base testID for `FormDialog`: `form-dialog`, `form-save`, `form-cancel`. */
+  formDialog: 'form',
   accordion: 'accordion',
   /** Default testID for the `BuildInfoFooter` caption (`v<version>`). */
   buildInfoFooter: 'build-info-footer',
 } as const;
+
+/** Window width (px) below which a dialog footer stacks its actions full width. */
+export const MODAL_FOOTER_STACK_BELOW = 400;
 
 /** Route the UpgradePrompt CTA navigates to by default (the apps' billing settings path). */
 export const DEFAULT_BILLING_ROUTE = '/settings/billing';

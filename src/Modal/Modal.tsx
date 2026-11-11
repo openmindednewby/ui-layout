@@ -23,7 +23,16 @@
  */
 import React, { useMemo, useRef } from 'react';
 
-import { Animated, Platform, Modal as RNModal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  Platform,
+  Modal as RNModal,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import { IconButton } from '@dloizides/ui-buttons';
 import { MODAL_OVERLAY_COLOR, useUi } from '@dloizides/ui-feedback';
@@ -35,6 +44,7 @@ import { useEscapeKey } from '../hooks/useEscapeKey';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useScrollLock } from '../hooks/useScrollLock';
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
+import { isModalFooterStacked } from '../responsive';
 import type { ModalSize } from './ModalSize';
 
 const OVERLAY_PADDING = 16;
@@ -42,6 +52,7 @@ const DIALOG_RADIUS = 12;
 const DIALOG_PADDING = 16;
 const HEADER_GAP = 12;
 const FOOTER_MARGIN = 16;
+const FOOTER_GAP = 12;
 const HEADER_MARGIN = 12;
 /** The dialog never grows past most of the viewport height; its body scrolls instead. */
 const DIALOG_MAX_HEIGHT = '90%';
@@ -78,8 +89,37 @@ const styles = StyleSheet.create({
   },
   // Occupies the header's leading space so the ✕ pins to the trailing edge even without a title.
   titleWrap: { flex: 1 },
-  footer: { marginTop: FOOTER_MARGIN },
+  footerRow: {
+    marginTop: FOOTER_MARGIN,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    columnGap: FOOTER_GAP,
+    rowGap: FOOTER_GAP,
+  },
+  footerStack: {
+    marginTop: FOOTER_MARGIN,
+    flexDirection: 'column-reverse',
+    alignItems: 'stretch',
+    rowGap: FOOTER_GAP,
+  },
 });
+
+interface ModalFooterProps {
+  children: React.ReactNode;
+  testID: string;
+}
+
+const ModalFooter = ({ children, testID }: ModalFooterProps): React.ReactElement => {
+  const { width } = useWindowDimensions();
+  const style = isModalFooterStacked(width) ? styles.footerStack : styles.footerRow;
+  return (
+    <View style={style} testID={testID}>
+      {children}
+    </View>
+  );
+};
 
 export interface ModalProps {
   /** Whether the dialog is mounted + shown. */
@@ -197,7 +237,7 @@ export const Modal = ({
 
           <ScrollView>{children}</ScrollView>
 
-          {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
+          {footer !== undefined ? <ModalFooter testID={`${testID}-footer`}>{footer}</ModalFooter> : null}
         </Animated.View>
       </View>
     </RNModal>

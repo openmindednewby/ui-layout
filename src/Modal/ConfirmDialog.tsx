@@ -13,7 +13,7 @@
  */
 import React from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { Button } from '@dloizides/ui-buttons';
 import { useUi } from '@dloizides/ui-feedback';
@@ -23,11 +23,9 @@ import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
 const MESSAGE_FONT_SIZE = 14;
 const MESSAGE_LINE_HEIGHT = 20;
-const BUTTON_GAP = 12;
 
 const styles = StyleSheet.create({
   message: { fontSize: MESSAGE_FONT_SIZE, lineHeight: MESSAGE_LINE_HEIGHT },
-  footer: { flexDirection: 'row', justifyContent: 'flex-end', columnGap: BUTTON_GAP },
 });
 
 export interface ConfirmDialogProps {
@@ -71,7 +69,7 @@ export const ConfirmDialog = ({
   const resolvedCancel = cancelLabel ?? t(LAYOUT_I18N.cancel);
 
   const footer = (
-    <View style={styles.footer}>
+    <>
       {/* Cancel FIRST — the web focus trap focuses the first focusable child, so the SAFE action is
           the default, never a destructive Confirm. It is also visually first (Confirm trails right). */}
       <Button
@@ -92,7 +90,7 @@ export const ConfirmDialog = ({
         variant={destructive ? 'danger' : 'primary'}
         onPress={onConfirm}
       />
-    </View>
+    </>
   );
 
   return (

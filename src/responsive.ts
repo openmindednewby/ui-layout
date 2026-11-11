@@ -6,7 +6,7 @@
  * surface is a phone or tablet, never a desktop, so the wide form is refused at
  * every width; on web it turns on at the breakpoint.
  */
-import { LAYOUT_COLLAPSE_BREAKPOINT } from './constants';
+import { LAYOUT_COLLAPSE_BREAKPOINT, MODAL_FOOTER_STACK_BELOW } from './constants';
 
 /** The web platform key that `Platform.OS` reports under react-native-web. */
 export const WEB_PLATFORM = 'web';
@@ -21,4 +21,9 @@ export function isWideWebViewport(
   breakpoint: number = LAYOUT_COLLAPSE_BREAKPOINT,
 ): boolean {
   return platformOS === WEB_PLATFORM && width >= breakpoint;
+}
+
+/** Whether a dialog footer stacks its actions full width at this window width. */
+export function isModalFooterStacked(width: number): boolean {
+  return width < MODAL_FOOTER_STACK_BELOW;
 }
