@@ -18,6 +18,7 @@ import { StyleSheet, Text } from 'react-native';
 import { Button } from '@dloizides/ui-buttons';
 import { useUi } from '@dloizides/ui-feedback';
 
+import { ConfirmDialogFocus } from './ConfirmDialogFocus';
 import { Modal } from './Modal';
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
@@ -47,6 +48,8 @@ export interface ConfirmDialogProps {
   onCancel: () => void;
   /** In-flight: Confirm shows a spinner and Cancel is disabled. Default `false`. */
   busy?: boolean;
+  /** Control focused on open (web). Default `Cancel`; never use `Confirm` for a destructive action. */
+  initialFocus?: ConfirmDialogFocus;
   /** Base testID. Default `confirm-dialog`. Confirm is `${testID}-confirm`, Cancel `${testID}-cancel`. */
   testID?: string;
 }
@@ -61,12 +64,18 @@ export const ConfirmDialog = ({
   onConfirm,
   onCancel,
   busy = false,
+  initialFocus = ConfirmDialogFocus.Cancel,
   testID = LAYOUT_TEST_IDS.confirmDialog,
 }: ConfirmDialogProps): React.ReactElement => {
   const { theme, t } = useUi();
 
   const resolvedConfirm = confirmLabel ?? t(LAYOUT_I18N.confirm);
   const resolvedCancel = cancelLabel ?? t(LAYOUT_I18N.cancel);
+  const focusTestID: Record<ConfirmDialogFocus, string> = {
+    [ConfirmDialogFocus.Cancel]: `${testID}-cancel`,
+    [ConfirmDialogFocus.Confirm]: `${testID}-confirm`,
+    [ConfirmDialogFocus.None]: testID,
+  };
 
   const footer = (
     <>
@@ -96,6 +105,7 @@ export const ConfirmDialog = ({
   return (
     <Modal
       footer={footer}
+      initialFocusTestID={focusTestID[initialFocus]}
       showClose={false}
       size="sm"
       testID={testID}

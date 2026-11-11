@@ -30,11 +30,16 @@ function savePreviousFocus(): HTMLElement | null {
   return document.activeElement instanceof HTMLElement ? document.activeElement : null;
 }
 
+const MAX_ATTACH_FRAMES = 10;
+
+function findNamed(domNode: HTMLElement, initialFocusTestID: string | undefined): HTMLElement | null {
+  if (initialFocusTestID === undefined) return null;
+  const selector = `[data-testid="${initialFocusTestID}"]`;
+  return domNode.matches(selector) ? domNode : domNode.querySelector<HTMLElement>(selector);
+}
+
 function focusInitial(domNode: HTMLElement, initialFocusTestID: string | undefined): void {
-  const named =
-    initialFocusTestID === undefined
-      ? null
-      : domNode.querySelector<HTMLElement>(`[data-testid="${initialFocusTestID}"]`);
+  const named = findNamed(domNode, initialFocusTestID);
   if (named) {
     named.focus();
     return;
@@ -79,19 +84,32 @@ export function useFocusTrap(
   useEffect(() => {
     if (Platform.OS !== 'web' || !enabled) return;
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- RN web ref is an HTMLElement at runtime
-    const domNode = containerRef.current as unknown as HTMLElement | null;
-    if (!domNode) return;
+    let domNode: HTMLElement | null = null;
+    let frame = 0;
+    let attempts = 0;
+    const listener = (e: KeyboardEvent): void => {
+      if (domNode) handleKeyDown(domNode, e);
+    };
 
-    const previous = savePreviousFocus();
-    previousFocusRef.current = previous !== null && domNode.contains(previous) ? null : previous;
-    queueMicrotask(() => focusInitial(domNode, initialFocusTestID));
-
-    const listener = (e: KeyboardEvent): void => handleKeyDown(domNode, e);
-    domNode.addEventListener('keydown', listener);
+    const attach = (): void => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- RN web ref is an HTMLElement at runtime
+      const node = containerRef.current as unknown as HTMLElement | null;
+      if (!node) {
+        attempts += 1;
+        if (attempts <= MAX_ATTACH_FRAMES) frame = requestAnimationFrame(attach);
+        return;
+      }
+      domNode = node;
+      const previous = savePreviousFocus();
+      previousFocusRef.current = previous !== null && node.contains(previous) ? null : previous;
+      queueMicrotask(() => focusInitial(node, initialFocusTestID));
+      node.addEventListener('keydown', listener);
+    };
+    attach();
 
     return () => {
-      domNode.removeEventListener('keydown', listener);
+      cancelAnimationFrame(frame);
+      domNode?.removeEventListener('keydown', listener);
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
     };

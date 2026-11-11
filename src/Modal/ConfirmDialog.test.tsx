@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { ConfirmDialog } from './ConfirmDialog';
+import { ConfirmDialogFocus } from './ConfirmDialogFocus';
 
 // Stub the icon so the (unused, showClose=false) close path never pulls react-native-svg into jsdom.
 jest.mock('@dloizides/ui-icons', () => ({ SvgIcon: () => null }));
@@ -112,5 +113,41 @@ describe('ConfirmDialog', () => {
 
     expect(screen.getByText('Delete')).toBeTruthy();
     expect(screen.getByText('Keep')).toBeTruthy();
+  });
+});
+
+describe('ConfirmDialog initial focus', () => {
+  it('with no initialFocus, focuses Cancel', async () => {
+    render(<ConfirmDialog {...baseProps} />);
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('confirm-dialog-cancel'));
+  });
+
+  it('with initialFocus Confirm, focuses Confirm', async () => {
+    render(<ConfirmDialog {...baseProps} initialFocus={ConfirmDialogFocus.Confirm} />);
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('confirm-dialog-confirm'));
+  });
+
+  it('with initialFocus None, focuses the dialog itself rather than a control', async () => {
+    render(<ConfirmDialog {...baseProps} initialFocus={ConfirmDialogFocus.None} />);
+
+    await act(async () => Promise.resolve());
+
+    expect(document.activeElement).toBe(screen.getByTestId('confirm-dialog'));
+  });
+
+  it('with the backdrop, keeps it out of the tab order and after the dialog in the DOM', () => {
+    render(<ConfirmDialog {...baseProps} />);
+
+    const backdrop = screen.getByTestId('confirm-dialog-backdrop');
+    const position = screen.getByTestId('confirm-dialog').compareDocumentPosition(backdrop);
+
+    expect(backdrop.getAttribute('tabindex')).toBe('-1');
+    expect(position & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

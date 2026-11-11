@@ -56,6 +56,7 @@ export type { BottomSheetProps } from './BottomSheet/BottomSheet';
 
 export { ConfirmDialog } from './Modal/ConfirmDialog';
 export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
+export { ConfirmDialogFocus } from './Modal/ConfirmDialogFocus';
 
 export { FormDialog } from './FormDialog/FormDialog';
 export type { FormDialogProps } from './FormDialog/FormDialog';

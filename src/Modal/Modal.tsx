@@ -74,7 +74,9 @@ const styles = StyleSheet.create({
   // react-native-web, which is why the fade is driven by `Animated` instead. `pointerEvents` lives
   // in style (not the deprecated prop) so taps fall through to the sibling tap-catcher below.
   scrim: { backgroundColor: MODAL_OVERLAY_COLOR, pointerEvents: 'none' },
+  backdrop: { zIndex: 0 },
   dialog: {
+    zIndex: 1,
     width: '100%',
     borderRadius: DIALOG_RADIUS,
     padding: DIALOG_PADDING,
@@ -143,7 +145,7 @@ export interface ModalProps {
   testID?: string;
   /** Accessible name of the dialog. Falls back to `title`, then the neutral "dialog" key. */
   accessibilityLabel?: string;
-  /** testID of the control focused on open (web). Default: an autoFocus child, else the first focusable. */
+  /** testID focused on open (web); the dialog's own testID focuses the dialog. Default: autoFocus child, else first focusable. */
   initialFocusTestID?: string;
 }
 
@@ -183,6 +185,7 @@ export const Modal = ({
   );
 
   const hasHeader = title !== undefined || showClose;
+  const focusesDialog = initialFocusTestID === testID;
 
   const hardwareBackClose = Platform.OS === 'web' ? undefined : onClose;
 
@@ -193,25 +196,13 @@ export const Modal = ({
         <Animated.View
           style={[StyleSheet.absoluteFill, styles.scrim, { opacity: backdrop.style.opacity }]}
         />
-        {/* Backdrop is a SIBLING behind the dialog, not its parent: a wrapping pressable would nest
-            the footer's action buttons inside a button (invalid DOM). Absolute-fill catches taps
-            outside the dialog surface. */}
-        <TouchableOpacity
-          accessible
-          accessibilityHint={t(LAYOUT_I18N.dismissDropdownHint)}
-          accessibilityLabel={t(LAYOUT_I18N.dismissDropdown)}
-          accessibilityRole="button"
-          activeOpacity={1}
-          style={StyleSheet.absoluteFill}
-          testID={`${testID}-backdrop`}
-          onPress={onClose}
-        />
         <Animated.View
           ref={dialogRef}
           accessibilityViewIsModal
           aria-label={accessibleName}
           role="dialog"
           style={[dialogStyle, panel.style]}
+          tabIndex={focusesDialog ? -1 : undefined}
           testID={testID}
         >
           {hasHeader ? (
@@ -239,6 +230,17 @@ export const Modal = ({
 
           {footer !== undefined ? <ModalFooter testID={`${testID}-footer`}>{footer}</ModalFooter> : null}
         </Animated.View>
+        <TouchableOpacity
+          accessible
+          accessibilityHint={t(LAYOUT_I18N.dismissDropdownHint)}
+          accessibilityLabel={t(LAYOUT_I18N.dismissDropdown)}
+          accessibilityRole="button"
+          activeOpacity={1}
+          style={[StyleSheet.absoluteFill, styles.backdrop]}
+          focusable={false}
+          testID={`${testID}-backdrop`}
+          onPress={onClose}
+        />
       </View>
     </RNModal>
   );
