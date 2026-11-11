@@ -37,6 +37,7 @@ jest.mock('@dloizides/ui-buttons', () => {
 });
 
 const baseProps = {
+  testID: 'confirm-dialog',
   visible: true,
   title: 'Remove attendee?',
   message: "This can't be undone.",
