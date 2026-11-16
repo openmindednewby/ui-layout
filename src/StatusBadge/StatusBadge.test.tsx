@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
+import { BadgeTone } from './BadgeTone';
 import { StatusBadge } from './StatusBadge';
 
 const TEST_ID = 'badge';
@@ -43,5 +44,23 @@ describe('StatusBadge', () => {
     const style = getComputedStyle(screen.getByTestId(TEST_ID));
 
     expect(style.borderTopStyle).not.toBe('dashed');
+  });
+});
+
+describe('StatusBadge tone', () => {
+  it('with raw colours and a tone, keeps the raw colours', () => {
+    render(<StatusBadge backgroundColor="rgb(1, 2, 3)" color="rgb(4, 5, 6)" label="Active" testID={TEST_ID} tone={BadgeTone.Danger} />);
+
+    const style = getComputedStyle(screen.getByTestId(TEST_ID));
+
+    expect(style.backgroundColor).toBe('rgb(1, 2, 3)');
+  });
+
+  it('with only a tone, paints a theme colour', () => {
+    render(<StatusBadge label="Active" testID={TEST_ID} tone={BadgeTone.Danger} />);
+
+    const style = getComputedStyle(screen.getByTestId(TEST_ID));
+
+    expect(style.backgroundColor).not.toBe('');
   });
 });

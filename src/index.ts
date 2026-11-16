@@ -14,6 +14,16 @@ export type { HeadingProps, HeadingLevel } from './Heading/Heading';
 
 export { StatusBadge } from './StatusBadge/StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
+export { BadgeTone } from './StatusBadge/BadgeTone';
+export { resolveToneColors } from './StatusBadge/toneColors';
+export type { ToneColors } from './StatusBadge/toneColors';
+export { CountBadge } from './CountBadge/CountBadge';
+export type { CountBadgeProps } from './CountBadge/CountBadge';
+export { formatCount } from './CountBadge/formatCount';
+export { SplitPanes } from './SplitPanes/SplitPanes';
+export type { SplitPanesProps } from './SplitPanes/SplitPanes';
+export { SplitLayout } from './SplitPanes/SplitLayout';
+export { isSplitSideBySide } from './SplitPanes/isSplitSideBySide';
 
 export { StickyPreview } from './StickyPreview/StickyPreview';
 export type { StickyPreviewProps } from './StickyPreview/StickyPreview';

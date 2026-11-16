@@ -1,6 +1,6 @@
 /**
- * StatusBadge — unified status pill. Colours are passed in; domain adapters map their
- * enums to label/color/backgroundColor.
+ * StatusBadge — unified status pill. Colour comes from `tone` (theme scales); raw
+ * `color`/`backgroundColor` still win, for existing callers.
  */
 import React, { useMemo } from 'react';
 
@@ -9,6 +9,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
+
+import { BadgeTone } from './BadgeTone';
+import { resolveToneColors } from './toneColors';
 
 const DEFAULT_PADDING_H = 10;
 const DEFAULT_PADDING_V = 4;
@@ -43,8 +46,9 @@ const styles = StyleSheet.create({
 
 export interface StatusBadgeProps {
   label: string;
-  color: string;
-  backgroundColor: string;
+  tone?: BadgeTone;
+  color?: string;
+  backgroundColor?: string;
   icon?: React.ReactNode;
   dashed?: boolean;
   testID?: string;
@@ -54,15 +58,19 @@ export interface StatusBadgeProps {
 
 export const StatusBadge = ({
   label,
-  color,
-  backgroundColor,
+  tone = BadgeTone.Neutral,
+  color: rawColor,
+  backgroundColor: rawBackground,
   icon,
   dashed = false,
   testID = LAYOUT_TEST_IDS.statusLabel,
   accessibilityLabel,
   accessibilityHint,
 }: StatusBadgeProps): React.ReactElement => {
-  const { t } = useUi();
+  const { t, theme } = useUi();
+  const toned = useMemo(() => resolveToneColors(theme, tone), [theme, tone]);
+  const color = rawColor ?? toned.color;
+  const backgroundColor = rawBackground ?? toned.backgroundColor;
 
   const dynamicBadge = useMemo(() => ({ backgroundColor }), [backgroundColor]);
   const dashedColor = useMemo(() => ({ borderColor: color }), [color]);

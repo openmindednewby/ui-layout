@@ -2,6 +2,8 @@
 export const LAYOUT_TEST_IDS = {
   headingText: 'heading-text',
   statusLabel: 'status-label',
+  countBadge: 'count-badge',
+  splitPanes: 'split-panes',
   stickyPreview: 'sticky-preview',
   pageFrame: 'page-frame',
   upgradePrompt: 'upgrade-prompt',
@@ -59,6 +61,8 @@ export const LAYOUT_I18N = {
   accordionToggleHint: 'common.accordionToggleHint',
   /** Default accessible hint on a `StatusBadge` when the caller supplies none. */
   statusBadgeHint: 'common.statusBadgeHint',
+  countBadgeLabel: 'common.countBadgeLabel',
+  countBadgeHint: 'common.countBadgeHint',
   /** `ModalShell`: accessible name of the dialog when its title is not a plain string. */
   dialog: 'common.dialog',
   /** `ModalShell`: accessible hint on the close button. */
