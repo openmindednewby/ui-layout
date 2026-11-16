@@ -37,11 +37,11 @@ describe('CountBadge', () => {
     expect(badge.getAttribute('aria-label')).toBe('3 open');
   });
 
-  it('exposes the status role', () => {
+  it('is plain text, not a live region', () => {
     render(<CountBadge count={3} testID={TEST_ID} />);
 
     const role = screen.getByTestId(TEST_ID).getAttribute('role');
 
-    expect(role).toBe('status');
+    expect(role).toBeNull();
   });
 });

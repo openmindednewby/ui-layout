@@ -10,7 +10,7 @@ import { useUi } from '@dloizides/ui-feedback';
 
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
-import { StatusTone } from './StatusTone';
+import { BadgeTone } from './BadgeTone';
 import { resolveToneColors } from './toneColors';
 
 const DEFAULT_PADDING_H = 10;
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 
 export interface StatusBadgeProps {
   label: string;
-  tone?: StatusTone;
+  tone?: BadgeTone;
   color?: string;
   backgroundColor?: string;
   icon?: React.ReactNode;
@@ -58,7 +58,7 @@ export interface StatusBadgeProps {
 
 export const StatusBadge = ({
   label,
-  tone = StatusTone.Neutral,
+  tone = BadgeTone.Neutral,
   color: rawColor,
   backgroundColor: rawBackground,
   icon,

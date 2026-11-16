@@ -1,11 +1,11 @@
 # Changelog
 
-## Unreleased
+## 1.44.0
 
 MODC-1 "Module C unified console" (AC-UI-1, AC-UI-7), UI-ATOMIC-1 "Reuse first, extract what is new, layer atom / molecule / organism".
 
-- `StatusBadge` takes `tone` (`StatusTone`: neutral, info, success, warning, danger) with the fill from the theme scale main (or deep) step and the ink from `resolveOnBrand`, so text is >= 4.5:1; `color` / `backgroundColor` are now optional and still win when passed. A tone no theme fill can carry falls back to theme text on the elevated surface. `StatusTone` is the one shared tone type.
-- New atom `CountBadge`: a count pill capped as `max+` (default 99), hidden at zero unless `showZero`, tone from `StatusTone`. New i18n keys `common.countBadgeLabel` (`{{p1}}` = count), `common.countBadgeHint`.
+- `StatusBadge` takes `tone` (`BadgeTone`: neutral, info, success, warning, danger) with the fill from the theme scale main (or deep) step and the ink from `resolveOnBrand`, so text is >= 4.5:1; `color` / `backgroundColor` are now optional and still win when passed. A tone no theme fill can carry falls back to theme text on the elevated surface. ui-tables `StatusTone` is to map onto `BadgeTone`.
+- New atom `CountBadge`: a count pill capped as `max+` (default 99), hidden at zero unless `showZero`, tone from `BadgeTone`. Plain text, no live region; new i18n key `common.countBadgeLabel` (`{{p1}}` = count).
 - New organism `SplitPanes`: two panes side by side or stacked (`SplitLayout` auto / stack / side); side by side each pane has `minWidth: 0` so its text wraps at 360 (TEXT-FIT-1).
 
 ## 1.39.0

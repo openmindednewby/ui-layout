@@ -62,7 +62,6 @@ export const LAYOUT_I18N = {
   /** Default accessible hint on a `StatusBadge` when the caller supplies none. */
   statusBadgeHint: 'common.statusBadgeHint',
   countBadgeLabel: 'common.countBadgeLabel',
-  countBadgeHint: 'common.countBadgeHint',
   /** `ModalShell`: accessible name of the dialog when its title is not a plain string. */
   dialog: 'common.dialog',
   /** `ModalShell`: accessible hint on the close button. */

@@ -1,4 +1,4 @@
-export const enum StatusTone {
+export const enum BadgeTone {
   Neutral = 'neutral',
   Info = 'info',
   Success = 'success',

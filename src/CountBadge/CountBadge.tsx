@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
-import { StatusTone } from '../StatusBadge/StatusTone';
+import { BadgeTone } from '../StatusBadge/BadgeTone';
 import { resolveToneColors } from '../StatusBadge/toneColors';
 
 import { formatCount } from './formatCount';
@@ -31,22 +31,20 @@ const styles = StyleSheet.create({
 export interface CountBadgeProps {
   count: number;
   max?: number;
-  tone?: StatusTone;
+  tone?: BadgeTone;
   showZero?: boolean;
   testID?: string;
   accessibilityLabel?: string;
-  accessibilityHint?: string;
 }
 
 /** A small count pill (unread, open items); hidden at zero unless `showZero`. */
 export const CountBadge = ({
   count,
   max = DEFAULT_MAX,
-  tone = StatusTone.Neutral,
+  tone = BadgeTone.Neutral,
   showZero = false,
   testID = LAYOUT_TEST_IDS.countBadge,
   accessibilityLabel,
-  accessibilityHint,
 }: CountBadgeProps): React.ReactElement | null => {
   const { theme, t } = useUi();
   const toned = useMemo(() => resolveToneColors(theme, tone), [theme, tone]);
@@ -58,9 +56,7 @@ export const CountBadge = ({
 
   return (
     <View
-      accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.countBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? t(LAYOUT_I18N.countBadgeLabel, text)}
-      role="status"
       style={badgeStyle}
       testID={testID}
     >

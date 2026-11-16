@@ -1,7 +1,7 @@
 import { UI_DEEP_STEP, UI_MAIN_STEP, canCarryAccessibleInk, isHexColor, resolveOnBrand } from '@dloizides/design-tokens';
 import type { UiTheme, UiThemeColors } from '@dloizides/ui-feedback';
 
-import { StatusTone } from './StatusTone';
+import { BadgeTone } from './BadgeTone';
 
 export interface ToneColors {
   color: string;
@@ -10,12 +10,12 @@ export interface ToneColors {
 
 type Scale = Record<string, string | undefined>;
 
-function scaleFor(theme: UiTheme, tone: StatusTone): Scale | undefined {
+function scaleFor(theme: UiTheme, tone: BadgeTone): Scale | undefined {
   const semantic: Record<string, Scale | undefined> = theme.semantic;
-  if (tone === StatusTone.Danger) return theme.semantic.error;
-  if (tone === StatusTone.Success) return semantic.success;
-  if (tone === StatusTone.Warning) return semantic.warning;
-  if (tone === StatusTone.Info) return semantic.info ?? theme.palette.primary;
+  if (tone === BadgeTone.Danger) return theme.semantic.error;
+  if (tone === BadgeTone.Success) return semantic.success;
+  if (tone === BadgeTone.Warning) return semantic.warning;
+  if (tone === BadgeTone.Info) return semantic.info ?? theme.palette.primary;
   return undefined;
 }
 
@@ -29,7 +29,7 @@ function neutralColors(colors: UiThemeColors): ToneColors {
 }
 
 /** Fill and ink (>= 4.5:1 on the fill) for a tone; a tone no theme fill can carry falls back to neutral. */
-export function resolveToneColors(theme: UiTheme, tone: StatusTone): ToneColors {
+export function resolveToneColors(theme: UiTheme, tone: BadgeTone): ToneColors {
   const scale = scaleFor(theme, tone);
   if (scale === undefined) return neutralColors(theme.colors);
   for (const fill of [scale[UI_MAIN_STEP], scale[UI_DEEP_STEP]]) {
