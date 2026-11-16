@@ -14,7 +14,7 @@ export type { HeadingProps, HeadingLevel } from './Heading/Heading';
 
 export { StatusBadge } from './StatusBadge/StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge/StatusBadge';
-export { BadgeTone } from './StatusBadge/BadgeTone';
+export { StatusTone } from './StatusBadge/StatusTone';
 export { resolveToneColors } from './StatusBadge/toneColors';
 export type { ToneColors } from './StatusBadge/toneColors';
 export { CountBadge } from './CountBadge/CountBadge';

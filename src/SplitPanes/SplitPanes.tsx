@@ -28,7 +28,7 @@ export interface SplitPanesProps {
   testID?: string;
 }
 
-/** Two panes side by side or stacked; side by side, each pane shrinks so its text wraps instead of overflowing. */
+/** Two panes; the default Auto stacks below `breakpoint` (phones), pass Side to keep them side by side at 360. */
 export const SplitPanes = ({
   start,
   end,

@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
-import { BadgeTone } from '../StatusBadge/BadgeTone';
+import { StatusTone } from '../StatusBadge/StatusTone';
 import { resolveToneColors } from '../StatusBadge/toneColors';
 
 import { formatCount } from './formatCount';
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 export interface CountBadgeProps {
   count: number;
   max?: number;
-  tone?: BadgeTone;
+  tone?: StatusTone;
   showZero?: boolean;
   testID?: string;
   accessibilityLabel?: string;
@@ -42,7 +42,7 @@ export interface CountBadgeProps {
 export const CountBadge = ({
   count,
   max = DEFAULT_MAX,
-  tone = BadgeTone.Neutral,
+  tone = StatusTone.Neutral,
   showZero = false,
   testID = LAYOUT_TEST_IDS.countBadge,
   accessibilityLabel,
@@ -50,6 +50,8 @@ export const CountBadge = ({
 }: CountBadgeProps): React.ReactElement | null => {
   const { theme, t } = useUi();
   const toned = useMemo(() => resolveToneColors(theme, tone), [theme, tone]);
+  const badgeStyle = useMemo(() => [styles.badge, { backgroundColor: toned.backgroundColor }], [toned.backgroundColor]);
+  const textStyle = useMemo(() => [styles.text, { color: toned.color }], [toned.color]);
   const text = formatCount(count, max);
   const isHidden = text === '0' && !showZero;
   if (isHidden) return null;
@@ -58,10 +60,11 @@ export const CountBadge = ({
     <View
       accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.countBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? t(LAYOUT_I18N.countBadgeLabel, text)}
-      style={[styles.badge, { backgroundColor: toned.backgroundColor }]}
+      role="status"
+      style={badgeStyle}
       testID={testID}
     >
-      <Text style={[styles.text, { color: toned.color }]}>{text}</Text>
+      <Text style={textStyle}>{text}</Text>
     </View>
   );
 };

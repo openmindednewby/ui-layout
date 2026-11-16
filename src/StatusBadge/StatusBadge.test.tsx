@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
-import { BadgeTone } from './BadgeTone';
+import { UiProvider } from '@dloizides/ui-feedback';
+import type { UiTheme } from '@dloizides/ui-feedback';
+
+import { StatusTone } from './StatusTone';
 import { StatusBadge } from './StatusBadge';
 
 const TEST_ID = 'badge';
@@ -49,18 +52,29 @@ describe('StatusBadge', () => {
 
 describe('StatusBadge tone', () => {
   it('with raw colours and a tone, keeps the raw colours', () => {
-    render(<StatusBadge backgroundColor="rgb(1, 2, 3)" color="rgb(4, 5, 6)" label="Active" testID={TEST_ID} tone={BadgeTone.Danger} />);
+    render(<StatusBadge backgroundColor="rgb(1, 2, 3)" color="rgb(4, 5, 6)" label="Active" testID={TEST_ID} tone={StatusTone.Danger} />);
 
     const style = getComputedStyle(screen.getByTestId(TEST_ID));
 
     expect(style.backgroundColor).toBe('rgb(1, 2, 3)');
   });
 
-  it('with only a tone, paints a theme colour', () => {
-    render(<StatusBadge label="Active" testID={TEST_ID} tone={BadgeTone.Danger} />);
+  it('with only a tone, fills with that tone from the theme', () => {
+    const errorFill = '#dc2626';
+    const errorFillRgb = 'rgb(220, 38, 38)';
+    const theme: UiTheme = {
+      colors: { background: '#fff', surface: '#fff', surfaceElevated: '#f4f4f5', text: '#18181b', textSecondary: '#52525b', border: '#d4d4d8' },
+      palette: { primary: { '500': '#2563eb' } },
+      semantic: { error: { '500': errorFill } },
+    };
+    render(
+      <UiProvider t={(key) => key} theme={theme}>
+        <StatusBadge label="Active" testID={TEST_ID} tone={StatusTone.Danger} />
+      </UiProvider>,
+    );
 
     const style = getComputedStyle(screen.getByTestId(TEST_ID));
 
-    expect(style.backgroundColor).not.toBe('');
+    expect(style.backgroundColor).toBe(errorFillRgb);
   });
 });
