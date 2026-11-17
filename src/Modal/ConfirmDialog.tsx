@@ -52,6 +52,10 @@ export interface ConfirmDialogProps {
   initialFocus?: ConfirmDialogFocus;
   /** Base testID. Default `confirm-dialog`. Confirm is `${testID}-confirm`, Cancel `${testID}-cancel`. */
   testID?: string;
+  /** testID of the Confirm button. Default `${testID}-confirm`. */
+  confirmTestID?: string;
+  /** testID of the Cancel button. Default `${testID}-cancel`. */
+  cancelTestID?: string;
 }
 
 export const ConfirmDialog = ({
@@ -66,14 +70,16 @@ export const ConfirmDialog = ({
   busy = false,
   initialFocus = ConfirmDialogFocus.Cancel,
   testID = LAYOUT_TEST_IDS.confirmDialog,
+  confirmTestID = `${testID}-confirm`,
+  cancelTestID = `${testID}-cancel`,
 }: ConfirmDialogProps): React.ReactElement => {
   const { theme, t } = useUi();
 
   const resolvedConfirm = confirmLabel ?? t(LAYOUT_I18N.confirm);
   const resolvedCancel = cancelLabel ?? t(LAYOUT_I18N.cancel);
   const focusTestID: Record<ConfirmDialogFocus, string> = {
-    [ConfirmDialogFocus.Cancel]: `${testID}-cancel`,
-    [ConfirmDialogFocus.Confirm]: `${testID}-confirm`,
+    [ConfirmDialogFocus.Cancel]: cancelTestID,
+    [ConfirmDialogFocus.Confirm]: confirmTestID,
     [ConfirmDialogFocus.None]: testID,
   };
 
@@ -86,7 +92,7 @@ export const ConfirmDialog = ({
         accessibilityLabel={resolvedCancel}
         disabled={busy}
         label={resolvedCancel}
-        testID={`${testID}-cancel`}
+        testID={cancelTestID}
         variant="secondary"
         onPress={onCancel}
       />
@@ -95,7 +101,7 @@ export const ConfirmDialog = ({
         accessibilityLabel={resolvedConfirm}
         label={resolvedConfirm}
         loading={busy}
-        testID={`${testID}-confirm`}
+        testID={confirmTestID}
         variant={destructive ? 'danger' : 'primary'}
         onPress={onConfirm}
       />
