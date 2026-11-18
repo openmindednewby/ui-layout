@@ -121,3 +121,14 @@ export { useListRowTone } from './ListRow/hooks/useListRowTone';
 export type { ListRowTone } from './ListRow/hooks/useListRowTone';
 export { resolveRowLook } from './ListRow/utils/rowLook';
 export type { RowLook, RowPalette, RowState } from './ListRow/utils/rowLook';
+
+export { FoldingGroups } from './FoldingGroups/FoldingGroups';
+export type { FoldingGroupsProps, FoldingGroupsLabels } from './FoldingGroups/FoldingGroups';
+export { groupItems } from './FoldingGroups/groupItems';
+export type { GroupKey, ItemGroup } from './FoldingGroups/groupItems';
+
+export { FactsStrip } from './FactsStack/FactsStrip';
+export type { Fact, FactsStripProps } from './FactsStack/FactsStrip';
+export { FactsStack } from './FactsStack/FactsStack';
+export type { FactsStackProps } from './FactsStack/FactsStack';
+export { FACTS_STACK_TWO_COLUMN_BREAKPOINT, isFactsStackTwoColumn } from './FactsStack/factsStackLayout';
