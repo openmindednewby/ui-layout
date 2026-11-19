@@ -41,6 +41,8 @@ export interface TabsMenuProps {
   onChange: (key: string) => void;
   /** Accessible name for the menu (the tablist's name in collapsed form). */
   accessibilityLabel: string;
+  /** Hint for the menu trigger; defaults to the kit's tabs-menu hint. */
+  accessibilityHint?: string;
   /** Prefix used to derive per-option testIDs when a descriptor supplies none. */
   idPrefix: string;
   /** testID for the menu trigger. */
@@ -59,6 +61,7 @@ export const TabsMenu = ({
   activeKey,
   onChange,
   accessibilityLabel,
+  accessibilityHint,
   idPrefix,
   testID,
   collapsedTrigger = TabsCollapsedTrigger.Caret,
@@ -82,7 +85,7 @@ export const TabsMenu = ({
 
   return (
     <ModalDropdown
-      accessibilityHint={t(LAYOUT_I18N.tabsMenuHint)}
+      accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.tabsMenuHint)}
       accessibilityLabel={accessibilityLabel}
       optionTestID={optionTestID}
       options={options}

@@ -141,6 +141,8 @@ export interface TabsProps {
   onChange: (key: string) => void;
   /** Accessible name for the whole tablist / collapsed menu. */
   accessibilityLabel: string;
+  /** Hint for the tablist / collapsed menu; the menu keeps the kit hint when omitted. */
+  accessibilityHint?: string;
   /** The panel content for the active tab. */
   children?: React.ReactNode;
   /** Prefix for the generated tab / panel element ids (must be unique per Tabs on a page). */
@@ -173,6 +175,7 @@ interface WideTabStripProps {
   activeKey: string;
   onChange: (key: string) => void;
   accessibilityLabel: string;
+  accessibilityHint?: string;
   idPrefix: string;
   borderColor: string;
   primaryColor: string;
@@ -187,6 +190,7 @@ const WideTabStrip = ({
   activeKey,
   onChange,
   accessibilityLabel,
+  accessibilityHint,
   idPrefix,
   borderColor,
   primaryColor,
@@ -196,7 +200,7 @@ const WideTabStrip = ({
 }: WideTabStripProps): React.ReactElement => (
   <View style={[styles.stripOuter, { borderBottomColor: borderColor }]}>
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View accessibilityRole="tablist" aria-label={accessibilityLabel} style={[styles.strip, stripStyle]}>
+      <View accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} style={[styles.strip, stripStyle]}>
         {tabs.map((tab) => {
           const selected = tab.key === activeKey;
           const textColor = selected ? TEXT_ON_PRIMARY : textSecondary;
@@ -234,6 +238,7 @@ export const Tabs = ({
   activeKey,
   onChange,
   accessibilityLabel,
+  accessibilityHint,
   children,
   idPrefix = 'tabs',
   collapseBelow = TABS_COLLAPSE_BREAKPOINT,
@@ -255,6 +260,7 @@ export const Tabs = ({
     <View style={[styles.root, style]} testID={testID}>
       {collapsed ? (
         <TabsMenu
+          accessibilityHint={accessibilityHint}
           accessibilityLabel={accessibilityLabel}
           activeKey={activeKey}
           collapsedTrigger={collapsedTrigger}
@@ -265,6 +271,7 @@ export const Tabs = ({
         />
       ) : (
         <WideTabStrip
+          accessibilityHint={accessibilityHint}
           accessibilityLabel={accessibilityLabel}
           activeKey={activeKey}
           borderColor={colors.border}
