@@ -121,3 +121,14 @@ export { useListRowTone } from './ListRow/hooks/useListRowTone';
 export type { ListRowTone } from './ListRow/hooks/useListRowTone';
 export { resolveRowLook } from './ListRow/utils/rowLook';
 export type { RowLook, RowPalette, RowState } from './ListRow/utils/rowLook';
+
+export { SectionIndexLayout } from './SectionIndexLayout/SectionIndexLayout';
+export type { SectionIndexLayoutProps } from './SectionIndexLayout/SectionIndexLayout';
+export { SectionIndex } from './SectionIndexLayout/SectionIndex';
+export type { SectionIndexProps } from './SectionIndexLayout/SectionIndex';
+export { SectionChips } from './SectionIndexLayout/SectionChips';
+export type { SectionChipsProps } from './SectionIndexLayout/SectionChips';
+export type { SectionIndexEntry } from './SectionIndexLayout/types';
+export { SECTION_INDEX_BREAKPOINT, resolveActiveKey } from './SectionIndexLayout/sectionKeys';
+export { SectionDensity } from './SectionIndexLayout/SectionDensity';
+export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';

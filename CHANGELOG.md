@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+MODC-1 D-MC-641 "One page layout for all pages", UI-ATOMIC-1.
+
+- New organism `SectionIndexLayout`: from `SECTION_INDEX_BREAKPOINT` (1024) an "On this page" index (molecule `SectionIndex`) beside every section stacked, a press scrolls to its section; below it a wrapping row of chips (molecule `SectionChips`) shows one section at a time, the first by default, so nothing is removed. Hit boxes >= 44 px; labels are pre-localized props. Options, defaults keep the plain behaviour: `density` (`SectionDensity` comfortable or dense gaps), `stickyIndex` (web, default false), `chipOverflow` (`ChipOverflow` wrap or scroll).
+
 ## 1.44.0
 
 MODC-1 "Module C unified console" (AC-UI-1, AC-UI-7), UI-ATOMIC-1 "Reuse first, extract what is new, layer atom / molecule / organism".
