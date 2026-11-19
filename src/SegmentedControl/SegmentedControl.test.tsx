@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
+import { describedByNode } from '../__testing__/a11yVisibility';
+
 import { SegmentedControl } from './SegmentedControl';
 
 // Reads theme/translate from @dloizides/ui-feedback's default context (no provider needed).
@@ -35,5 +37,13 @@ describe('SegmentedControl', () => {
   it('exposes the group as a tablist', () => {
     render(<SegmentedControl options={OPTIONS} value="peps" onChange={noop} accessibilityLabel="Catalog view" testID="seg" />);
     expect(screen.getByTestId('seg').getAttribute('role')).toBe('tablist');
+  });
+
+  it('with a group hint, describes the tablist with it', () => {
+    const hint = 'Filters the list by type';
+
+    render(<SegmentedControl options={OPTIONS} value="peps" onChange={noop} accessibilityLabel="Catalog view" accessibilityHint={hint} testID="seg" />);
+
+    expect(describedByNode(screen.getByTestId('seg'))?.textContent).toBe(hint);
   });
 });

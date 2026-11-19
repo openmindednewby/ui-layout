@@ -23,6 +23,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { useA11y } from '@dloizides/a11y';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { MIN_TARGET_PX } from '../constants';
@@ -45,6 +46,7 @@ const SEGMENT_BOX_SHADOW = '0px 1px 3px rgba(20, 30, 50, 0.1)';
 /** Android draws `elevation`, not `boxShadow`. */
 const SHADOW_ELEVATION = 2;
 const TRANSPARENT = 'transparent';
+const HINT_ID_FALLBACK = 'segmented-control';
 
 const styles = StyleSheet.create({
   track: {
@@ -101,6 +103,8 @@ export interface SegmentedControlProps<V extends string = string> {
   onChange: (value: V) => void;
   /** Accessible name for the whole group (the `tablist`). */
   accessibilityLabel: string;
+  /** Optional hint for the whole group. */
+  accessibilityHint?: string;
   /** Optional style override merged LAST onto the track. */
   style?: StyleProp<ViewStyle>;
   testID?: string;
@@ -115,16 +119,20 @@ export function SegmentedControl<V extends string = string>({
   value,
   onChange,
   accessibilityLabel,
+  accessibilityHint,
   style,
   testID,
 }: SegmentedControlProps<V>): React.ReactElement {
   const { theme } = useUi();
   const { colors } = theme;
+  const { a11yProps, hintNode } = useA11y({ label: accessibilityLabel, hint: accessibilityHint, testID: testID ?? HINT_ID_FALLBACK });
+  const describedBy = accessibilityHint === undefined ? {} : { 'aria-describedby': (a11yProps as unknown as Record<string, unknown>)['aria-describedby'] };
 
   return (
     <View
       accessibilityRole="tablist"
       aria-label={accessibilityLabel}
+      {...describedBy}
       style={[styles.track, { backgroundColor: colors.background, borderColor: colors.border }, style]}
       testID={testID}
     >
@@ -150,6 +158,7 @@ export function SegmentedControl<V extends string = string>({
           </Pressable>
         );
       })}
+      {accessibilityHint === undefined ? null : hintNode}
     </View>
   );
 }

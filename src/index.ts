@@ -132,3 +132,10 @@ export type { SectionIndexEntry } from './SectionIndexLayout/types';
 export { SECTION_INDEX_BREAKPOINT, resolveActiveKey } from './SectionIndexLayout/sectionKeys';
 export { SectionDensity } from './SectionIndexLayout/SectionDensity';
 export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';
+
+export { DayCard } from './DayCard/DayCard';
+export type { DayCardProps } from './DayCard/DayCard';
+export { FigureStrip, figureCell } from './FigureStrip/FigureStrip';
+export type { FigureStripProps } from './FigureStrip/FigureStrip';
+export { ToggleSection } from './ToggleSection/ToggleSection';
+export type { ToggleSectionProps } from './ToggleSection/ToggleSection';
