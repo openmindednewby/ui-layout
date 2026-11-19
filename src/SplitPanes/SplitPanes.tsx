@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   column: { flexDirection: 'column', width: '100%' },
   sidePane: { flexBasis: 0, flexShrink: 1, minWidth: 0 },
   stackPane: { width: '100%', minWidth: 0 },
+  fixedPane: { flexGrow: 0, flexShrink: 0, minWidth: 0 },
 });
 
 export interface SplitPanesProps {
@@ -23,18 +24,21 @@ export interface SplitPanesProps {
   layout?: SplitLayout;
   startWeight?: number;
   endWeight?: number;
+  endWidth?: number;
   gap?: number;
   breakpoint?: number;
   testID?: string;
 }
 
-/** Two panes; the default Auto stacks below `breakpoint` (phones), pass Side to keep them side by side at 360. */
+/** Two panes; the default Auto stacks below `breakpoint` (phones), pass Side to keep them side by side at 360.
+ * `endWidth` fixes the end pane (a rail) at that width while side by side; stacked it stays full width. */
 export const SplitPanes = ({
   start,
   end,
   layout = SplitLayout.Auto,
   startWeight = DEFAULT_WEIGHT,
   endWeight = DEFAULT_WEIGHT,
+  endWidth,
   gap = DEFAULT_GAP,
   breakpoint = LAYOUT_COLLAPSE_BREAKPOINT,
   testID = LAYOUT_TEST_IDS.splitPanes,
@@ -43,7 +47,8 @@ export const SplitPanes = ({
   const isSide = isSplitSideBySide(layout, width, breakpoint);
   const container = useMemo(() => [isSide ? styles.row : styles.column, { gap }], [isSide, gap]);
   const startStyle = isSide ? [styles.sidePane, { flexGrow: startWeight }] : styles.stackPane;
-  const endStyle = isSide ? [styles.sidePane, { flexGrow: endWeight }] : styles.stackPane;
+  const sideEnd = endWidth === undefined ? [styles.sidePane, { flexGrow: endWeight }] : [styles.fixedPane, { width: endWidth }];
+  const endStyle = isSide ? sideEnd : styles.stackPane;
 
   return (
     <View style={container} testID={testID}>

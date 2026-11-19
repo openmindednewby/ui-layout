@@ -30,4 +30,20 @@ describe('Section', () => {
     expect(actual.backgroundColor).toBe(styleOf('expected').backgroundColor);
     expect(actual.borderTopLeftRadius).toBe('12px');
   });
+
+  it('with a title, heads the card with a heading at the given level', () => {
+    render(<Section testID="actual" title="Requests" titleLevel={3} />);
+
+    const heading = screen.getByRole('heading', { level: 3 });
+
+    expect(heading.textContent).toBe('Requests');
+  });
+
+  it('with no title, renders no heading', () => {
+    render(<Section testID="actual" />);
+
+    const headings = screen.queryAllByRole('heading');
+
+    expect(headings).toHaveLength(0);
+  });
 });

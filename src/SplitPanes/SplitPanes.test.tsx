@@ -39,4 +39,20 @@ describe('SplitPanes', () => {
 
     expect(grow).toBe('2');
   });
+
+  it('with an end width side by side, fixes the end pane at that width and keeps the start pane growing', () => {
+    render(<SplitPanes end={<span />} endWidth={320} layout={SplitLayout.Side} start={<span />} testID={TEST_ID} />);
+
+    const end = getComputedStyle(screen.getByTestId(END_ID));
+
+    expect([end.width, end.flexGrow, end.flexShrink, getComputedStyle(screen.getByTestId(START_ID)).flexGrow]).toEqual(['320px', '0', '0', '1']);
+  });
+
+  it('with an end width stacked, keeps the end pane full width', () => {
+    render(<SplitPanes end={<span />} endWidth={320} layout={SplitLayout.Stack} start={<span />} testID={TEST_ID} />);
+
+    const width = getComputedStyle(screen.getByTestId(END_ID)).width;
+
+    expect(width).toBe('100%');
+  });
 });
