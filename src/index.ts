@@ -139,3 +139,6 @@ export { FigureStrip, figureCell } from './FigureStrip/FigureStrip';
 export type { FigureStripProps } from './FigureStrip/FigureStrip';
 export { ToggleSection } from './ToggleSection/ToggleSection';
 export type { ToggleSectionProps } from './ToggleSection/ToggleSection';
+
+export { Timeline } from './Timeline/Timeline';
+export type { TimelineProps, TimelineEntry } from './Timeline/Timeline';
