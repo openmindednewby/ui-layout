@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.50.0
+
+- `SplitPanes` takes `startWidth`: fixes the start pane (a list rail) at that width while side by side, like `endWidth`; stacked it stays full width.
+- `rowSelection(isDesktop, rowKey, { selectedKey, shownKey })`: desktop marks the shown row with `AccentBar`, a phone outlines only the tapped row (`Outline`). From invoice-web (INV-EXTRACT-1 W12).
+
 ## Unreleased
 
 ## 1.49.2

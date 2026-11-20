@@ -55,4 +55,20 @@ describe('SplitPanes', () => {
 
     expect(width).toBe('100%');
   });
+
+  it('with a start width side by side, fixes the start pane and lets the end pane grow', () => {
+    render(<SplitPanes end={<span />} layout={SplitLayout.Side} start={<span />} startWidth={320} testID={TEST_ID} />);
+
+    const start = getComputedStyle(screen.getByTestId(START_ID));
+
+    expect([start.width, start.flexGrow, start.flexShrink, getComputedStyle(screen.getByTestId(END_ID)).flexGrow]).toEqual(['320px', '0', '0', '1']);
+  });
+
+  it('with a start width stacked, keeps the start pane full width', () => {
+    render(<SplitPanes end={<span />} layout={SplitLayout.Stack} start={<span />} startWidth={320} testID={TEST_ID} />);
+
+    const width = getComputedStyle(screen.getByTestId(START_ID)).width;
+
+    expect(width).toBe('100%');
+  });
 });

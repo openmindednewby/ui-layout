@@ -121,6 +121,8 @@ export { useListRowTone } from './ListRow/hooks/useListRowTone';
 export type { ListRowTone } from './ListRow/hooks/useListRowTone';
 export { resolveRowLook } from './ListRow/utils/rowLook';
 export type { RowLook, RowPalette, RowState } from './ListRow/utils/rowLook';
+export { rowSelection } from './ListRow/utils/rowSelection';
+export type { RowSelection, RowSelectionKeys } from './ListRow/utils/rowSelection';
 
 export { SectionIndexLayout } from './SectionIndexLayout/SectionIndexLayout';
 export type { SectionIndexLayoutProps } from './SectionIndexLayout/SectionIndexLayout';
