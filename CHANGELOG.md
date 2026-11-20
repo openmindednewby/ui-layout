@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.49.1
+- IdChip: `value` may be null or empty; the chip then copies nothing, is disabled and hides the copy glyph (was: copied the placeholder).
+
 MODC-1 D-MC-641 "One page layout for all pages", UI-ATOMIC-1.
 
 - New organism `SectionIndexLayout`: from `SECTION_INDEX_BREAKPOINT` (1024) an "On this page" index (molecule `SectionIndex`) beside every section stacked, a press scrolls to its section; below it a wrapping row of chips (molecule `SectionChips`) shows one section at a time, the first by default, so nothing is removed. Hit boxes >= 44 px; labels are pre-localized props. Options, defaults keep the plain behaviour: `density` (`SectionDensity` comfortable or dense gaps), `stickyIndex` (web, default false), `chipOverflow` (`ChipOverflow` wrap or scroll).

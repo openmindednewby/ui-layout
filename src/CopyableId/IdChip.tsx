@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 
 export interface IdChipProps {
   label: string;
-  value: string;
+  value: string | null;
   testID: string;
   accessibilityLabel: string;
   accessibilityHint: string;
@@ -32,23 +32,26 @@ export interface IdChipProps {
   writer?: (text: string) => void | Promise<void>;
 }
 
-/** An id chip: label and monospace value inside one box with a copy glyph; pressing it copies the full value. */
+/** An id chip: label and monospace value inside one box with a copy glyph; pressing it copies the full value */
 export const IdChip = ({ label, value, testID, accessibilityLabel, accessibilityHint, display, valueTestID, writer }: IdChipProps): React.ReactElement => {
   const { theme } = useUi();
-  const { status, copy } = useCopyToClipboard(value, writer);
+  const copyable = value !== null && value !== '';
+  const { status, copy } = useCopyToClipboard(value ?? '', writer);
   const ink = { color: theme.colors.text };
   return (
     <Pressable
       accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
+      accessibilityState={{ disabled: !copyable }}
+      disabled={!copyable}
       style={[styles.chip, { backgroundColor: theme.colors.surfaceElevated, borderColor: theme.colors.border }]}
       testID={testID}
-      onPress={copy}
+      onPress={copyable ? copy : undefined}
     >
       <Text style={[styles.text, { color: theme.colors.textSecondary }]}>{label}</Text>
       <Text numberOfLines={1} style={[styles.text, ink]} testID={valueTestID}>{display ?? value}</Text>
-      <Text aria-hidden style={[styles.text, ink]} testID={`${testID}-glyph`}>{status === CopyStatus.Copied ? COPIED_GLYPH : COPY_GLYPH}</Text>
+      {copyable ? <Text aria-hidden style={[styles.text, ink]} testID={`${testID}-glyph`}>{status === CopyStatus.Copied ? COPIED_GLYPH : COPY_GLYPH}</Text> : null}
     </Pressable>
   );
 };

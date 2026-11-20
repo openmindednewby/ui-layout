@@ -30,4 +30,22 @@ describe('IdChip', () => {
 
     expect(screen.getByTestId('chip-glyph').textContent).toBe('✓');
   });
+
+  it('with no value, copies nothing and disables the chip', async () => {
+    const writer = jest.fn();
+    render(<IdChip accessibilityHint="hint" accessibilityLabel="copy" display="-" label="External ID" testID="chip" value={null} writer={writer} />);
+
+    await act(async () => { fireEvent.click(screen.getByTestId('chip')); });
+
+    expect({ copied: writer.mock.calls.length, disabled: screen.getByTestId('chip').getAttribute('aria-disabled') }).toEqual({ copied: 0, disabled: 'true' });
+  });
+
+  it('with an empty value, copies nothing', async () => {
+    const writer = jest.fn();
+    render(<IdChip accessibilityHint="hint" accessibilityLabel="copy" display="-" label="External ID" testID="chip" value="" writer={writer} />);
+
+    await act(async () => { fireEvent.click(screen.getByTestId('chip')); });
+
+    expect(writer).not.toHaveBeenCalled();
+  });
 });
