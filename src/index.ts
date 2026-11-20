@@ -142,3 +142,17 @@ export type { ToggleSectionProps } from './ToggleSection/ToggleSection';
 
 export { Timeline } from './Timeline/Timeline';
 export type { TimelineProps, TimelineEntry } from './Timeline/Timeline';
+
+export { RecordHeader } from './RecordHeader/RecordHeader';
+export type { RecordHeaderProps } from './RecordHeader/RecordHeader';
+export { Breadcrumb } from './RecordHeader/Breadcrumb';
+export type { BreadcrumbProps, BreadcrumbItem } from './RecordHeader/Breadcrumb';
+export { RecordActionButton } from './RecordHeader/RecordActionButton';
+export type { RecordActionButtonProps } from './RecordHeader/RecordActionButton';
+export { isRecordHeaderCompact } from './RecordHeader/recordHeaderLayout';
+export { IdChip } from './CopyableId/IdChip';
+export type { IdChipProps } from './CopyableId/IdChip';
+export { UnderlineTabs } from './Tabs/UnderlineTabs';
+export type { UnderlineTabsProps, UnderlineTab } from './Tabs/UnderlineTabs';
+export { WidgetCard } from './WidgetCard/WidgetCard';
+export type { WidgetCardProps } from './WidgetCard/WidgetCard';
