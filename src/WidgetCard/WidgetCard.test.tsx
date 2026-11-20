@@ -18,4 +18,12 @@ describe('WidgetCard', () => {
 
     expect(heading.textContent).toBe('Summary');
   });
+
+  it('with a footer action, sizes the action to its content without a nested border', () => {
+    render(<WidgetCard footer={<span data-testid="bar" />} testID="card" title="Verification"><span /></WidgetCard>);
+
+    const footer = getComputedStyle(screen.getByTestId('bar').parentElement as HTMLElement);
+
+    expect({ align: footer.alignItems, border: footer.borderTopWidth }).toEqual({ align: 'flex-start', border: '0px' });
+  });
 });

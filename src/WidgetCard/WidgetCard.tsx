@@ -11,7 +11,7 @@ const TITLE_FONT = 15;
 
 const styles = StyleSheet.create({
   card: { borderRadius: RADIUS, borderWidth: 1, gap: GAP, minWidth: 0, padding: PAD },
-  footer: { borderRadius: GAP, borderWidth: 1, gap: GAP, padding: PAD / 2 + GAP / 2 },
+  footer: { alignItems: 'flex-start', flexDirection: 'row', flexWrap: 'wrap', gap: GAP },
   head: { alignItems: 'center', flexDirection: 'row', gap: GAP },
   title: { flex: 1, fontSize: TITLE_FONT, fontWeight: '700' },
 });
@@ -36,7 +36,7 @@ export const WidgetCard = ({ title, children, icon, headerRight, footer, testID 
         {headerRight}
       </View>
       {children}
-      {footer === undefined ? null : <View style={[styles.footer, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>{footer}</View>}
+      {footer === undefined ? null : <View style={styles.footer}>{footer}</View>}
     </View>
   );
 };
