@@ -5,6 +5,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { MIN_TARGET_PX } from '../constants';
+import { EdgeFadeStrip } from './EdgeFadeStrip';
+import { useEdgeFade } from './edgeFade';
 
 const UNDERLINE = 3;
 const PAD_H = 12;
@@ -15,11 +17,12 @@ const COUNT_MIN = 22;
 const COUNT_PAD = 6;
 const PILL = 999;
 const DEFAULT_UNDERLINE_STEP = '700';
+const SCROLL_THROTTLE_MS = 16;
 
 const styles = StyleSheet.create({
   count: { borderRadius: PILL, fontSize: COUNT_FONT, fontWeight: '700', minWidth: COUNT_MIN, paddingHorizontal: COUNT_PAD, textAlign: 'center' },
   label: { fontSize: FONT_SIZE, fontWeight: '600' },
-  strip: { borderBottomWidth: 1, width: '100%' },
+  strip: { borderBottomWidth: 1, position: 'relative', width: '100%' },
   tab: { alignItems: 'center', borderBottomWidth: UNDERLINE, flexDirection: 'row', gap: GAP, justifyContent: 'center', minHeight: MIN_TARGET_PX, minWidth: MIN_TARGET_PX, paddingHorizontal: PAD_H },
 });
 
@@ -38,16 +41,18 @@ export interface UnderlineTabsProps {
   accessibilityLabel: string;
   accessibilityHint?: string;
   underlineColor?: string;
+  fadeColor?: string;
   testID?: string;
 }
 
 /** A full-width tab strip with an underline on the selected tab and an optional count per tab. */
-export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, testID }: UnderlineTabsProps): React.ReactElement => {
+export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, fadeColor, testID }: UnderlineTabsProps): React.ReactElement => {
   const { theme } = useUi();
   const underline = underlineColor ?? theme.palette.primary[DEFAULT_UNDERLINE_STEP];
+  const fade = useEdgeFade();
   return (
     <View style={[styles.strip, { borderBottomColor: theme.colors.border }]} testID={testID}>
-      <ScrollView horizontal accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} scrollEventThrottle={SCROLL_THROTTLE_MS} showsHorizontalScrollIndicator={false} onContentSizeChange={fade.onContentSizeChange} onLayout={fade.onLayout} onScroll={fade.onScroll}>
         {tabs.map((tab) => {
           const selected = tab.key === activeKey;
           return (
@@ -68,6 +73,7 @@ export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, a
           );
         })}
       </ScrollView>
+      {fade.visible ? <EdgeFadeStrip color={fadeColor ?? theme.colors.background} /> : null}
     </View>
   );
 };

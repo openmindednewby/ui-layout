@@ -26,6 +26,7 @@ import { useUi } from '@dloizides/ui-feedback';
 import { LAYOUT_I18N, MIN_TARGET_PX } from '../constants';
 import { TruncatedText } from '../TruncatedText/TruncatedText';
 import { CopyStatus } from './CopyStatus';
+import { readableTone } from './readableTone';
 import { useCopyToClipboard } from './useCopyToClipboard';
 
 const LABEL_FONT_SIZE = 11;
@@ -164,7 +165,7 @@ export const CopyableId = ({
           accessibilityLabel={t(action.key)}
           accessibilityHint={t(LAYOUT_I18N.copyHint)}
           testID={`${testID}-copy`}
-          style={[styles.action, { color: action.color }]}
+          style={[styles.action, { color: readableTone(action.color, [colors.background, colors.surfaceElevated], colors.text) }]}
         >
           {t(action.key)}
         </Text>
