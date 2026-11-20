@@ -11,6 +11,7 @@ import { useUi } from '@dloizides/ui-feedback';
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
 import { BadgeTone } from './BadgeTone';
+import { readableRawInk } from './rawInk';
 import { resolveToneColors } from './toneColors';
 
 const DEFAULT_PADDING_H = 10;
@@ -69,8 +70,11 @@ export const StatusBadge = ({
 }: StatusBadgeProps): React.ReactElement => {
   const { t, theme } = useUi();
   const toned = useMemo(() => resolveToneColors(theme, tone), [theme, tone]);
-  const color = rawColor ?? toned.color;
   const backgroundColor = rawBackground ?? toned.backgroundColor;
+  const color = useMemo(
+    () => (rawColor === undefined ? toned.color : readableRawInk(theme, rawColor, backgroundColor)),
+    [rawColor, toned.color, theme, backgroundColor],
+  );
 
   const dynamicBadge = useMemo(() => ({ backgroundColor }), [backgroundColor]);
   const dashedColor = useMemo(() => ({ borderColor: color }), [color]);

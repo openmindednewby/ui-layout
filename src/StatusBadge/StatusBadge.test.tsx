@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { UiProvider } from '@dloizides/ui-feedback';
 import type { UiTheme } from '@dloizides/ui-feedback';
 
+import { LIGHT_THEME } from '../__testing__/badgeThemes';
+
 import { BadgeTone } from './BadgeTone';
 import { StatusBadge } from './StatusBadge';
 
@@ -79,5 +81,18 @@ describe('StatusBadge tone', () => {
     const colors = [getComputedStyle(badge).backgroundColor, getComputedStyle(screen.getByText('Active')).color];
 
     expect(colors).toEqual([errorFillRgb, whiteInkRgb]);
+  });
+
+  it('with a raw ink too faint for its soft background, renders a darker ink', () => {
+    const rawInkRgb = 'rgb(217, 119, 6)';
+    render(
+      <UiProvider t={(key) => key} theme={LIGHT_THEME}>
+        <StatusBadge backgroundColor="#d9770622" color="#d97706" label="Review" testID={TEST_ID} />
+      </UiProvider>,
+    );
+
+    const ink = getComputedStyle(screen.getByText('Review')).color;
+
+    expect(ink).not.toBe(rawInkRgb);
   });
 });
