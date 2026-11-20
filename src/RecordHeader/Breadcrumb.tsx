@@ -28,15 +28,16 @@ export interface BreadcrumbItem {
 export interface BreadcrumbProps {
   items: ReadonlyArray<BreadcrumbItem>;
   accessibilityLabel: string;
+  accessibilityHint?: string;
   testID?: string;
 }
 
 /** A compact text trail back to the parent list; a step without onPress is the current place. */
-export const Breadcrumb = ({ items, accessibilityLabel, testID }: BreadcrumbProps): React.ReactElement => {
+export const Breadcrumb = ({ items, accessibilityLabel, accessibilityHint, testID }: BreadcrumbProps): React.ReactElement => {
   const { theme } = useUi();
   const muted = { color: theme.colors.textSecondary };
   return (
-    <View aria-label={accessibilityLabel} style={styles.row} testID={testID}>
+    <View accessibilityHint={accessibilityHint} aria-label={accessibilityLabel} style={styles.row} testID={testID}>
       <Text aria-hidden style={[styles.text, muted]}>{BACK}</Text>
       {items.map((item, index) => (
         <React.Fragment key={item.key}>

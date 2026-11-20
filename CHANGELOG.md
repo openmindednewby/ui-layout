@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.49.2
+- Breadcrumb and UnderlineTabs take an optional `accessibilityHint`, passed to the strip element.
+
 ## 1.49.1
 - IdChip: `value` may be null or empty; the chip then copies nothing, is disabled and hides the copy glyph (was: copied the placeholder).
 

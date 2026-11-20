@@ -36,17 +36,18 @@ export interface UnderlineTabsProps {
   activeKey: string;
   onChange: (key: string) => void;
   accessibilityLabel: string;
+  accessibilityHint?: string;
   underlineColor?: string;
   testID?: string;
 }
 
 /** A full-width tab strip with an underline on the selected tab and an optional count per tab. */
-export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, underlineColor, testID }: UnderlineTabsProps): React.ReactElement => {
+export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, testID }: UnderlineTabsProps): React.ReactElement => {
   const { theme } = useUi();
   const underline = underlineColor ?? theme.palette.primary[DEFAULT_UNDERLINE_STEP];
   return (
     <View style={[styles.strip, { borderBottomColor: theme.colors.border }]} testID={testID}>
-      <ScrollView horizontal accessibilityRole="tablist" aria-label={accessibilityLabel} showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} showsHorizontalScrollIndicator={false}>
         {tabs.map((tab) => {
           const selected = tab.key === activeKey;
           return (
