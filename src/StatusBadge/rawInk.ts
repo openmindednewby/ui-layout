@@ -38,15 +38,15 @@ export function compositeOver(background: string, surface: string): string | nul
   return mix(base.channels, top.channels, top.alpha);
 }
 
-/** A caller's raw ink, moved toward the theme text until it reaches 4.5:1 on the badge's visible background. */
-export function readableRawInk(theme: UiTheme, ink: string, background: string): string {
-  const ground = compositeOver(background, theme.colors.surface);
+/** A caller's raw ink, moved toward the theme text until it reaches 4.5:1 on the background shown over `ground` (default: theme surface). */
+export function readableRawInk(theme: UiTheme, ink: string, background: string, ground: string = theme.colors.surface): string {
+  const visible = compositeOver(background, ground);
   const source = isHexColor(ink) ? parseHex(ink) : null;
   const target = isHexColor(theme.colors.text) ? parseHex(theme.colors.text) : null;
-  if (ground === null || source === null || target === null) return ink;
+  if (visible === null || source === null || target === null) return ink;
   for (let step = 0; step <= MIX_STEPS; step += 1) {
     const candidate = step === 0 ? ink : mix(source.channels, target.channels, step / MIX_STEPS);
-    if (contrastRatio(candidate, ground) >= AA_NORMAL_TEXT_RATIO) return candidate;
+    if (contrastRatio(candidate, visible) >= AA_NORMAL_TEXT_RATIO) return candidate;
   }
   return theme.colors.text;
 }

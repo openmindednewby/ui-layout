@@ -68,4 +68,20 @@ describe('readableRawInk', () => {
 
     expect(result).toBe('#00aa00');
   });
+
+  it('with a transparent tint over a dark ground, keeps the grey ink that passes there', () => {
+    const ink = '#888888';
+
+    const result = readableRawInk(LIGHT_THEME, ink, '#ffffff00', '#000000');
+
+    expect(result).toBe('#888888');
+  });
+
+  it('with the same tint and no ground, scores on the light surface and moves the grey ink', () => {
+    const ink = '#888888';
+
+    const result = readableRawInk(LIGHT_THEME, ink, '#ffffff00');
+
+    expect(result).not.toBe('#888888');
+  });
 });
