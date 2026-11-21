@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.51.0
+
+- INV-BILLS-1 D-BILLS-9 "Every Bills UI part is shared", UI-ATOMIC-1. New molecule `CopyValueRow` (label, value, copy button that shows copied / failed through `useCopyToClipboard`; `emphasis` `CopyRowEmphasis` inline or prominent with a wide button; `copyValue` copies a different string than shown, e.g. an IBAN without spaces; `monospace`). New organism `TransferSlip` (amount and recipient lead, copy rows as children, optional `footer`). New molecule `TotalsStrip` (`TotalsItem[]` over `FigureStrip`, `TotalsTone.Alert` colours the value). New organism `ListDetailLayout` (list beside the chosen record from the breakpoint, one pane below it chosen by `narrowPane` `ListDetailPane`; `resolveListDetailPanes`). All labels are pre-localized props.
+
 ## 1.50.0
 
 - `SplitPanes` takes `startWidth`: fixes the start pane (a list rail) at that width while side by side, like `endWidth`; stacked it stays full width.
