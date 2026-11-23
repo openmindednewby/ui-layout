@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.53.0
+
+- U6-F17 "Pay copy icon buttons", UI-PKG-FIRST-1. `CopyValueRow` takes `copyControl` (`CopyControl` Text, the default and unchanged, or Icon): Icon draws a 44 px outline `IconButton` with the copy glyph, named `<action>: <label>` with the copy hint; after a press the copied / failed word shows beside the glyph until the feedback time ends.
+
 ## 1.52.0
 
 - MODC-1 D-MC-705 "Chip jump row for the applicant page", UI-PKG-FIRST-1. `UnderlineTabs` takes `variant` (`TabsVariant` Underline, the default, or Chips): Chips draws each tab as a pill (selected = filled with the theme text colour and background ink, others = 1 px border outline, radius full, >= 44 px hit box) with the count after the label. `chipOverflow` (`ChipOverflow`, default Scroll) scrolls the row sideways at 360 with the end-edge fade, or Wrap wraps it. Every chip keeps role tab with the selected state as `accessibilityState` and `aria-selected`; the row is one labelled tablist.

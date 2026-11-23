@@ -165,6 +165,7 @@ export type { TransferSlipProps } from './TransferSlip/TransferSlip';
 export { CopyValueRow } from './TransferSlip/CopyValueRow';
 export type { CopyValueRowProps } from './TransferSlip/CopyValueRow';
 export { CopyRowEmphasis } from './TransferSlip/CopyRowEmphasis';
+export { CopyControl } from './TransferSlip/CopyControl';
 export { copyActionLabel } from './TransferSlip/copyActionLabel';
 export type { CopyValueLabels } from './TransferSlip/copyActionLabel';
 export { TotalsStrip } from './TotalsStrip/TotalsStrip';

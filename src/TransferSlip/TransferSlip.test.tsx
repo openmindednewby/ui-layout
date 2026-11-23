@@ -5,6 +5,8 @@ import { CopyValueRow } from './CopyValueRow';
 import { TransferSlip } from './TransferSlip';
 import { COPY_FEEDBACK_MS } from '../CopyableId/useCopyToClipboard';
 
+jest.mock('@dloizides/ui-icons', () => ({ SvgIcon: (): null => null }));
+
 const LABELS = { copy: 'Copy', copied: 'Copied', failed: 'Copy failed', hint: 'Copies the value' };
 
 describe('CopyValueRow', () => {
