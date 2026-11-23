@@ -14,6 +14,8 @@ export interface AppTextProps {
   children: React.ReactNode;
 }
 
+const TITLE_HEADING_LEVEL = 1;
+
 const SIZES: Record<TextKind, TextStyle> = {
   [TextKind.Title]: { fontSize: 24, fontWeight: '700', lineHeight: 30 },
   [TextKind.Heading]: { fontSize: 17, fontWeight: '700', lineHeight: 24 },
@@ -32,8 +34,11 @@ export const AppText = ({
 }: AppTextProps): React.ReactElement => {
   const { theme } = useUi();
   const quiet = kind === TextKind.Muted || kind === TextKind.Small;
+  const isTitle = kind === TextKind.Title;
   return (
     <Text
+      accessibilityRole={isTitle ? 'header' : undefined}
+      aria-level={isTitle ? TITLE_HEADING_LEVEL : undefined}
       style={[
         SIZES[kind],
         { color: color ?? (quiet ? theme.colors.textSecondary : theme.colors.text) },

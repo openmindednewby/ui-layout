@@ -36,4 +36,20 @@ describe('AppText', () => {
 
     expect(actual).toBe('rgb(1, 2, 3)');
   });
+
+  it('with the title kind, exposes a level 1 heading', () => {
+    render(<AppText kind={TextKind.Title}>Monthly plan</AppText>);
+
+    const heading = screen.queryByRole('heading', { level: 1 });
+
+    expect(heading?.textContent).toBe('Monthly plan');
+  });
+
+  it('with the body kind, exposes no heading', () => {
+    render(<AppText>Monthly plan</AppText>);
+
+    const heading = screen.queryByRole('heading');
+
+    expect(heading).toBeNull();
+  });
 });
