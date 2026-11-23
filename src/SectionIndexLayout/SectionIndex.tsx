@@ -8,12 +8,12 @@ import { MIN_TARGET_PX } from '../constants';
 
 import type { SectionIndexEntry } from './types';
 
-const INDEX_WIDTH = 200;
+export const SECTION_INDEX_WIDTH = 200;
 const ACTIVE_BAR = 3;
 const TRANSPARENT = 'transparent';
 
 const styles = StyleSheet.create({
-  root: { width: INDEX_WIDTH, flexShrink: 0, gap: 2, alignSelf: 'flex-start' },
+  root: { flexShrink: 0, gap: 2, alignSelf: 'flex-start' },
   heading: { fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', paddingHorizontal: 10, paddingBottom: 6 },
   item: { minHeight: MIN_TARGET_PX, justifyContent: 'center', paddingHorizontal: 10, borderLeftWidth: ACTIVE_BAR, borderRadius: 6 },
   label: { fontSize: 14 },
@@ -31,13 +31,14 @@ export interface SectionIndexProps {
   itemHint: string;
   onSelect: (key: string) => void;
   testID: string;
+  width?: number;
 }
 
-export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect, testID }: SectionIndexProps): React.ReactElement => {
+export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect, testID, width = SECTION_INDEX_WIDTH }: SectionIndexProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
   return (
-    <View role="navigation" accessibilityLabel={heading} style={styles.root} testID={`${testID}-index`}>
+    <View role="navigation" accessibilityLabel={heading} style={[styles.root, { width }]} testID={`${testID}-index`}>
       <Text style={[styles.heading, { color: colors.textSecondary }]}>{heading}</Text>
       {sections.map((entry) => {
         const active = entry.key === activeKey;

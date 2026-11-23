@@ -6,7 +6,7 @@ import { useIsWideViewport } from '../hooks/useIsWideViewport';
 import { ChipOverflow } from './ChipOverflow';
 import { SectionChips } from './SectionChips';
 import { SectionDensity } from './SectionDensity';
-import { SectionIndex } from './SectionIndex';
+import { SectionIndex, SECTION_INDEX_WIDTH } from './SectionIndex';
 import { resolveActiveKey, scrollToSection, sectionAnchorId, SECTION_INDEX_BREAKPOINT } from './sectionKeys';
 
 import type { SectionIndexEntry } from './types';
@@ -29,6 +29,7 @@ export interface SectionIndexLayoutProps {
   density?: SectionDensity;
   stickyIndex?: boolean;
   chipOverflow?: ChipOverflow;
+  indexWidth?: number;
   testID?: string;
 }
 
@@ -41,6 +42,7 @@ export const SectionIndexLayout = ({
   density = SectionDensity.Comfortable,
   stickyIndex = false,
   chipOverflow = ChipOverflow.Wrap,
+  indexWidth = SECTION_INDEX_WIDTH,
   testID = 'section-index',
 }: SectionIndexLayoutProps): React.ReactElement => {
   const wide = useIsWideViewport(breakpoint);
@@ -75,7 +77,7 @@ export const SectionIndexLayout = ({
   return (
     <View style={styles.wide} testID={testID}>
       <View style={sticky}>
-        <SectionIndex activeKey={activeKey} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} onSelect={select} />
+        <SectionIndex activeKey={activeKey} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
       </View>
       <View style={[styles.column, gap]}>
         {sections.map((entry) => (

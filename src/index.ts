@@ -1,5 +1,5 @@
 export { Section } from './Section/Section';
-export type { SectionProps } from './Section/Section';
+export type { SectionProps, SectionPadding } from './Section/Section';
 export { SectionVariant } from './Section/SectionVariant';
 
 export { AppText } from './AppText/AppText';
@@ -128,6 +128,7 @@ export { SectionIndexLayout } from './SectionIndexLayout/SectionIndexLayout';
 export type { SectionIndexLayoutProps } from './SectionIndexLayout/SectionIndexLayout';
 export { SectionIndex } from './SectionIndexLayout/SectionIndex';
 export type { SectionIndexProps } from './SectionIndexLayout/SectionIndex';
+export { SECTION_INDEX_WIDTH } from './SectionIndexLayout/SectionIndex';
 export { SectionChips } from './SectionIndexLayout/SectionChips';
 export type { SectionChipsProps } from './SectionIndexLayout/SectionChips';
 export type { SectionIndexEntry } from './SectionIndexLayout/types';
@@ -137,10 +138,16 @@ export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';
 
 export { DayCard } from './DayCard/DayCard';
 export type { DayCardProps } from './DayCard/DayCard';
+export { DayBadgeFill } from './DayCard/DayBadgeFill';
 export { FigureStrip, figureCell } from './FigureStrip/FigureStrip';
 export type { FigureStripProps } from './FigureStrip/FigureStrip';
 export { ToggleSection } from './ToggleSection/ToggleSection';
 export type { ToggleSectionProps } from './ToggleSection/ToggleSection';
+export { StickyActionBar } from './StickyActionBar/StickyActionBar';
+export type { StickyActionBarProps } from './StickyActionBar/StickyActionBar';
+export { PageHead } from './PageHead/PageHead';
+export type { PageHeadProps } from './PageHead/PageHead';
+export { resolveTintColors } from './StatusBadge/toneColors';
 
 export { Timeline } from './Timeline/Timeline';
 export type { TimelineProps, TimelineEntry } from './Timeline/Timeline';

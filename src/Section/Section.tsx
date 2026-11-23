@@ -32,7 +32,17 @@ export interface SectionProps {
   variant?: SectionVariant;
   title?: string;
   titleLevel?: HeadingLevel;
+  padding?: SectionPadding;
   testID?: string;
+}
+
+/** Inner padding: one value for every side, or a vertical and horizontal pair. */
+export type SectionPadding = number | { vertical: number; horizontal: number };
+
+function paddingStyle(padding: SectionPadding | undefined): ViewStyle | null {
+  if (padding === undefined) return null;
+  if (typeof padding === 'number') return { padding };
+  return { paddingVertical: padding.vertical, paddingHorizontal: padding.horizontal };
 }
 
 export const Section = ({
@@ -41,6 +51,7 @@ export const Section = ({
   variant = SectionVariant.Panel,
   title,
   titleLevel,
+  padding,
   testID,
 }: SectionProps): React.ReactElement => {
   const { theme } = useUi();
@@ -48,8 +59,8 @@ export const Section = ({
   const fill = isCard ? theme.colors.background : theme.colors.surface;
 
   const containerStyle = React.useMemo(
-    () => [styles.card, isCard ? styles.raised : null, title === undefined ? null : styles.titled, { borderColor: theme.colors.border, backgroundColor: fill }, style],
-    [theme.colors.border, fill, isCard, title, style],
+    () => [styles.card, isCard ? styles.raised : null, title === undefined ? null : styles.titled, { borderColor: theme.colors.border, backgroundColor: fill }, paddingStyle(padding), style],
+    [theme.colors.border, fill, isCard, title, padding, style],
   );
 
   return (

@@ -22,6 +22,8 @@ export const LAYOUT_TEST_IDS = {
   accordion: 'accordion',
   /** Default testID for the `BuildInfoFooter` caption (`v<version>`). */
   buildInfoFooter: 'build-info-footer',
+  stickyActionBar: 'sticky-action-bar',
+  pageHead: 'page-head',
 } as const;
 
 /** Window width (px) below which a dialog footer stacks its actions full width. */

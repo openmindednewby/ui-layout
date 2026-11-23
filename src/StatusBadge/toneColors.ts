@@ -38,3 +38,14 @@ export function resolveToneColors(theme: UiTheme, tone: BadgeTone): ToneColors {
   }
   return neutralColors(theme.colors);
 }
+
+const TINT_STEP = '100';
+
+/** Light tint fill with the tone's deep ink; a theme without a tint step falls back to the solid tone colours. */
+export function resolveTintColors(theme: UiTheme, tone: BadgeTone): ToneColors {
+  const scale = scaleFor(theme, tone);
+  const fill = scale?.[TINT_STEP];
+  const ink = scale?.[UI_DEEP_STEP];
+  if (fill === undefined || ink === undefined || !isHexColor(fill) || !isHexColor(ink)) return resolveToneColors(theme, tone);
+  return { color: ink, backgroundColor: fill };
+}

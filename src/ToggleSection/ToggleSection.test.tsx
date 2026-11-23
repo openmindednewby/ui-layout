@@ -51,3 +51,33 @@ describe('ToggleSection', () => {
     expect(screen.getByText(CONTENT)).toBeTruthy();
   });
 });
+
+describe('ToggleSection controlled', () => {
+  it('when open is passed true, shows the content without a press', () => {
+    const open = true;
+
+    render(<ToggleSection open={open} testID="filters" title="Filters" toggleHint="Shows the filters" toggleLabel="Filters" wide={false}><span>{CONTENT}</span></ToggleSection>);
+
+    expect(screen.getByText(CONTENT)).toBeTruthy();
+  });
+
+  it('when controlled closed and pressed, reports true and stays closed until the parent opens it', () => {
+    const onOpenChange = jest.fn();
+    render(<ToggleSection open={false} testID="filters" title="Filters" toggleHint="Shows the filters" toggleLabel="Filters" wide={false} onOpenChange={onOpenChange}><span>{CONTENT}</span></ToggleSection>);
+
+    fireEvent.click(screen.getByTestId('filters-toggle'));
+
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(screen.queryByText(CONTENT)).toBeNull();
+  });
+
+  it('when uncontrolled and pressed, opens and reports true', () => {
+    const onOpenChange = jest.fn();
+    render(<ToggleSection testID="filters" title="Filters" toggleHint="Shows the filters" toggleLabel="Filters" wide={false} onOpenChange={onOpenChange}><span>{CONTENT}</span></ToggleSection>);
+
+    fireEvent.click(screen.getByTestId('filters-toggle'));
+
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(screen.getByText(CONTENT)).toBeTruthy();
+  });
+});

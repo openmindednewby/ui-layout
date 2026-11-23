@@ -97,3 +97,21 @@ describe('resolveActiveKey', () => {
     expect(key).toBe('');
   });
 });
+
+describe('SectionIndexLayout indexWidth', () => {
+  it('on a wide viewport with indexWidth 168, sizes the index rail to 168 px', () => {
+    render(<SectionIndexLayout breakpoint={WIDE} indexHeading="On this page" indexWidth={168} itemHint="Shows the section" sections={SECTIONS} />);
+
+    const rail = window.getComputedStyle(screen.getByTestId('section-index-index'));
+
+    expect(rail.width).toBe('168px');
+  });
+
+  it('on a wide viewport without indexWidth, keeps the 200 px rail', () => {
+    render(<SectionIndexLayout breakpoint={WIDE} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const rail = window.getComputedStyle(screen.getByTestId('section-index-index'));
+
+    expect(rail.width).toBe('200px');
+  });
+});
