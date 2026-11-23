@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 
 export interface StickyActionBarProps {
   accessibilityLabel: string;
+  accessibilityHint?: string;
   children: React.ReactNode;
   breakpoint?: number;
   bottomInset?: number;
@@ -26,6 +27,7 @@ export interface StickyActionBarProps {
 /** Page actions: pinned to the bottom edge above the safe area when narrow, an inline end-aligned row when wide. */
 export const StickyActionBar = ({
   accessibilityLabel,
+  accessibilityHint,
   children,
   breakpoint = LAYOUT_COLLAPSE_BREAKPOINT,
   bottomInset = 0,
@@ -33,10 +35,10 @@ export const StickyActionBar = ({
 }: StickyActionBarProps): React.ReactElement => {
   const wide = useIsWideViewport(breakpoint);
   const { colors } = useUi().theme;
-  if (wide) return <View accessibilityLabel={accessibilityLabel} role="toolbar" style={styles.inline} testID={testID}>{children}</View>;
+  if (wide) return <View accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} role="toolbar" style={styles.inline} testID={testID}>{children}</View>;
   const surface = { backgroundColor: colors.surface, borderTopColor: colors.border };
   return (
-    <View accessibilityLabel={accessibilityLabel} role="toolbar" style={[styles.bar, surface, stickyEdgeStyle(Platform.OS, bottomInset)]} testID={testID}>
+    <View accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} role="toolbar" style={[styles.bar, surface, stickyEdgeStyle(Platform.OS, bottomInset)]} testID={testID}>
       {children}
     </View>
   );

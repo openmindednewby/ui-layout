@@ -19,4 +19,22 @@ describe('PageHead', () => {
 
     expect(screen.queryByTestId('head-actions')).toBeNull();
   });
+
+  it('with initialFocus, focuses the title and marks it as the menu default', () => {
+    render(<PageHead initialFocus testID="head" title="Policy" />);
+
+    const title = screen.getByTestId('head-title');
+
+    expect(document.activeElement).toBe(title);
+    expect(title.getAttribute('data-menu-default')).toBe('true');
+  });
+
+  it('without initialFocus, leaves focus where it was', () => {
+    render(<PageHead testID="head" title="Policy" />);
+
+    const title = screen.getByTestId('head-title');
+
+    expect(document.activeElement).not.toBe(title);
+    expect(title.getAttribute('data-menu-default')).toBeNull();
+  });
 });
