@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.55.2
+
+- INV-QA-LOW-1 D-INV-QA-2 "Title heading role in the package". `AppText` with `TextKind.Title` renders `accessibilityRole="header"` and `aria-level` 1 (an `<h1>` on web), so screen titles are announced as headings. Other kinds unchanged.
+
 ## 1.54.0
 
 - MODC-1 D-MC-710 "Shared parts in packages", UI-PKG-FIRST-1. New `StickyActionBar`: page actions pinned to the bottom edge when narrow (web `position: sticky`, bottom padding 12 px + `bottomInset` + `env(safe-area-inset-bottom)`; native pads by the inset), an inline end-aligned row when wide (`breakpoint`, default 768); role toolbar with the caller's label. New `PageHead` (title + subtitle left, actions right, actions wrap below on narrow screens; testIDs `<id>-title`, `<id>-actions`). `DayCard` takes `badgeFill` (`DayBadgeFill` Solid, the default, or Tint: tone tint step 100 with deep ink, solid fallback) and `badgeIcon` (ui-icons name, e.g. `clock`); badge testID `<id>-badge`. `SectionIndexLayout` takes `indexWidth` (default `SECTION_INDEX_WIDTH` 200); `SectionIndex` takes `width`. `ToggleSection` takes controlled `open` + `onOpenChange`. `Section` takes `padding` (number or `{ vertical, horizontal }`). New export `resolveTintColors`. All additive; defaults unchanged.
