@@ -30,6 +30,7 @@ export interface SectionIndexLayoutProps {
   stickyIndex?: boolean;
   chipOverflow?: ChipOverflow;
   indexWidth?: number;
+  activeColor?: string;
   testID?: string;
 }
 
@@ -43,6 +44,7 @@ export const SectionIndexLayout = ({
   stickyIndex = false,
   chipOverflow = ChipOverflow.Wrap,
   indexWidth = SECTION_INDEX_WIDTH,
+  activeColor,
   testID = 'section-index',
 }: SectionIndexLayoutProps): React.ReactElement => {
   const wide = useIsWideViewport(breakpoint);
@@ -55,6 +57,7 @@ export const SectionIndexLayout = ({
     return (
       <View style={gap} testID={testID}>
         <SectionChips
+          activeColor={activeColor}
           activeKey={activeKey}
           groupLabel={indexHeading}
           itemHint={itemHint}
@@ -77,7 +80,7 @@ export const SectionIndexLayout = ({
   return (
     <View style={styles.wide} testID={testID}>
       <View style={sticky}>
-        <SectionIndex activeKey={activeKey} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
+        <SectionIndex activeColor={activeColor} activeKey={activeKey} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
       </View>
       <View style={[styles.column, gap]}>
         {sections.map((entry) => (

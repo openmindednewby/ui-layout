@@ -27,13 +27,15 @@ export interface SectionChipsProps {
   groupLabel: string;
   itemHint: string;
   overflow?: ChipOverflow;
+  activeColor?: string;
   onSelect: (key: string) => void;
   testID: string;
 }
 
-export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overflow = ChipOverflow.Wrap, onSelect, testID }: SectionChipsProps): React.ReactElement => {
+export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overflow = ChipOverflow.Wrap, activeColor, onSelect, testID }: SectionChipsProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
+  const fill = activeColor ?? colors.text;
   const scroll = overflow === ChipOverflow.Scroll;
   const row = (
     <View accessibilityRole="tablist" accessibilityLabel={groupLabel} style={scroll ? styles.scrollRow : styles.root} testID={`${testID}-chips`}>
@@ -46,7 +48,7 @@ export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overfl
             accessibilityRole="tab"
             accessibilityLabel={entry.title}
             accessibilityHint={itemHint}
-            style={[styles.chip, { borderColor: colors.border, backgroundColor: active ? colors.text : colors.background }]}
+            style={[styles.chip, { borderColor: colors.border, backgroundColor: active ? fill : colors.background }]}
             testID={`${testID}-chip-${entry.key}`}
             onPress={() => onSelect(entry.key)}
           >

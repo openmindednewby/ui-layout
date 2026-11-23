@@ -115,3 +115,29 @@ describe('SectionIndexLayout indexWidth', () => {
     expect(rail.width).toBe('200px');
   });
 });
+
+describe('SectionIndexLayout activeColor', () => {
+  it('on a narrow viewport with activeColor, fills the active chip with it', () => {
+    render(<SectionIndexLayout activeColor="rgb(1, 2, 3)" breakpoint={NARROW} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const chip = window.getComputedStyle(screen.getByTestId('section-index-chip-health'));
+
+    expect(chip.backgroundColor).toBe('rgb(1, 2, 3)');
+  });
+
+  it('on a wide viewport with activeColor, draws the active bar with it', () => {
+    render(<SectionIndexLayout activeColor="rgb(1, 2, 3)" breakpoint={WIDE} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const item = window.getComputedStyle(screen.getByTestId('section-index-index-health'));
+
+    expect(item.borderLeftColor.replace(/\s/g, '')).toMatch(/^rgba?\(1,2,3[,)]/);
+  });
+
+  it('on a wide viewport without activeColor, keeps the active bar in another colour', () => {
+    render(<SectionIndexLayout breakpoint={WIDE} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const item = window.getComputedStyle(screen.getByTestId('section-index-index-health'));
+
+    expect(item.borderLeftColor.replace(/\s/g, '')).not.toMatch(/^rgba?\(1,2,3[,)]/);
+  });
+});

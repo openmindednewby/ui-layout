@@ -32,11 +32,13 @@ export interface SectionIndexProps {
   onSelect: (key: string) => void;
   testID: string;
   width?: number;
+  activeColor?: string;
 }
 
-export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect, testID, width = SECTION_INDEX_WIDTH }: SectionIndexProps): React.ReactElement => {
+export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect, testID, width = SECTION_INDEX_WIDTH, activeColor }: SectionIndexProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
+  const bar = activeColor ?? colors.text;
   return (
     <View role="navigation" accessibilityLabel={heading} style={[styles.root, { width }]} testID={`${testID}-index`}>
       <Text style={[styles.heading, { color: colors.textSecondary }]}>{heading}</Text>
@@ -49,7 +51,7 @@ export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect,
             accessibilityRole="link"
             accessibilityLabel={entry.title}
             accessibilityHint={itemHint}
-            style={[styles.item, { borderLeftColor: active ? colors.text : TRANSPARENT, backgroundColor: active ? colors.surface : TRANSPARENT }]}
+            style={[styles.item, { borderLeftColor: active ? bar : TRANSPARENT, backgroundColor: active ? colors.surface : TRANSPARENT }]}
             testID={`${testID}-index-${entry.key}`}
             onPress={() => onSelect(entry.key)}
           >

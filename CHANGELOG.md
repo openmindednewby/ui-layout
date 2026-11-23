@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.56.0
+
+- `SectionIndexLayout` takes `activeColor`: the fill of the active chip (narrow) and the bar of the active index item (wide). `SectionChips` and `SectionIndex` take it too. Default unchanged (theme `colors.text`).
+
 ## 1.55.2
 
 - INV-QA-LOW-1 D-INV-QA-2 "Title heading role in the package". `AppText` with `TextKind.Title` renders `accessibilityRole="header"` and `aria-level` 1 (an `<h1>` on web), so screen titles are announced as headings. Other kinds unchanged.
