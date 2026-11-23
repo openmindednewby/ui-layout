@@ -56,6 +56,7 @@ export const UnderlineTabItem = ({ underline, ...item }: TabItemProps & { underl
   const { theme } = useUi();
   return (
     <TabPressable {...item} style={[styles.tab, { borderBottomColor: item.selected ? underline : 'transparent' }]}>
+      {item.tab.icon ?? null}
       <Text style={[styles.label, { color: item.selected ? theme.colors.text : theme.colors.textSecondary }]}>{item.tab.label}</Text>
       {item.tab.count === undefined ? null : <Text style={[styles.count, { backgroundColor: theme.colors.border, color: theme.colors.text }]}>{String(item.tab.count)}</Text>}
     </TabPressable>

@@ -37,6 +37,7 @@ export type { PageSize, ScaledFrame } from './PageFrame/utils/pageScale';
 
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl/SegmentedControl';
+export { SegmentedVariant } from './SegmentedControl/SegmentedVariant';
 
 export { Tabs } from './Tabs/Tabs';
 export type { TabsProps, TabDescriptor } from './Tabs/Tabs';

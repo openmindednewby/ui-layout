@@ -8,6 +8,8 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { Heading, type HeadingLevel } from '../Heading/Heading';
+import { LAYOUT_COLLAPSE_BREAKPOINT } from '../constants';
+import { useIsWideViewport } from '../hooks/useIsWideViewport';
 
 import { SectionVariant } from './SectionVariant';
 
@@ -33,6 +35,8 @@ export interface SectionProps {
   title?: string;
   titleLevel?: HeadingLevel;
   padding?: SectionPadding;
+  narrowPadding?: SectionPadding;
+  breakpoint?: number;
   testID?: string;
 }
 
@@ -52,15 +56,19 @@ export const Section = ({
   title,
   titleLevel,
   padding,
+  narrowPadding,
+  breakpoint = LAYOUT_COLLAPSE_BREAKPOINT,
   testID,
 }: SectionProps): React.ReactElement => {
   const { theme } = useUi();
+  const wide = useIsWideViewport(breakpoint);
+  const inner = narrowPadding !== undefined && !wide ? narrowPadding : padding;
   const isCard = variant === SectionVariant.Card;
   const fill = isCard ? theme.colors.background : theme.colors.surface;
 
   const containerStyle = React.useMemo(
-    () => [styles.card, isCard ? styles.raised : null, title === undefined ? null : styles.titled, { borderColor: theme.colors.border, backgroundColor: fill }, paddingStyle(padding), style],
-    [theme.colors.border, fill, isCard, title, padding, style],
+    () => [styles.card, isCard ? styles.raised : null, title === undefined ? null : styles.titled, { borderColor: theme.colors.border, backgroundColor: fill }, paddingStyle(inner), style],
+    [theme.colors.border, fill, isCard, title, inner, style],
   );
 
   return (

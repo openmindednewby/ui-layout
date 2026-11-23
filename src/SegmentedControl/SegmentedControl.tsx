@@ -27,6 +27,8 @@ import { useA11y } from '@dloizides/a11y';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { MIN_TARGET_PX } from '../constants';
+import { segmentLook, segmentShape, trackShape } from './segmentLook';
+import { SegmentedVariant } from './SegmentedVariant';
 
 const TRACK_PADDING = 3;
 const TRACK_RADIUS = 999;
@@ -45,7 +47,6 @@ const BORDER_WIDTH = 1;
 const SEGMENT_BOX_SHADOW = '0px 1px 3px rgba(20, 30, 50, 0.1)';
 /** Android draws `elevation`, not `boxShadow`. */
 const SHADOW_ELEVATION = 2;
-const TRANSPARENT = 'transparent';
 const HINT_ID_FALLBACK = 'segmented-control';
 
 const styles = StyleSheet.create({
@@ -107,6 +108,12 @@ export interface SegmentedControlProps<V extends string = string> {
   accessibilityHint?: string;
   /** Optional style override merged LAST onto the track. */
   style?: StyleProp<ViewStyle>;
+  /** Fill the parent width, every segment an equal share. */
+  stretch?: boolean;
+  /** Raised (default) lifts the selected segment; Filled paints it with `selectedColor`. */
+  variant?: SegmentedVariant;
+  /** Fill of the selected segment in the Filled variant (default: theme text colour). */
+  selectedColor?: string;
   testID?: string;
 }
 
@@ -121,6 +128,9 @@ export function SegmentedControl<V extends string = string>({
   accessibilityLabel,
   accessibilityHint,
   style,
+  stretch = false,
+  variant = SegmentedVariant.Raised,
+  selectedColor,
   testID,
 }: SegmentedControlProps<V>): React.ReactElement {
   const { theme } = useUi();
@@ -133,11 +143,12 @@ export function SegmentedControl<V extends string = string>({
       accessibilityRole="tablist"
       aria-label={accessibilityLabel}
       {...describedBy}
-      style={[styles.track, { backgroundColor: colors.background, borderColor: colors.border }, style]}
+      style={[styles.track, { backgroundColor: colors.background, borderColor: colors.border }, ...trackShape(variant, stretch), style]}
       testID={testID}
     >
       {options.map((opt) => {
         const selected = opt.value === value;
+        const look = segmentLook(variant, selected, colors, selectedColor);
         return (
           <Pressable
             key={opt.value}
@@ -148,13 +159,14 @@ export function SegmentedControl<V extends string = string>({
             onPress={() => onChange(opt.value)}
             style={[
               styles.segment,
-              selected ? styles.segmentSelected : null,
-              { backgroundColor: selected ? colors.surface : TRANSPARENT },
+              selected && variant === SegmentedVariant.Raised ? styles.segmentSelected : null,
+              ...segmentShape(variant, stretch),
+              { backgroundColor: look.fill },
             ]}
             testID={opt.testID}
             {...ariaSelectedProps(selected)}
           >
-            <Text style={[styles.label, { color: selected ? colors.text : colors.textSecondary }]}>{opt.label}</Text>
+            <Text style={[styles.label, { color: look.ink }]}>{opt.label}</Text>
           </Pressable>
         );
       })}

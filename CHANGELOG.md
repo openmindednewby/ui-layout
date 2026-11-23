@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.57.0
+
+- MODC-1 D-MC-728 "Layout gaps in the package". All new props optional, defaults unchanged.
+- `StickyActionBar` takes `bleed`: below the breakpoint the bar pulls that many px past each side, cancelling the page's side padding so it docks full width.
+- `Section` takes `narrowPadding` and `breakpoint`: the padding used below the breakpoint (default 768); `padding` stays the wide value.
+- `SegmentedControl` takes `stretch` (full width, equal segments), `variant` (`SegmentedVariant.Raised` default, `Filled`) and `selectedColor` (Filled fill, default theme text colour; label on the surface colour).
+- `UnderlineTab` takes `icon`: a node rendered before the label in the underline strip.
+
 ## 1.56.0
 
 - `SectionIndexLayout` takes `activeColor`: the fill of the active chip (narrow) and the bar of the active index item (wide). `SectionChips` and `SectionIndex` take it too. Default unchanged (theme `colors.text`).

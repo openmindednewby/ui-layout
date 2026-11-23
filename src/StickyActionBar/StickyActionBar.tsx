@@ -21,22 +21,24 @@ export interface StickyActionBarProps {
   children: React.ReactNode;
   breakpoint?: number;
   bottomInset?: number;
+  bleed?: number;
   testID?: string;
 }
 
-/** Page actions: pinned to the bottom edge above the safe area when narrow, an inline end-aligned row when wide. */
+/** Page actions: pinned to the bottom edge above the safe area when narrow, an inline end-aligned row when wide. `bleed` cancels the page's side padding so the narrow bar spans the full width. */
 export const StickyActionBar = ({
   accessibilityLabel,
   accessibilityHint,
   children,
   breakpoint = LAYOUT_COLLAPSE_BREAKPOINT,
   bottomInset = 0,
+  bleed = 0,
   testID = LAYOUT_TEST_IDS.stickyActionBar,
 }: StickyActionBarProps): React.ReactElement => {
   const wide = useIsWideViewport(breakpoint);
   const { colors } = useUi().theme;
   if (wide) return <View accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} role="toolbar" style={styles.inline} testID={testID}>{children}</View>;
-  const surface = { backgroundColor: colors.surface, borderTopColor: colors.border };
+  const surface = { backgroundColor: colors.surface, borderTopColor: colors.border, marginHorizontal: -bleed };
   return (
     <View accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} role="toolbar" style={[styles.bar, surface, stickyEdgeStyle(Platform.OS, bottomInset)]} testID={testID}>
       {children}
