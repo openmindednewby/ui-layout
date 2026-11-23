@@ -1,38 +1,28 @@
 import React from 'react';
 
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { MIN_TARGET_PX } from '../constants';
+import { ChipOverflow } from '../SectionIndexLayout/ChipOverflow';
 import { EdgeFadeStrip } from './EdgeFadeStrip';
 import { useEdgeFade } from './edgeFade';
+import { ChipTabItem, UnderlineTabItem } from './TabItems';
+import { TabsVariant } from './TabsVariant';
+import type { UnderlineTab } from './underlineTabTypes';
 
-const UNDERLINE = 3;
-const PAD_H = 12;
-const GAP = 6;
-const FONT_SIZE = 14;
-const COUNT_FONT = 12;
-const COUNT_MIN = 22;
-const COUNT_PAD = 6;
-const PILL = 999;
+export type { UnderlineTab } from './underlineTabTypes';
+
 const DEFAULT_UNDERLINE_STEP = '700';
 const SCROLL_THROTTLE_MS = 16;
+const CHIP_GAP = 8;
+const CHIP_PAD_V = 4;
 
 const styles = StyleSheet.create({
-  count: { borderRadius: PILL, fontSize: COUNT_FONT, fontWeight: '700', minWidth: COUNT_MIN, paddingHorizontal: COUNT_PAD, textAlign: 'center' },
-  label: { fontSize: FONT_SIZE, fontWeight: '600' },
-  strip: { borderBottomWidth: 1, position: 'relative', width: '100%' },
-  tab: { alignItems: 'center', borderBottomWidth: UNDERLINE, flexDirection: 'row', gap: GAP, justifyContent: 'center', minHeight: MIN_TARGET_PX, minWidth: MIN_TARGET_PX, paddingHorizontal: PAD_H },
+  chipRow: { alignItems: 'center', flexDirection: 'row', gap: CHIP_GAP, paddingVertical: CHIP_PAD_V },
+  chipWrap: { flexWrap: 'wrap' },
+  strip: { position: 'relative', width: '100%' },
 });
-
-export interface UnderlineTab {
-  key: string;
-  label: string;
-  count?: number;
-  testID?: string;
-  accessibilityHint?: string;
-}
 
 export interface UnderlineTabsProps {
   tabs: ReadonlyArray<UnderlineTab>;
@@ -43,35 +33,32 @@ export interface UnderlineTabsProps {
   underlineColor?: string;
   fadeColor?: string;
   testID?: string;
+  variant?: TabsVariant;
+  chipOverflow?: ChipOverflow;
 }
 
-/** A full-width tab strip with an underline on the selected tab and an optional count per tab. */
-export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, fadeColor, testID }: UnderlineTabsProps): React.ReactElement => {
+/** A full-width tab strip: underline tabs (default) or a pill-chip jump row (`variant` Chips), with an optional count per tab. */
+export const UnderlineTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, fadeColor, testID, variant = TabsVariant.Underline, chipOverflow = ChipOverflow.Scroll }: UnderlineTabsProps): React.ReactElement => {
   const { theme } = useUi();
   const underline = underlineColor ?? theme.palette.primary[DEFAULT_UNDERLINE_STEP];
   const fade = useEdgeFade();
+  const chips = variant === TabsVariant.Chips;
+  const items = tabs.map((tab) => {
+    const item = { tab, selected: tab.key === activeKey, onChange };
+    return chips ? <ChipTabItem key={tab.key} {...item} /> : <UnderlineTabItem key={tab.key} {...item} underline={underline} />;
+  });
+  const stripStyle = chips ? styles.strip : [styles.strip, { borderBottomColor: theme.colors.border, borderBottomWidth: 1 }];
+  if (chips && chipOverflow === ChipOverflow.Wrap) {
+    return (
+      <View accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} style={[styles.chipRow, styles.chipWrap]} testID={testID}>
+        {items}
+      </View>
+    );
+  }
   return (
-    <View style={[styles.strip, { borderBottomColor: theme.colors.border }]} testID={testID}>
-      <ScrollView horizontal accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} scrollEventThrottle={SCROLL_THROTTLE_MS} showsHorizontalScrollIndicator={false} onContentSizeChange={fade.onContentSizeChange} onLayout={fade.onLayout} onScroll={fade.onScroll}>
-        {tabs.map((tab) => {
-          const selected = tab.key === activeKey;
-          return (
-            <Pressable
-              key={tab.key}
-              accessibilityHint={tab.accessibilityHint}
-              accessibilityLabel={tab.label}
-              accessibilityRole="tab"
-              accessibilityState={{ selected }}
-              aria-selected={selected}
-              style={[styles.tab, { borderBottomColor: selected ? underline : 'transparent' }]}
-              testID={tab.testID}
-              onPress={() => onChange(tab.key)}
-            >
-              <Text style={[styles.label, { color: selected ? theme.colors.text : theme.colors.textSecondary }]}>{tab.label}</Text>
-              {tab.count === undefined ? null : <Text style={[styles.count, { backgroundColor: theme.colors.border, color: theme.colors.text }]}>{String(tab.count)}</Text>}
-            </Pressable>
-          );
-        })}
+    <View style={stripStyle} testID={testID}>
+      <ScrollView horizontal accessibilityHint={accessibilityHint} accessibilityRole="tablist" aria-label={accessibilityLabel} contentContainerStyle={chips ? styles.chipRow : undefined} scrollEventThrottle={SCROLL_THROTTLE_MS} showsHorizontalScrollIndicator={false} onContentSizeChange={fade.onContentSizeChange} onLayout={fade.onLayout} onScroll={fade.onScroll}>
+        {items}
       </ScrollView>
       {fade.visible ? <EdgeFadeStrip color={fadeColor ?? theme.colors.background} /> : null}
     </View>

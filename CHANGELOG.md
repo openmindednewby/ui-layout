@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.52.0
+
+- MODC-1 D-MC-705 "Chip jump row for the applicant page", UI-PKG-FIRST-1. `UnderlineTabs` takes `variant` (`TabsVariant` Underline, the default, or Chips): Chips draws each tab as a pill (selected = filled with the theme text colour and background ink, others = 1 px border outline, radius full, >= 44 px hit box) with the count after the label. `chipOverflow` (`ChipOverflow`, default Scroll) scrolls the row sideways at 360 with the end-edge fade, or Wrap wraps it. Every chip keeps role tab with the selected state as `accessibilityState` and `aria-selected`; the row is one labelled tablist.
+
 ## 1.51.0
 
 - INV-BILLS-1 D-BILLS-9 "Every Bills UI part is shared", UI-ATOMIC-1. New molecule `CopyValueRow` (label, value, copy button that shows copied / failed through `useCopyToClipboard`; `emphasis` `CopyRowEmphasis` inline or prominent with a wide button; `copyValue` copies a different string than shown, e.g. an IBAN without spaces; `monospace`). New organism `TransferSlip` (amount and recipient lead, copy rows as children, optional `footer`). New molecule `TotalsStrip` (`TotalsItem[]` over `FigureStrip`, `TotalsTone.Alert` colours the value). New organism `ListDetailLayout` (list beside the chosen record from the breakpoint, one pane below it chosen by `narrowPane` `ListDetailPane`; `resolveListDetailPanes`). All labels are pre-localized props.

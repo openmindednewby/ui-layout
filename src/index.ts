@@ -156,6 +156,7 @@ export { IdChip } from './CopyableId/IdChip';
 export type { IdChipProps } from './CopyableId/IdChip';
 export { UnderlineTabs } from './Tabs/UnderlineTabs';
 export type { UnderlineTabsProps, UnderlineTab } from './Tabs/UnderlineTabs';
+export { TabsVariant } from './Tabs/TabsVariant';
 export { WidgetCard } from './WidgetCard/WidgetCard';
 export type { WidgetCardProps } from './WidgetCard/WidgetCard';
 
