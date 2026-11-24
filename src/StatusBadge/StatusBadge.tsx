@@ -10,6 +10,7 @@ import { useUi } from '@dloizides/ui-feedback';
 
 import { LAYOUT_I18N, LAYOUT_TEST_IDS } from '../constants';
 
+import { BadgeSize } from './BadgeSize';
 import { BadgeTone } from './BadgeTone';
 import { readableRawInk } from './rawInk';
 import { resolveToneColors } from './toneColors';
@@ -19,6 +20,10 @@ const DEFAULT_PADDING_V = 4;
 const DEFAULT_BORDER_RADIUS = 12;
 const DEFAULT_FONT_SIZE = 12;
 const ICON_GAP = 4;
+const COMPACT_PADDING_H = 8;
+const COMPACT_PADDING_V = 1;
+const COMPACT_RADIUS = 999;
+const COMPACT_LINE_HEIGHT = 17;
 
 const styles = StyleSheet.create({
   badge: {
@@ -38,6 +43,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'dashed',
   },
+  badgeCompact: {
+    paddingHorizontal: COMPACT_PADDING_H,
+    paddingVertical: COMPACT_PADDING_V,
+    borderRadius: COMPACT_RADIUS,
+  },
+  textCompact: {
+    lineHeight: COMPACT_LINE_HEIGHT,
+  },
   text: {
     fontSize: DEFAULT_FONT_SIZE,
     fontWeight: '600',
@@ -52,6 +65,8 @@ export interface StatusBadgeProps {
   backgroundColor?: string;
   icon?: React.ReactNode;
   dashed?: boolean;
+  /** `BadgeSize.Compact` is the chip for a compact table cell. Default regular. */
+  size?: BadgeSize;
   testID?: string;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -64,6 +79,7 @@ export const StatusBadge = ({
   backgroundColor: rawBackground,
   icon,
   dashed = false,
+  size = BadgeSize.Regular,
   testID = LAYOUT_TEST_IDS.statusLabel,
   accessibilityLabel,
   accessibilityHint,
@@ -80,16 +96,17 @@ export const StatusBadge = ({
   const dashedColor = useMemo(() => ({ borderColor: color }), [color]);
   const dynamicText = useMemo(() => ({ color }), [color]);
   const hasIcon = icon !== undefined && icon !== null;
+  const compact = size === BadgeSize.Compact;
 
   return (
     <View
       accessibilityHint={accessibilityHint ?? t(LAYOUT_I18N.statusBadgeHint)}
       accessibilityLabel={accessibilityLabel ?? label}
-      style={[styles.badge, hasIcon && styles.badgeWithIcon, dynamicBadge, dashed && styles.badgeDashed, dashed && dashedColor]}
+      style={[styles.badge, compact && styles.badgeCompact, hasIcon && styles.badgeWithIcon, dynamicBadge, dashed && styles.badgeDashed, dashed && dashedColor]}
       testID={testID}
     >
       {hasIcon ? <View aria-hidden>{icon}</View> : null}
-      <Text style={[styles.text, dynamicText]}>{label}</Text>
+      <Text style={[styles.text, compact && styles.textCompact, dynamicText]}>{label}</Text>
     </View>
   );
 };
