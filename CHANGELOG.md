@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.60.1
+
+- Ships the 1.60.0 `SectionIndexLayout` `collapsedKey` change; 1.60.0 never reached npm (its test used a wrong index testID).
+
 ## 1.60.0
 
 - MODC-1 D-MC-743 "S-7 owner sighting findings" F1. `SectionIndexLayout` takes `collapsedKey`: the section the collapsed (chips) layout opens on, so a screen whose primary section differs from its first index entry keeps it on screen below the index breakpoint. `initialKey` still marks the wide index. The picked key stays unset until the user picks, so resizing across the breakpoint follows the layout. Optional, default unchanged.

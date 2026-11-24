@@ -52,7 +52,7 @@ describe('SectionIndexLayout', () => {
   it('on a wide viewport with a collapsedKey, marks initialKey current', () => {
     render(<SectionIndexLayout breakpoint={WIDE} collapsedKey="audit" indexHeading="On this page" initialKey="fresh" itemHint="Shows the section" sections={SECTIONS} />);
 
-    const current = screen.getByTestId('section-index-item-fresh').getAttribute('aria-current');
+    const current = screen.getByTestId('section-index-index-fresh').getAttribute('aria-current');
 
     expect(current).not.toBeNull();
   });
