@@ -9,17 +9,33 @@ import { SectionDensity } from './SectionDensity';
 import { SectionIndex, SECTION_INDEX_WIDTH } from './SectionIndex';
 import { resolveActiveKey, scrollToSection, sectionAnchorId, SECTION_INDEX_BREAKPOINT } from './sectionKeys';
 
-import type { SectionIndexEntry } from './types';
+import type { SectionFold, SectionIndexEntry } from './types';
 
 const COMFORTABLE_GAP = 12;
 const DENSE_GAP = 8;
-const DENSE_WIDE_GAP = 14;
+const DENSE_WIDE_GAP = 16;
 const WEB_STICKY = { position: 'sticky', top: 0 } as unknown as ViewStyle;
+
+const NO_STACK = Number.POSITIVE_INFINITY;
 
 const styles = StyleSheet.create({
   wide: { flexDirection: 'row', alignItems: 'flex-start', gap: 20 },
   column: { flex: 1, minWidth: 0 },
 });
+
+function toFold(breakpoint: number | SectionFold): SectionFold {
+  return typeof breakpoint === 'number' ? { wide: breakpoint, stackFrom: NO_STACK } : breakpoint;
+}
+
+const SectionColumn = ({ sections, testID, style }: { sections: ReadonlyArray<SectionIndexEntry>; testID: string; style: ViewStyle }): React.ReactElement => (
+  <View style={style} testID={`${testID}-column`}>
+    {sections.map((entry) => (
+      <View key={entry.key} nativeID={sectionAnchorId(testID, entry.key)} testID={sectionAnchorId(testID, entry.key)}>
+        {entry.content}
+      </View>
+    ))}
+  </View>
+);
 
 export interface SectionIndexLayoutProps {
   sections: ReadonlyArray<SectionIndexEntry>;
@@ -27,7 +43,7 @@ export interface SectionIndexLayoutProps {
   itemHint: string;
   initialKey?: string;
   collapsedKey?: string;
-  breakpoint?: number;
+  breakpoint?: number | SectionFold;
   density?: SectionDensity;
   stickyIndex?: boolean;
   chipOverflow?: ChipOverflow;
@@ -50,12 +66,15 @@ export const SectionIndexLayout = ({
   activeColor,
   testID = 'section-index',
 }: SectionIndexLayoutProps): React.ReactElement => {
-  const wide = useIsWideViewport(breakpoint);
+  const fold = toFold(breakpoint);
+  const wide = useIsWideViewport(fold.wide);
+  const stacked = useIsWideViewport(fold.stackFrom);
   const [picked, setPicked] = useState<string | undefined>(undefined);
   const activeKey = resolveActiveKey(sections, picked ?? (wide ? initialKey : collapsedKey ?? initialKey));
   const dense = density === SectionDensity.Dense;
   const gap = { gap: dense ? DENSE_GAP : COMFORTABLE_GAP };
   if (sections.length < 2) return <View testID={testID}>{sections[0]?.content}</View>;
+  if (!wide && stacked) return <View testID={testID}><SectionColumn sections={sections} style={gap} testID={testID} /></View>;
   if (!wide) {
     const active = sections.find((entry) => entry.key === activeKey);
     return (
@@ -87,13 +106,7 @@ export const SectionIndexLayout = ({
       <View style={sticky}>
         <SectionIndex activeColor={activeColor} activeKey={activeKey} dense={dense} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
       </View>
-      <View style={[styles.column, gap]}>
-        {sections.map((entry) => (
-          <View key={entry.key} nativeID={sectionAnchorId(testID, entry.key)} testID={sectionAnchorId(testID, entry.key)}>
-            {entry.content}
-          </View>
-        ))}
-      </View>
+      <SectionColumn sections={sections} style={StyleSheet.flatten([styles.column, gap])} testID={testID} />
     </View>
   );
 };

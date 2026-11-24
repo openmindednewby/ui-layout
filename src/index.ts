@@ -132,7 +132,7 @@ export type { SectionIndexProps } from './SectionIndexLayout/SectionIndex';
 export { SECTION_INDEX_WIDTH } from './SectionIndexLayout/SectionIndex';
 export { SectionChips } from './SectionIndexLayout/SectionChips';
 export type { SectionChipsProps } from './SectionIndexLayout/SectionChips';
-export type { SectionIndexEntry } from './SectionIndexLayout/types';
+export type { SectionFold, SectionIndexEntry } from './SectionIndexLayout/types';
 export { SECTION_INDEX_BREAKPOINT, resolveActiveKey } from './SectionIndexLayout/sectionKeys';
 export { SectionDensity } from './SectionIndexLayout/SectionDensity';
 export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';

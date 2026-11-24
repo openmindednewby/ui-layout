@@ -158,3 +158,24 @@ describe('SectionIndexLayout activeColor', () => {
     expect(item.borderLeftColor.replace(/\s/g, '')).not.toMatch(/^rgba?\(1,2,3[,)]/);
   });
 });
+
+describe('SectionIndexLayout stackFrom', () => {
+  it('between stackFrom and wide, renders every section stacked without an index or chips', () => {
+    render(<SectionIndexLayout breakpoint={{ wide: NARROW, stackFrom: WIDE }} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const bodies = ['health body', 'fresh body', 'audit body'].map((body) => screen.queryByText(body));
+
+    expect(bodies.every((body) => body !== null)).toBe(true);
+    expect(screen.queryByTestId('section-index-chips')).toBeNull();
+    expect(screen.queryByTestId('section-index-index')).toBeNull();
+  });
+
+  it('below stackFrom, keeps the chips and one section', () => {
+    render(<SectionIndexLayout breakpoint={{ wide: NARROW, stackFrom: NARROW }} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const hidden = screen.queryByText('fresh body');
+
+    expect(screen.getByTestId('section-index-chips')).toBeTruthy();
+    expect(hidden).toBeNull();
+  });
+});

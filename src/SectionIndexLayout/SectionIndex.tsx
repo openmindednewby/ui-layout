@@ -12,6 +12,7 @@ export const SECTION_INDEX_WIDTH = 200;
 const ACTIVE_BAR = 3;
 const TRANSPARENT = 'transparent';
 const DENSE_TARGET_PX = 24;
+const DENSE_LINE = 19;
 
 const styles = StyleSheet.create({
   root: { flexShrink: 0, gap: 2, alignSelf: 'flex-start' },
@@ -19,10 +20,10 @@ const styles = StyleSheet.create({
   item: { minHeight: MIN_TARGET_PX, justifyContent: 'center', paddingHorizontal: 10, borderLeftWidth: ACTIVE_BAR, borderRadius: 6 },
   label: { fontSize: 14 },
   labelActive: { fontWeight: '700' },
-  denseRoot: { gap: 0 },
-  denseHeading: { fontSize: 11, fontWeight: '600', paddingBottom: 10 },
-  denseItem: { minHeight: DENSE_TARGET_PX, paddingVertical: 7, paddingHorizontal: 7 },
-  denseLabel: { fontSize: 13, lineHeight: 19 },
+  denseRoot: { gap: 2 },
+  denseHeading: { fontSize: 11, fontWeight: '600', letterSpacing: 0.66, lineHeight: 16, paddingBottom: 6 },
+  denseItem: { minHeight: DENSE_TARGET_PX, paddingVertical: 6, paddingLeft: 7, paddingRight: 10, borderRadius: 7 },
+  denseLabel: { fontSize: 13, lineHeight: DENSE_LINE },
   denseLabelActive: { fontWeight: '600' },
 });
 
@@ -39,7 +40,7 @@ export interface SectionIndexProps {
   testID: string;
   width?: number;
   activeColor?: string;
-  /** Dense: 11/600 heading, 13 px items at a 24 px desktop target. */
+  /** Dense: 11/600 heading, 13/19 px items with 6x10 px padding, 2 px apart. */
   dense?: boolean;
 }
 
