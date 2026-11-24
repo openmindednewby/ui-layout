@@ -13,6 +13,7 @@ import type { SectionIndexEntry } from './types';
 
 const COMFORTABLE_GAP = 12;
 const DENSE_GAP = 8;
+const DENSE_WIDE_GAP = 14;
 const WEB_STICKY = { position: 'sticky', top: 0 } as unknown as ViewStyle;
 
 const styles = StyleSheet.create({
@@ -52,7 +53,8 @@ export const SectionIndexLayout = ({
   const wide = useIsWideViewport(breakpoint);
   const [picked, setPicked] = useState<string | undefined>(undefined);
   const activeKey = resolveActiveKey(sections, picked ?? (wide ? initialKey : collapsedKey ?? initialKey));
-  const gap = { gap: density === SectionDensity.Dense ? DENSE_GAP : COMFORTABLE_GAP };
+  const dense = density === SectionDensity.Dense;
+  const gap = { gap: dense ? DENSE_GAP : COMFORTABLE_GAP };
   if (sections.length < 2) return <View testID={testID}>{sections[0]?.content}</View>;
   if (!wide) {
     const active = sections.find((entry) => entry.key === activeKey);
@@ -61,6 +63,7 @@ export const SectionIndexLayout = ({
         <SectionChips
           activeColor={activeColor}
           activeKey={activeKey}
+          dense={dense}
           groupLabel={indexHeading}
           itemHint={itemHint}
           overflow={chipOverflow}
@@ -80,9 +83,9 @@ export const SectionIndexLayout = ({
   };
   const sticky = stickyIndex && Platform.OS === 'web' ? WEB_STICKY : null;
   return (
-    <View style={styles.wide} testID={testID}>
+    <View style={[styles.wide, dense && { gap: DENSE_WIDE_GAP }]} testID={testID}>
       <View style={sticky}>
-        <SectionIndex activeColor={activeColor} activeKey={activeKey} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
+        <SectionIndex activeColor={activeColor} activeKey={activeKey} dense={dense} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
       </View>
       <View style={[styles.column, gap]}>
         {sections.map((entry) => (
