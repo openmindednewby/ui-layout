@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.60.0
+
+- MODC-1 D-MC-743 "S-7 owner sighting findings" F1. `SectionIndexLayout` takes `collapsedKey`: the section the collapsed (chips) layout opens on, so a screen whose primary section differs from its first index entry keeps it on screen below the index breakpoint. `initialKey` still marks the wide index. The picked key stays unset until the user picks, so resizing across the breakpoint follows the layout. Optional, default unchanged.
+
 ## 1.58.0
 
 - MODC-1 D-MC-728 "Layout gaps in the package". All new props optional, defaults unchanged.
