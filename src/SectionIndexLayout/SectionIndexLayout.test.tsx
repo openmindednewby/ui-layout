@@ -40,6 +40,23 @@ describe('SectionIndexLayout', () => {
     expect(screen.getByTestId('section-index-chip-health').getAttribute('aria-selected')).toBe('false');
   });
 
+  it('on a narrow viewport with a collapsedKey, opens on that section instead of initialKey', () => {
+    render(<SectionIndexLayout breakpoint={NARROW} collapsedKey="audit" indexHeading="On this page" initialKey="health" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const hidden = screen.queryByText('health body');
+
+    expect(screen.getByText('audit body')).toBeTruthy();
+    expect(hidden).toBeNull();
+  });
+
+  it('on a wide viewport with a collapsedKey, marks initialKey current', () => {
+    render(<SectionIndexLayout breakpoint={WIDE} collapsedKey="audit" indexHeading="On this page" initialKey="fresh" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const current = screen.getByTestId('section-index-item-fresh').getAttribute('aria-current');
+
+    expect(current).not.toBeNull();
+  });
+
   it('on a wide viewport, renders every section at once', () => {
     render(<SectionIndexLayout breakpoint={WIDE} indexHeading="On this page" itemHint="Scrolls to the section" sections={SECTIONS} />);
 

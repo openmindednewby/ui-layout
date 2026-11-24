@@ -25,6 +25,7 @@ export interface SectionIndexLayoutProps {
   indexHeading: string;
   itemHint: string;
   initialKey?: string;
+  collapsedKey?: string;
   breakpoint?: number;
   density?: SectionDensity;
   stickyIndex?: boolean;
@@ -39,6 +40,7 @@ export const SectionIndexLayout = ({
   indexHeading,
   itemHint,
   initialKey,
+  collapsedKey,
   breakpoint = SECTION_INDEX_BREAKPOINT,
   density = SectionDensity.Comfortable,
   stickyIndex = false,
@@ -48,8 +50,8 @@ export const SectionIndexLayout = ({
   testID = 'section-index',
 }: SectionIndexLayoutProps): React.ReactElement => {
   const wide = useIsWideViewport(breakpoint);
-  const [picked, setPicked] = useState<string | undefined>(initialKey);
-  const activeKey = resolveActiveKey(sections, picked);
+  const [picked, setPicked] = useState<string | undefined>(undefined);
+  const activeKey = resolveActiveKey(sections, picked ?? (wide ? initialKey : collapsedKey ?? initialKey));
   const gap = { gap: density === SectionDensity.Dense ? DENSE_GAP : COMFORTABLE_GAP };
   if (sections.length < 2) return <View testID={testID}>{sections[0]?.content}</View>;
   if (!wide) {
