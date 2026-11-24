@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 
@@ -7,7 +7,9 @@ import { ChipOverflow } from './ChipOverflow';
 import { SectionChips } from './SectionChips';
 import { SectionDensity } from './SectionDensity';
 import { SectionIndex, SECTION_INDEX_WIDTH } from './SectionIndex';
-import { resolveActiveKey, scrollToSection, sectionAnchorId, SECTION_INDEX_BREAKPOINT } from './sectionKeys';
+import { resolveSticky, type StickyIndexConfig } from './scrollSpy';
+import { sectionAnchorId, SECTION_INDEX_BREAKPOINT } from './sectionKeys';
+import { useSectionSelection } from './useSectionSelection';
 
 import type { SectionFold, SectionIndexEntry } from './types';
 
@@ -45,7 +47,7 @@ export interface SectionIndexLayoutProps {
   collapsedKey?: string;
   breakpoint?: number | SectionFold;
   density?: SectionDensity;
-  stickyIndex?: boolean;
+  stickyIndex?: boolean | StickyIndexConfig;
   chipOverflow?: ChipOverflow;
   indexWidth?: number;
   activeColor?: string;
@@ -69,8 +71,9 @@ export const SectionIndexLayout = ({
   const fold = toFold(breakpoint);
   const wide = useIsWideViewport(fold.wide);
   const stacked = useIsWideViewport(fold.stackFrom);
-  const [picked, setPicked] = useState<string | undefined>(undefined);
-  const activeKey = resolveActiveKey(sections, picked ?? (wide ? initialKey : collapsedKey ?? initialKey));
+  const sticky = resolveSticky(stickyIndex);
+  const preferredKey = wide ? initialKey : collapsedKey ?? initialKey;
+  const { activeKey, pick, select } = useSectionSelection({ sections, testID, preferredKey, spyEnabled: wide && sections.length > 1, sticky });
   const dense = density === SectionDensity.Dense;
   const gap = { gap: dense ? DENSE_GAP : COMFORTABLE_GAP };
   if (sections.length < 2) return <View testID={testID}>{sections[0]?.content}</View>;
@@ -88,7 +91,7 @@ export const SectionIndexLayout = ({
           overflow={chipOverflow}
           sections={sections}
           testID={testID}
-          onSelect={setPicked}
+          onSelect={pick}
         />
         <View nativeID={sectionAnchorId(testID, activeKey)} testID={sectionAnchorId(testID, activeKey)}>
           {active?.content}
@@ -96,14 +99,10 @@ export const SectionIndexLayout = ({
       </View>
     );
   }
-  const select = (key: string): void => {
-    setPicked(key);
-    scrollToSection(sectionAnchorId(testID, key));
-  };
-  const sticky = stickyIndex && Platform.OS === 'web' ? WEB_STICKY : null;
+  const stickyStyle = sticky.sticky && Platform.OS === 'web' ? WEB_STICKY : null;
   return (
     <View style={[styles.wide, dense && { gap: DENSE_WIDE_GAP }]} testID={testID}>
-      <View style={sticky}>
+      <View style={stickyStyle}>
         <SectionIndex activeColor={activeColor} activeKey={activeKey} dense={dense} heading={indexHeading} itemHint={itemHint} sections={sections} testID={testID} width={indexWidth} onSelect={select} />
       </View>
       <SectionColumn sections={sections} style={StyleSheet.flatten([styles.column, gap])} testID={testID} />

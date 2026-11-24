@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { Pressable, StyleSheet, Text, View, type PressableProps } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View, type PressableProps } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
 import { MIN_TARGET_PX } from '../constants';
+
+import { useSlidingIndicator } from './useSlidingIndicator';
 
 import type { SectionIndexEntry } from './types';
 
@@ -25,6 +27,7 @@ const styles = StyleSheet.create({
   denseItem: { minHeight: DENSE_TARGET_PX, paddingVertical: 6, paddingLeft: 7, paddingRight: 10, borderRadius: 7 },
   denseLabel: { fontSize: 13, lineHeight: DENSE_LINE },
   denseLabelActive: { fontWeight: '600' },
+  indicator: { position: 'absolute', left: 0, width: ACTIVE_BAR, borderRadius: ACTIVE_BAR },
 });
 
 function ariaCurrent(active: boolean): PressableProps & { 'aria-current'?: 'location' } {
@@ -48,10 +51,13 @@ export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect,
   const { theme } = useUi();
   const { colors } = theme;
   const bar = activeColor ?? colors.text;
+  const indicator = useSlidingIndicator(sections.findIndex((entry) => entry.key === activeKey));
+  const staticBar = indicator.measured ? TRANSPARENT : bar;
   return (
     <View role="navigation" accessibilityLabel={heading} style={[styles.root, dense && styles.denseRoot, { width }]} testID={`${testID}-index`}>
+      {indicator.measured ? <Animated.View pointerEvents="none" style={[styles.indicator, { backgroundColor: bar, top: indicator.top, height: indicator.height }]} testID={`${testID}-index-indicator`} /> : null}
       <Text style={[styles.heading, dense && styles.denseHeading, { color: colors.textSecondary }]}>{heading}</Text>
-      {sections.map((entry) => {
+      {sections.map((entry, index) => {
         const active = entry.key === activeKey;
         return (
           <Pressable
@@ -60,8 +66,9 @@ export const SectionIndex = ({ sections, activeKey, heading, itemHint, onSelect,
             accessibilityRole="link"
             accessibilityLabel={entry.title}
             accessibilityHint={itemHint}
-            style={[styles.item, dense && styles.denseItem, { borderLeftColor: active ? bar : TRANSPARENT, backgroundColor: active ? colors.surface : TRANSPARENT }]}
+            style={[styles.item, dense && styles.denseItem, { borderLeftColor: active ? staticBar : TRANSPARENT, backgroundColor: active ? colors.surface : TRANSPARENT }]}
             testID={`${testID}-index-${entry.key}`}
+            onLayout={indicator.onRowLayout(index)}
             onPress={() => onSelect(entry.key)}
           >
             <Text style={[styles.label, active && styles.labelActive, dense && styles.denseLabel, dense && active && styles.denseLabelActive, { color: active ? colors.text : colors.textSecondary }]}>{entry.title}</Text>

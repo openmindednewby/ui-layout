@@ -137,6 +137,10 @@ export type { SectionFold, SectionIndexEntry } from './SectionIndexLayout/types'
 export { SECTION_INDEX_BREAKPOINT, resolveActiveKey } from './SectionIndexLayout/sectionKeys';
 export { SectionDensity } from './SectionIndexLayout/SectionDensity';
 export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';
+export { SPY_ACTIVATION_RATIO, SPY_CLICK_LOCK_MS, pickActiveIndex } from './SectionIndexLayout/scrollSpy';
+export type { StickyIndexConfig } from './SectionIndexLayout/scrollSpy';
+export { useScrollSpy } from './SectionIndexLayout/useScrollSpy';
+export type { ScrollSpyControl, ScrollSpyOptions } from './SectionIndexLayout/useScrollSpy';
 
 export { DayCard } from './DayCard/DayCard';
 export type { DayCardProps } from './DayCard/DayCard';
