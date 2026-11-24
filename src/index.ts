@@ -140,6 +140,7 @@ export { ChipOverflow } from './SectionIndexLayout/ChipOverflow';
 export { DayCard } from './DayCard/DayCard';
 export type { DayCardProps } from './DayCard/DayCard';
 export { DayBadgeFill } from './DayCard/DayBadgeFill';
+export { DayCardLayout } from './DayCard/DayCardLayout';
 export { FigureStrip, figureCell } from './FigureStrip/FigureStrip';
 export type { FigureStripProps } from './FigureStrip/FigureStrip';
 export { ToggleSection } from './ToggleSection/ToggleSection';

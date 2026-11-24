@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.58.0
+
+- MODC-1 D-MC-728 "Layout gaps in the package". All new props optional, defaults unchanged.
+- `UnderlineTabs` takes `activeTextColor` (the selected label on underline tabs, the selected chip's ink) and `activeFillColor` (the selected chip's fill and border). Defaults stay theme `colors.text` / `colors.background`.
+- `DayCard` takes `layout` (`DayCardLayout.Grouped`, the default, one shared card; or `Separate`, one card per child, 12 px radius, 8 px gap, testIDs `<id>-item-<n>`). New export `DayCardLayout`.
+
 ## 1.57.0
 
 - MODC-1 D-MC-728 "Layout gaps in the package". All new props optional, defaults unchanged.

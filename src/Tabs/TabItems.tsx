@@ -29,9 +29,10 @@ export interface TabItemProps {
   tab: UnderlineTab;
   selected: boolean;
   onChange: (key: string) => void;
+  activeText?: string;
 }
 
-interface TabPressableProps extends TabItemProps {
+interface TabPressableProps extends Omit<TabItemProps, 'activeText'> {
   style: React.ComponentProps<typeof Pressable>['style'];
   children: React.ReactNode;
 }
@@ -52,24 +53,26 @@ const TabPressable = ({ tab, selected, onChange, style, children }: TabPressable
 );
 
 /** One tab of the underline strip: the selected tab carries the underline colour. */
-export const UnderlineTabItem = ({ underline, ...item }: TabItemProps & { underline: string | undefined }): React.ReactElement => {
+export const UnderlineTabItem = ({ underline, activeText, ...item }: TabItemProps & { underline: string | undefined }): React.ReactElement => {
   const { theme } = useUi();
+  const selectedInk = activeText ?? theme.colors.text;
   return (
     <TabPressable {...item} style={[styles.tab, { borderBottomColor: item.selected ? underline : 'transparent' }]}>
       {item.tab.icon ?? null}
-      <Text style={[styles.label, { color: item.selected ? theme.colors.text : theme.colors.textSecondary }]}>{item.tab.label}</Text>
+      <Text style={[styles.label, { color: item.selected ? selectedInk : theme.colors.textSecondary }]}>{item.tab.label}</Text>
       {item.tab.count === undefined ? null : <Text style={[styles.count, { backgroundColor: theme.colors.border, color: theme.colors.text }]}>{String(item.tab.count)}</Text>}
     </TabPressable>
   );
 };
 
-/** One pill chip of the jump row: selected = filled with the text colour, others = 1 px outline. */
-export const ChipTabItem = (item: TabItemProps): React.ReactElement => {
+/** One pill chip of the jump row: selected = filled (`activeFill`, default the text colour), others = 1 px outline. */
+export const ChipTabItem = ({ activeFill, activeText, ...item }: TabItemProps & { activeFill?: string }): React.ReactElement => {
   const { theme } = useUi();
-  const fill = item.selected ? theme.colors.text : 'transparent';
-  const ink = item.selected ? theme.colors.background : theme.colors.text;
+  const selectedFill = activeFill ?? theme.colors.text;
+  const fill = item.selected ? selectedFill : 'transparent';
+  const ink = item.selected ? (activeText ?? theme.colors.background) : theme.colors.text;
   return (
-    <TabPressable {...item} style={[styles.chip, { backgroundColor: fill, borderColor: item.selected ? theme.colors.text : theme.colors.border }]}>
+    <TabPressable {...item} style={[styles.chip, { backgroundColor: fill, borderColor: item.selected ? selectedFill : theme.colors.border }]}>
       <Text style={[styles.label, { color: ink }]}>{item.tab.label}</Text>
       {item.tab.count === undefined ? null : <Text style={[styles.chipCount, { color: ink }]}>{String(item.tab.count)}</Text>}
     </TabPressable>

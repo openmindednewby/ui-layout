@@ -9,14 +9,19 @@ import { BadgeTone } from '../StatusBadge/BadgeTone';
 import { StatusBadge } from '../StatusBadge/StatusBadge';
 import { resolveTintColors } from '../StatusBadge/toneColors';
 import { DayBadgeFill } from './DayBadgeFill';
+import { DayCardLayout } from './DayCardLayout';
 
 const PILL_RADIUS = 999;
 const BADGE_ICON_SIZE = 12;
+const ITEM_RADIUS = 12;
+const ITEM_GAP = 8;
 
 const styles = StyleSheet.create({
   body: { borderRadius: 8, borderWidth: 1, overflow: 'hidden' },
   count: { borderRadius: PILL_RADIUS, borderWidth: 1, fontSize: 12, fontWeight: '700', paddingHorizontal: 8 },
   head: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  item: { borderRadius: ITEM_RADIUS, borderWidth: 1, overflow: 'hidden' },
+  items: { gap: ITEM_GAP },
   label: { fontSize: 13, fontWeight: '600' },
   stack: { gap: 6 },
 });
@@ -30,11 +35,12 @@ export interface DayCardProps {
   badgeTone?: BadgeTone;
   badgeFill?: DayBadgeFill;
   badgeIcon?: IconName;
+  layout?: DayCardLayout;
   testID?: string;
   children: React.ReactNode;
 }
 
-/** One day of a list: its label, an age badge and the item count over a card holding the day's rows. */
+/** One day of a list: its label, an age badge and the item count over the day's rows, in one card or one card per row (`layout`). */
 export const DayCard = ({
   label,
   badge,
@@ -44,12 +50,14 @@ export const DayCard = ({
   badgeTone = BadgeTone.Warning,
   badgeFill = DayBadgeFill.Solid,
   badgeIcon,
+  layout = DayCardLayout.Grouped,
   testID,
   children,
 }: DayCardProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
   const tint = badgeFill === DayBadgeFill.Tint ? resolveTintColors(theme, badgeTone) : undefined;
+  const surface = { backgroundColor: colors.surface, borderColor: colors.border };
   const iconInk = tint?.color ?? colors.textSecondary;
   const icon = badgeIcon === undefined ? undefined : <SvgIcon color={iconInk} name={badgeIcon} size={BADGE_ICON_SIZE} />;
   return (
@@ -59,7 +67,15 @@ export const DayCard = ({
         <StatusBadge backgroundColor={tint?.backgroundColor} color={tint?.color} icon={icon} label={badge} testID={testID === undefined ? undefined : `${testID}-badge`} tone={badgeTone} />
         <Text style={[styles.count, { borderColor: colors.border, color: colors.textSecondary }]}>{String(count)}</Text>
       </View>
-      <View style={[styles.body, { backgroundColor: colors.surface, borderColor: colors.border }]}>{children}</View>
+      {layout === DayCardLayout.Separate ? (
+        <View style={styles.items}>
+          {React.Children.toArray(children).map((child, index) => (
+            <View key={index} style={[styles.item, surface]} testID={testID === undefined ? undefined : `${testID}-item-${String(index)}`}>{child}</View>
+          ))}
+        </View>
+      ) : (
+        <View style={[styles.body, surface]}>{children}</View>
+      )}
     </View>
   );
 };
