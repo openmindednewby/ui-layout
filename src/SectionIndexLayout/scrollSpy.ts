@@ -1,3 +1,5 @@
+import type { ScrollViewport } from './scrollViewport';
+
 export interface StickyIndexConfig {
   scrollSpy?: boolean;
   activationRatio?: number;
@@ -13,7 +15,6 @@ export interface ResolvedSticky {
 
 export const SPY_ACTIVATION_RATIO = 0.3;
 export const SPY_CLICK_LOCK_MS = 900;
-const PERCENT = 100;
 
 export function resolveSticky(value: boolean | StickyIndexConfig | undefined): ResolvedSticky {
   if (value === undefined || value === false) return { sticky: false, spy: false, activationRatio: SPY_ACTIVATION_RATIO, clickLockMs: SPY_CLICK_LOCK_MS };
@@ -31,6 +32,8 @@ export function pickActiveIndex(tops: ReadonlyArray<number>, line: number): numb
   return tops.reduce((picked, top, index) => (top <= line ? index : picked), 0);
 }
 
-export function spyRootMargin(activationRatio: number): string {
-  return `0px 0px -${Math.round((1 - activationRatio) * PERCENT)}% 0px`;
+/** The current section: the last one when the scroller is at its end, else the one crossing the line `activationRatio` down the scroller. */
+export function pickSpyIndex(tops: ReadonlyArray<number>, viewport: ScrollViewport, activationRatio: number): number {
+  if (viewport.atEnd) return Math.max(tops.length - 1, 0);
+  return pickActiveIndex(tops, viewport.top + viewport.height * activationRatio);
 }

@@ -1,4 +1,4 @@
-import { pickActiveIndex, resolveSticky, spyRootMargin, SPY_ACTIVATION_RATIO, SPY_CLICK_LOCK_MS } from './scrollSpy';
+import { pickActiveIndex, pickSpyIndex, resolveSticky, SPY_ACTIVATION_RATIO, SPY_CLICK_LOCK_MS } from './scrollSpy';
 
 describe('pickActiveIndex', () => {
   it('with no section at the line yet, picks the first', () => {
@@ -46,10 +46,20 @@ describe('resolveSticky', () => {
   });
 });
 
-describe('spyRootMargin', () => {
-  it('with a 0.3 line, trims the bottom 70 percent of the viewport', () => {
-    const margin = spyRootMargin(0.3);
+describe('pickSpyIndex', () => {
+  it('with the scroller at its end, picks the last section even when it never reaches the line', () => {
+    const viewport = { top: 0, height: 1000, atEnd: true };
 
-    expect(margin).toBe('0px 0px -70% 0px');
+    const index = pickSpyIndex([-1000, -100, 600], viewport, 0.3);
+
+    expect(index).toBe(2);
+  });
+
+  it('with an inner scroller below the window top, measures the line inside that scroller', () => {
+    const viewport = { top: 400, height: 400, atEnd: false };
+
+    const index = pickSpyIndex([-200, 450, 1050], viewport, 0.3);
+
+    expect(index).toBe(1);
   });
 });
