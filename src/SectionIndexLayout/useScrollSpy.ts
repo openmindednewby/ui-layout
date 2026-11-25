@@ -49,10 +49,9 @@ export function useScrollSpy({ anchorIds, enabled, activationRatio, onActive }: 
       const tops = anchors.map((anchor) => anchor.element.getBoundingClientRect().top);
       const picked = pickSpyIndex(tops, scrollViewport(first.element), activationRatio);
       const index = anchors[picked]?.index ?? 0;
-      const primed = last.current !== UNPRIMED;
       if (index === last.current) return;
       last.current = index;
-      if (primed || index > 0) onActiveRef.current(index);
+      onActiveRef.current(index);
     };
     document.addEventListener('scroll', evaluate, LISTEN_OPTIONS);
     window.addEventListener('resize', evaluate, LISTEN_OPTIONS);

@@ -47,8 +47,16 @@ describe('resolveSticky', () => {
 });
 
 describe('pickSpyIndex', () => {
+  it('with the scroller at its top, picks the first section even when a short first section lets the second cross the line', () => {
+    const viewport = { top: 0, height: 800, atStart: true, atEnd: false };
+
+    const index = pickSpyIndex([150, 230, 600], viewport, 0.3);
+
+    expect(index).toBe(0);
+  });
+
   it('with the scroller at its end, picks the last section even when it never reaches the line', () => {
-    const viewport = { top: 0, height: 1000, atEnd: true };
+    const viewport = { top: 0, height: 1000, atStart: false, atEnd: true };
 
     const index = pickSpyIndex([-1000, -100, 600], viewport, 0.3);
 
@@ -56,7 +64,7 @@ describe('pickSpyIndex', () => {
   });
 
   it('with an inner scroller below the window top, measures the line inside that scroller', () => {
-    const viewport = { top: 400, height: 400, atEnd: false };
+    const viewport = { top: 400, height: 400, atStart: false, atEnd: false };
 
     const index = pickSpyIndex([-200, 450, 1050], viewport, 0.3);
 

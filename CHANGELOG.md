@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.65.0
+
+- MODC-1 "Module C unified console" scroll-0 fix. With the scroll spy on, the scroller at its top marks the first section current, even when `initialKey` names a later one or a short first section lets the second cross the activation line (`ScrollViewport` gains `atStart`). The collapsed (chips) layout opens on `collapsedKey` only, else the first chip; `initialKey` no longer applies below the index breakpoint.
+
 ## 1.60.1
 
 - Ships the 1.60.0 `SectionIndexLayout` `collapsedKey` change; 1.60.0 never reached npm (its test used a wrong index testID).

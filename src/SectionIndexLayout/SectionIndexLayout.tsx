@@ -72,7 +72,7 @@ export const SectionIndexLayout = ({
   const wide = useIsWideViewport(fold.wide);
   const stacked = useIsWideViewport(fold.stackFrom);
   const sticky = resolveSticky(stickyIndex);
-  const preferredKey = wide ? initialKey : collapsedKey ?? initialKey;
+  const preferredKey = wide ? initialKey : collapsedKey;
   const { activeKey, pick, select } = useSectionSelection({ sections, testID, preferredKey, spyEnabled: wide && sections.length > 1, sticky });
   const dense = density === SectionDensity.Dense;
   const gap = { gap: dense ? DENSE_GAP : COMFORTABLE_GAP };

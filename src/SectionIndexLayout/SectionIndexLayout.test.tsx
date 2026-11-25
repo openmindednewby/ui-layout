@@ -40,6 +40,14 @@ describe('SectionIndexLayout', () => {
     expect(screen.getByTestId('section-index-chip-health').getAttribute('aria-selected')).toBe('false');
   });
 
+  it('on a narrow viewport without a collapsedKey, opens on the first chip although initialKey names a later one', () => {
+    render(<SectionIndexLayout breakpoint={NARROW} indexHeading="On this page" initialKey="audit" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const selected = screen.getByTestId('section-index-chip-health').getAttribute('aria-selected');
+
+    expect(selected).toBe('true');
+  });
+
   it('on a narrow viewport with a collapsedKey, opens on that section instead of initialKey', () => {
     render(<SectionIndexLayout breakpoint={NARROW} collapsedKey="audit" indexHeading="On this page" initialKey="health" itemHint="Shows the section" sections={SECTIONS} />);
 

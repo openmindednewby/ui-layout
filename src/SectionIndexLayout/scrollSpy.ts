@@ -32,8 +32,9 @@ export function pickActiveIndex(tops: ReadonlyArray<number>, line: number): numb
   return tops.reduce((picked, top, index) => (top <= line ? index : picked), 0);
 }
 
-/** The current section: the last one when the scroller is at its end, else the one crossing the line `activationRatio` down the scroller. */
+/** The current section: the first at the scroller's top, the last at its end, else the one crossing the line `activationRatio` down. */
 export function pickSpyIndex(tops: ReadonlyArray<number>, viewport: ScrollViewport, activationRatio: number): number {
+  if (viewport.atStart) return 0;
   if (viewport.atEnd) return Math.max(tops.length - 1, 0);
   return pickActiveIndex(tops, viewport.top + viewport.height * activationRatio);
 }

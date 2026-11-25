@@ -67,8 +67,18 @@ describe('SectionIndexLayout scroll spy', () => {
     expect(key).toBe('health');
   });
 
+  it('at scroll 0 with initialKey on a later section and a short first section, marks the first section current', () => {
+    placeSections([150, 230, 600]);
+
+    render(<SectionIndexLayout stickyIndex breakpoint={WIDE} indexHeading="On this page" initialKey="fresh" itemHint="Jumps to the section" sections={SECTIONS} />);
+
+    expect(currentKey()).toBe('health');
+  });
+
   it('with the second section scrolled past the line, marks it current', () => {
     renderWide();
+    defineValue(window, 'scrollY', 900);
+    defineValue(document.documentElement, 'scrollHeight', 4000);
     placeSections(SECOND_PAST_LINE);
 
     scrollSection();
