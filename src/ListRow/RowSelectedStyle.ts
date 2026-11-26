@@ -5,4 +5,5 @@ export enum RowSelectedStyle {
   Raised = 'raised',
   Outline = 'outline',
   Check = 'check',
+  Radio = 'radio',
 }

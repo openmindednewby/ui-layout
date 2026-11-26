@@ -38,6 +38,8 @@ export interface RowLook {
   inverse: boolean;
   showCheck: boolean;
   checkFilled: boolean;
+  showRadio: boolean;
+  radioFilled: boolean;
 }
 
 function inset(width: number, color: string): string {
@@ -61,6 +63,7 @@ function selectedContainer(style: RowSelectedStyle, palette: RowPalette): ViewSt
     case RowSelectedStyle.Outline:
       return { backgroundColor: palette.background, boxShadow: inset(OUTLINE_WIDTH, palette.accent) };
     case RowSelectedStyle.Check:
+    case RowSelectedStyle.Radio:
       return { backgroundColor: palette.background };
     default:
       return { backgroundColor: palette.surface };
@@ -103,5 +106,7 @@ export function resolveRowLook(style: RowSelectedStyle, state: RowState, palette
     inverse,
     showCheck: style === RowSelectedStyle.Check,
     checkFilled: style === RowSelectedStyle.Check && state.selected,
+    showRadio: style === RowSelectedStyle.Radio,
+    radioFilled: style === RowSelectedStyle.Radio && state.selected,
   };
 }

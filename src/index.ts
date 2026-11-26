@@ -126,6 +126,12 @@ export type { RowLook, RowPalette, RowState } from './ListRow/utils/rowLook';
 export { rowSelection } from './ListRow/utils/rowSelection';
 export type { RowSelection, RowSelectionKeys } from './ListRow/utils/rowSelection';
 
+export { InlineBanner } from './InlineBanner/InlineBanner';
+export type { InlineBannerProps } from './InlineBanner/InlineBanner';
+export { BannerTone } from './InlineBanner/BannerTone';
+export { resolveBannerColors } from './InlineBanner/bannerColors';
+export type { BannerColors } from './InlineBanner/bannerColors';
+
 export { SectionIndexLayout } from './SectionIndexLayout/SectionIndexLayout';
 export type { SectionIndexLayoutProps } from './SectionIndexLayout/SectionIndexLayout';
 export { SectionIndex } from './SectionIndexLayout/SectionIndex';
