@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
+    maxWidth: '100%',
     alignItems: 'center',
     gap: TRACK_PADDING + 1,
     padding: TRACK_PADDING,
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     borderWidth: BORDER_WIDTH,
   },
   segment: {
+    flexShrink: 1,
     minHeight: MIN_TARGET_PX,
     justifyContent: 'center',
     paddingHorizontal: SEGMENT_PAD_H,

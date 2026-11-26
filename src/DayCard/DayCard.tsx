@@ -26,6 +26,12 @@ const styles = StyleSheet.create({
   stack: { gap: 6 },
 });
 
+/** Explicit badge fill and ink, e.g. a brand colour from the app's theme config. */
+export interface DayBadgeColors {
+  backgroundColor: string;
+  color: string;
+}
+
 export interface DayCardProps {
   label: string;
   badge: string;
@@ -34,6 +40,7 @@ export interface DayCardProps {
   accessibilityHint: string;
   badgeTone?: BadgeTone;
   badgeFill?: DayBadgeFill;
+  badgeColors?: DayBadgeColors;
   badgeIcon?: IconName;
   layout?: DayCardLayout;
   testID?: string;
@@ -49,6 +56,7 @@ export const DayCard = ({
   accessibilityHint,
   badgeTone = BadgeTone.Warning,
   badgeFill = DayBadgeFill.Solid,
+  badgeColors,
   badgeIcon,
   layout = DayCardLayout.Grouped,
   testID,
@@ -56,7 +64,7 @@ export const DayCard = ({
 }: DayCardProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
-  const tint = badgeFill === DayBadgeFill.Tint ? resolveTintColors(theme, badgeTone) : undefined;
+  const tint = badgeColors ?? (badgeFill === DayBadgeFill.Tint ? resolveTintColors(theme, badgeTone) : undefined);
   const surface = { backgroundColor: colors.surface, borderColor: colors.border };
   const iconInk = tint?.color ?? colors.textSecondary;
   const icon = badgeIcon === undefined ? undefined : <SvgIcon color={iconInk} name={badgeIcon} size={BADGE_ICON_SIZE} />;

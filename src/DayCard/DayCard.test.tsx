@@ -32,3 +32,13 @@ describe('DayCard badgeFill', () => {
     expect(window.getComputedStyle(screen.getByTestId('day-badge')).backgroundColor).toBe('rgb(254, 243, 199)');
   });
 });
+
+describe('DayCard badgeColors', () => {
+  it('with explicit badge colours, paints the badge with them over the tone tint', () => {
+    const colors = { backgroundColor: '#0e5a7e', color: '#ffffff' };
+
+    render(<UiProvider t={t} theme={TINTED}><DayCard accessibilityHint="Items opened that day" accessibilityLabel="Opened Nov 8" badge="waiting 10 days" badgeColors={colors} badgeFill={DayBadgeFill.Tint} count={3} label="Opened Nov 8" testID="day"><span>row</span></DayCard></UiProvider>);
+
+    expect(window.getComputedStyle(screen.getByTestId('day-badge')).backgroundColor).toBe('rgb(14, 90, 126)');
+  });
+});

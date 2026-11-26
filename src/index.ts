@@ -143,7 +143,7 @@ export { useScrollSpy } from './SectionIndexLayout/useScrollSpy';
 export type { ScrollSpyControl, ScrollSpyOptions } from './SectionIndexLayout/useScrollSpy';
 
 export { DayCard } from './DayCard/DayCard';
-export type { DayCardProps } from './DayCard/DayCard';
+export type { DayBadgeColors, DayCardProps } from './DayCard/DayCard';
 export { DayBadgeFill } from './DayCard/DayBadgeFill';
 export { DayCardLayout } from './DayCard/DayCardLayout';
 export { FigureStrip, figureCell } from './FigureStrip/FigureStrip';
