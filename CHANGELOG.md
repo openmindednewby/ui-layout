@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.71.0
+
+- MODC-1 "Module C unified console" residuals-3 S21-M. `StatusBadge` takes `minWidth: auto`, so in a squeezed row the chip keeps its longest word whole ("Review" no longer breaks to "Revie / w"); a longer label still wraps between words. No API change.
+
 ## 1.70.0
 
 - `ListRow`: the `trailing` slot never shrinks and text stays on one line, so an amount no longer wraps mid-number beside a long title; the title shrinks and wraps instead. Non-string trailing nodes sit in a box that never shrinks. Trailing gets testID `<testID>-trailing`.
