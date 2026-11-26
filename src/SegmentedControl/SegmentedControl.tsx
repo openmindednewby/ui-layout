@@ -20,6 +20,7 @@ import {
   View,
   type PressableProps,
   type StyleProp,
+  type TextStyle,
   type ViewStyle,
 } from 'react-native';
 
@@ -48,6 +49,8 @@ const SEGMENT_BOX_SHADOW = '0px 1px 3px rgba(20, 30, 50, 0.1)';
 /** Android draws `elevation`, not `boxShadow`. */
 const SHADOW_ELEVATION = 2;
 const HINT_ID_FALLBACK = 'segmented-control';
+const LABEL_WRAP = { wordBreak: 'normal', overflowWrap: 'normal' } as unknown as TextStyle;
+const SEGMENT_KEEP_WORD = { minWidth: 'auto' } as unknown as ViewStyle;
 
 const styles = StyleSheet.create({
   track: {
@@ -161,6 +164,7 @@ export function SegmentedControl<V extends string = string>({
             onPress={() => onChange(opt.value)}
             style={[
               styles.segment,
+              SEGMENT_KEEP_WORD,
               selected && variant === SegmentedVariant.Raised ? styles.segmentSelected : null,
               ...segmentShape(variant, stretch),
               { backgroundColor: look.fill },
@@ -168,7 +172,7 @@ export function SegmentedControl<V extends string = string>({
             testID={opt.testID}
             {...ariaSelectedProps(selected)}
           >
-            <Text style={[styles.label, ...labelShape(variant), { color: look.ink }]}>{opt.label}</Text>
+            <Text style={[styles.label, LABEL_WRAP, ...labelShape(variant), { color: look.ink }]}>{opt.label}</Text>
           </Pressable>
         );
       })}
