@@ -66,6 +66,12 @@ export type { SideSheetProps } from './SideSheet/SideSheet';
 export { BottomSheet } from './BottomSheet/BottomSheet';
 export type { BottomSheetProps } from './BottomSheet/BottomSheet';
 
+export { FullPageSheet } from './FullPageSheet/FullPageSheet';
+export type { FullPageSheetProps } from './FullPageSheet/FullPageSheet';
+export { FullPageSheetPanel } from './FullPageSheet/FullPageSheetPanel';
+export type { FullPageSheetPanelProps } from './FullPageSheet/FullPageSheetPanel';
+export { fullPageContentWidth, FULL_PAGE_MAX_WIDTH, FULL_PAGE_SIDE_SPACE } from './FullPageSheet/fullPageContentWidth';
+
 export { ConfirmDialog } from './Modal/ConfirmDialog';
 export type { ConfirmDialogProps } from './Modal/ConfirmDialog';
 export { ConfirmDialogFocus } from './Modal/ConfirmDialogFocus';
