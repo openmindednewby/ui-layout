@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.70.0
+
+- `ListRow`: the `trailing` slot never shrinks and text stays on one line, so an amount no longer wraps mid-number beside a long title; the title shrinks and wraps instead. Non-string trailing nodes sit in a box that never shrinks. Trailing gets testID `<testID>-trailing`.
+
 ## 1.69.0
 
 - INV-TAX-2 "Move the tax screen's chart, tiles and fact card into the shared UI packages". New `StatTile` (label, one 24px tabular figure on a 32px line, optional note; grows from a 150px basis). New `FactCard` (title above a bordered surface card) and `FactRow` (strong label, optional notes under it, value on the right; `first` drops the top divider). Colours from the UiProvider theme.
