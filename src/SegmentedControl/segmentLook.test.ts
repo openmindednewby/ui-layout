@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { labelShape, segmentLook, segmentShape, trackShape } from './segmentLook';
 import { SegmentedVariant } from './SegmentedVariant';
 
@@ -86,5 +88,23 @@ describe('segmentShape', () => {
     const shapes = labelShape(variant);
 
     expect(shapes).toEqual([]);
+  });
+});
+
+describe('segmentShape boxed fit', () => {
+  it('with the Boxed variant, never shrinks a segment so its label does not wrap mid-word', () => {
+    const variant = SegmentedVariant.Boxed;
+
+    const shape = StyleSheet.flatten(segmentShape(variant, false));
+
+    expect(shape.flexShrink).toBe(0);
+  });
+
+  it('with the Boxed variant, lets the track wrap whole segments onto a new line', () => {
+    const variant = SegmentedVariant.Boxed;
+
+    const track = StyleSheet.flatten(trackShape(variant, false));
+
+    expect(track.flexWrap).toBe('wrap');
   });
 });

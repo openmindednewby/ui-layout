@@ -16,8 +16,8 @@ const TRANSPARENT = 'transparent';
 const styles = StyleSheet.create({
   filledTrack: { borderRadius: FILLED_RADIUS, padding: 0, gap: 0, overflow: 'hidden' },
   filledSegment: { borderRadius: 0, paddingVertical: FILLED_PAD_V },
-  boxedTrack: { borderRadius: BOXED_RADIUS, padding: BOXED_PAD, gap: BOXED_GAP },
-  boxedSegment: { borderRadius: BOXED_SEGMENT_RADIUS, paddingVertical: BOXED_PAD_V, paddingHorizontal: BOXED_PAD_H },
+  boxedTrack: { borderRadius: BOXED_RADIUS, padding: BOXED_PAD, gap: BOXED_GAP, flexWrap: 'wrap' },
+  boxedSegment: { borderRadius: BOXED_SEGMENT_RADIUS, paddingVertical: BOXED_PAD_V, paddingHorizontal: BOXED_PAD_H, flexShrink: 0 },
   boxedLabel: { fontSize: BOXED_FONT },
   stretchTrack: { alignSelf: 'stretch' },
   stretchSegment: { flex: 1 },
@@ -51,7 +51,7 @@ export function trackShape(variant: SegmentedVariant, stretch: boolean): ViewSty
   return shape;
 }
 
-/** Extra segment style for the variant and stretch options. */
+/** Extra segment style for the variant and stretch options; Boxed segments never shrink, so a label wraps as a whole segment, never mid-word (TEXT-FIT-1). */
 export function segmentShape(variant: SegmentedVariant, stretch: boolean): ViewStyle[] {
   const shape: ViewStyle[] = [];
   if (variant === SegmentedVariant.Filled) shape.push(styles.filledSegment);
