@@ -95,3 +95,17 @@ describe('resolveRowLook', () => {
     expect([look.container.boxShadow, look.container.borderWidth, look.container.borderTopWidth]).toEqual([undefined, undefined, undefined]);
   });
 });
+
+describe('resolveRowLook radio', () => {
+  it('with radio and a selected row, shows a filled radio and no check', () => {
+    const look = resolveRowLook(RowSelectedStyle.Radio, { ...REST, selected: true }, PALETTE);
+
+    expect([look.showRadio, look.radioFilled, look.showCheck, look.container.backgroundColor]).toEqual([true, true, false, 'white']);
+  });
+
+  it('with radio and a row at rest, shows an empty radio', () => {
+    const look = resolveRowLook(RowSelectedStyle.Radio, REST, PALETTE);
+
+    expect([look.showRadio, look.radioFilled]).toEqual([true, false]);
+  });
+});

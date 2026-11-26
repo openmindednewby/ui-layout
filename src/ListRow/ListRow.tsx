@@ -7,11 +7,12 @@ import { useUi } from '@dloizides/ui-feedback';
 import { MIN_TARGET_PX } from '../constants';
 
 import { CheckMark } from './components/CheckMark';
+import { RadioMark } from './components/RadioMark';
 import { ListRowToneContext } from './hooks/useListRowTone';
 import { useRowPalette } from './hooks/useRowPalette';
 import { RowSelectedStyle } from './RowSelectedStyle';
 import { isFocusVisible } from './utils/focusVisible';
-import { resolveRowLook } from './utils/rowLook';
+import { resolveRowLook, type RowLook, type RowPalette } from './utils/rowLook';
 
 const FONT = 15;
 const PAD_H = 16;
@@ -58,8 +59,19 @@ interface WebPressState {
   hovered?: boolean;
 }
 
-function pressedProps(selected: boolean): PressableProps & { 'aria-pressed': boolean } {
-  return { 'aria-pressed': selected };
+function pressedProps(selected: boolean, radio: boolean): PressableProps & { 'aria-pressed'?: boolean; 'aria-checked'?: boolean } {
+  if (radio) return { accessibilityRole: 'radio', accessibilityState: { checked: selected }, 'aria-checked': selected };
+  return { accessibilityRole: 'button', accessibilityState: { selected }, 'aria-pressed': selected };
+}
+
+function selectionMark(look: RowLook, palette: RowPalette, testID: string | undefined): React.ReactNode {
+  if (look.showCheck) {
+    const id = testID === undefined ? undefined : `${testID}-check`;
+    return <CheckMark accent={palette.accent} filled={look.checkFilled} glyphColor={palette.background} ring={palette.border} testID={id} />;
+  }
+  if (!look.showRadio) return null;
+  const id = testID === undefined ? undefined : `${testID}-radio`;
+  return <RadioMark accent={palette.accent} filled={look.radioFilled} ring={palette.border} testID={id} />;
 }
 
 function focusTarget(event: unknown): unknown {
@@ -78,7 +90,7 @@ function trailingSlot(node: React.ReactNode, color: string, testID: string | und
   return <Text numberOfLines={1} style={[styles.trailing, styles.strong, { color }]} testID={id}>{node}</Text>;
 }
 
-/** A selectable list row with title, trailing, meta and badge slots, one selected-style setting and an optional top divider. */
+/** A selectable list row with title, trailing, meta and badge slots, one selected-style setting (radio announces as a radio) and an optional top divider. */
 export const ListRow = ({
   title,
   trailing,
@@ -98,14 +110,11 @@ export const ListRow = ({
   const [focused, setFocused] = useState(false);
   const rest = resolveRowLook(selectedStyle, { selected, hovered: false, pressed: false, focused }, palette);
   const tone = useMemo(() => ({ textColor: rest.textColor, inverse: rest.inverse }), [rest.textColor, rest.inverse]);
-  const checkTestId = testID === undefined ? undefined : `${testID}-check`;
   return (
     <ListRowToneContext.Provider value={tone}>
       <Pressable
         accessibilityHint={accessibilityHint}
         accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        accessibilityState={{ selected }}
         style={(state) => {
           const { pressed, hovered } = state as WebPressState;
           const look = resolveRowLook(selectedStyle, { selected, pressed, focused, hovered: hovered === true }, palette);
@@ -119,11 +128,9 @@ export const ListRow = ({
           setFocused(isFocusVisible(focusTarget(event)));
         }}
         onPress={onPress}
-        {...pressedProps(selected)}
+        {...pressedProps(selected, selectedStyle === RowSelectedStyle.Radio)}
       >
-        {rest.showCheck ? (
-          <CheckMark accent={palette.accent} filled={rest.checkFilled} glyphColor={palette.background} ring={palette.border} testID={checkTestId} />
-        ) : null}
+        {selectionMark(rest, palette, testID)}
         <View style={styles.body}>
           <View style={styles.line}>
             {slot(title, rest.titleColor, true)}
