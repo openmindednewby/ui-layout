@@ -29,12 +29,12 @@ describe('ListRow trailing', () => {
     expect({ wrap: amount.whiteSpace, shrink: amount.flexShrink }).toEqual({ wrap: 'nowrap', shrink: '0' });
   });
 
-  it('with a long title and a text amount, lets the title shrink instead', () => {
+  it('with a long title and a text amount, lets the title shrink instead, down to its longest word', () => {
     renderRow('-€2,500.00');
 
     const title = getComputedStyle(screen.getByText(LONG_TITLE));
 
-    expect({ shrink: title.flexShrink, min: title.minWidth }).toEqual({ shrink: '1', min: '0px' });
+    expect({ shrink: title.flexShrink, min: title.minWidth }).toEqual({ shrink: '1', min: 'auto' });
   });
 
   it('with a node amount, wraps it in a box that never shrinks', () => {
