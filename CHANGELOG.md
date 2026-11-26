@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.66.1
+
+- `RecordHeader`: beside the title the actions row takes at most 60% of the width and wraps, so the title and id chips keep the rest (they were squeezed to the space the unwrapped actions left). `actionsStyleOf(compact)` exported.
+
 ## 1.65.0
 
 - MODC-1 "Module C unified console" scroll-0 fix. With the scroll spy on, the scroller at its top marks the first section current, even when `initialKey` names a later one or a short first section lets the second cross the activation line (`ScrollViewport` gains `atStart`). The collapsed (chips) layout opens on `collapsedKey` only, else the first chip; `initialKey` no longer applies below the index breakpoint.

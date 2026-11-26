@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Breadcrumb } from './Breadcrumb';
+import { actionsStyleOf } from './RecordHeader';
 import { RecordActionButton } from './RecordActionButton';
 
 const REASON = 'Not available yet';
@@ -40,5 +41,15 @@ describe('Breadcrumb', () => {
     fireEvent.click(screen.getByTestId('crumb'));
 
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('actionsStyleOf', () => {
+  it('beside the title, caps the actions at 60% and lets them shrink and wrap', () => {
+    const wide = false;
+
+    const style = actionsStyleOf(wide);
+
+    expect({ maxWidth: style.maxWidth, shrink: style.flexShrink, wrap: style.flexWrap }).toEqual({ maxWidth: '60%', shrink: 1, wrap: 'wrap' });
   });
 });
