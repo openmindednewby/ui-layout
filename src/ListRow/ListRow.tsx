@@ -10,6 +10,7 @@ import { CheckMark } from './components/CheckMark';
 import { RadioMark } from './components/RadioMark';
 import { ListRowToneContext } from './hooks/useListRowTone';
 import { useRowPalette } from './hooks/useRowPalette';
+import { RowDensity, useRowDensity } from './RowDensity';
 import { RowSelectedStyle } from './RowSelectedStyle';
 import { isFocusVisible } from './utils/focusVisible';
 import { keepCodesWhole } from './utils/keepCodesWhole';
@@ -22,6 +23,8 @@ const PAD_V = 12;
 const GAP = 4;
 const MARK_GAP = 12;
 const LINE_GAP = 8;
+const COMPACT_PAD_V = 6;
+const COMPACT_TRAILING_LINE = 20;
 
 const styles = StyleSheet.create({
   row: {
@@ -38,6 +41,8 @@ const styles = StyleSheet.create({
   shrink: { flexShrink: 1, minWidth: 0 },
   trailing: { flexShrink: 0, ...TRAILING_END },
   strong: { fontSize: FONT, fontWeight: '600' },
+  compactRow: { paddingVertical: COMPACT_PAD_V },
+  compactLine: { marginVertical: -(MIN_TARGET_PX - COMPACT_TRAILING_LINE) / 2 },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP, justifyContent: 'flex-end' },
 });
 
@@ -113,6 +118,7 @@ export const ListRow = ({
   testID,
 }: ListRowProps): React.ReactElement => {
   const palette = useRowPalette();
+  const compact = useRowDensity() === RowDensity.Compact;
   const { colors } = useUi().theme;
   const [focused, setFocused] = useState(false);
   const rest = resolveRowLook(selectedStyle, { selected, hovered: false, pressed: false, focused }, palette);
@@ -125,7 +131,7 @@ export const ListRow = ({
         style={(state) => {
           const { pressed, hovered } = state as WebPressState;
           const look = resolveRowLook(selectedStyle, { selected, pressed, focused, hovered: hovered === true }, palette);
-          return [styles.row, { borderTopColor: colors.border, borderTopWidth: divider ? 1 : 0 }, look.container];
+          return [styles.row, compact && styles.compactRow, { borderTopColor: colors.border, borderTopWidth: divider ? 1 : 0 }, look.container];
         }}
         testID={testID}
         onBlur={() => {
@@ -141,7 +147,7 @@ export const ListRow = ({
         <View style={styles.body}>
           <View style={[styles.line, TITLE_LINE]}>
             {titleSlot(title, rest.titleColor)}
-            {trailingSlot(trailing, rest.textColor, testID)}
+            {compact && trailing !== undefined ? <View style={styles.compactLine}>{trailingSlot(trailing, rest.textColor, testID)}</View> : trailingSlot(trailing, rest.textColor, testID)}
           </View>
           <View style={styles.line}>
             <View style={styles.shrink}>{metaSlot(meta, rest.textColor)}</View>

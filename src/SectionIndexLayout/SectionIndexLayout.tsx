@@ -74,7 +74,7 @@ export const SectionIndexLayout = ({
   const sticky = resolveSticky(stickyIndex);
   const preferredKey = wide ? initialKey : collapsedKey;
   const { activeKey, pick, select } = useSectionSelection({ sections, testID, preferredKey, spyEnabled: wide && sections.length > 1, sticky });
-  const dense = density === SectionDensity.Dense;
+  const dense = density !== SectionDensity.Comfortable;
   const gap = { gap: dense ? DENSE_GAP : COMFORTABLE_GAP };
   if (sections.length < 2) return <View testID={testID}>{sections[0]?.content}</View>;
   if (!wide && stacked) return <View testID={testID}><SectionColumn sections={sections} style={gap} testID={testID} /></View>;
@@ -86,6 +86,7 @@ export const SectionIndexLayout = ({
           activeColor={activeColor}
           activeKey={activeKey}
           dense={dense}
+          pill={density === SectionDensity.DensePill}
           groupLabel={indexHeading}
           itemHint={itemHint}
           overflow={chipOverflow}

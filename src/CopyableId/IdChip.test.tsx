@@ -56,4 +56,13 @@ describe('IdChip', () => {
 
     expect(getComputedStyle(screen.getByTestId('chip')).width).toBe('200px');
   });
+
+  it('when compact, keeps a 44 px hit box around a 22 px box', () => {
+    render(<IdChip compact accessibilityHint="hint" accessibilityLabel="copy" label="ID" testID="chip" value={FULL} />);
+
+    const box = getComputedStyle(screen.getByTestId('chip-box'));
+
+    expect(getComputedStyle(screen.getByTestId('chip')).minHeight).toBe('44px');
+    expect(box.minHeight).toBe('22px');
+  });
 });

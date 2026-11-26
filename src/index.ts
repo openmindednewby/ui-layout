@@ -173,6 +173,7 @@ export { RecordActionButton } from './RecordHeader/RecordActionButton';
 export type { RecordActionButtonProps } from './RecordHeader/RecordActionButton';
 export { isRecordHeaderCompact } from './RecordHeader/recordHeaderLayout';
 export { IdChip } from './CopyableId/IdChip';
+export { ListRowDensityContext, RowDensity, useRowDensity } from './ListRow/RowDensity';
 export type { IdChipProps } from './CopyableId/IdChip';
 export { IdEllipsis } from './CopyableId/IdEllipsis';
 export { CardTitle } from './CardTitle/CardTitle';

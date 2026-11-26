@@ -10,6 +10,10 @@ import { ChipOverflow } from './ChipOverflow';
 
 import type { SectionIndexEntry } from './types';
 
+const DENSE_PILL_PX = 38;
+const DENSE_INSET = (MIN_TARGET_PX - DENSE_PILL_PX) / 2;
+const DENSE_ROW_GAP = 1;
+
 const styles = StyleSheet.create({
   root: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   scrollRow: { flexDirection: 'row', flexWrap: 'nowrap', gap: 8 },
@@ -17,6 +21,9 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, fontWeight: '600' },
   denseRow: { gap: 6 },
   denseChip: { paddingHorizontal: 12 },
+  pillRow: { columnGap: 6, rowGap: DENSE_ROW_GAP, marginVertical: -DENSE_INSET },
+  denseHit: { minHeight: MIN_TARGET_PX, justifyContent: 'center' },
+  densePill: { minHeight: DENSE_PILL_PX, justifyContent: 'center', paddingHorizontal: 12, borderRadius: 999, borderWidth: 1 },
   denseLabel: { fontSize: 13 },
 });
 
@@ -38,19 +45,23 @@ export interface SectionChipsProps {
   activeColor?: string;
   /** Dense: 13 px labels, 12 px chip padding, 6 px gutter, active label on the surface colour. */
   dense?: boolean;
+  /** With dense: a 38 px pill inside a 44 px hit box, rows 45 px apart. */
+  pill?: boolean;
   onSelect: (key: string) => void;
   testID: string;
 }
 
-export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overflow = ChipOverflow.Wrap, activeColor, dense = false, onSelect, testID }: SectionChipsProps): React.ReactElement => {
+export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overflow = ChipOverflow.Wrap, activeColor, dense = false, pill = false, onSelect, testID }: SectionChipsProps): React.ReactElement => {
   const { theme } = useUi();
   const { colors } = theme;
   const fill = activeColor ?? colors.text;
   const scroll = overflow === ChipOverflow.Scroll;
   const row = (
-    <View accessibilityRole="tablist" accessibilityLabel={groupLabel} style={[scroll ? styles.scrollRow : styles.root, dense && styles.denseRow]} testID={`${testID}-chips`}>
+    <View accessibilityRole="tablist" accessibilityLabel={groupLabel} style={[scroll ? styles.scrollRow : styles.root, dense && (pill ? styles.pillRow : styles.denseRow)]} testID={`${testID}-chips`}>
       {sections.map((entry) => {
         const active = entry.key === activeKey;
+        const paint = { borderColor: colors.border, backgroundColor: active ? fill : colors.background };
+        const label = <Text style={[styles.label, dense && styles.denseLabel, { color: activeInk(active, dense, colors) }]}>{entry.title}</Text>;
         return (
           <Pressable
             key={entry.key}
@@ -58,11 +69,11 @@ export const SectionChips = ({ sections, activeKey, groupLabel, itemHint, overfl
             accessibilityRole="tab"
             accessibilityLabel={entry.title}
             accessibilityHint={itemHint}
-            style={[styles.chip, dense && styles.denseChip, { borderColor: colors.border, backgroundColor: active ? fill : colors.background }]}
+            style={dense && pill ? styles.denseHit : [styles.chip, dense && styles.denseChip, paint]}
             testID={`${testID}-chip-${entry.key}`}
             onPress={() => onSelect(entry.key)}
           >
-            <Text style={[styles.label, dense && styles.denseLabel, { color: activeInk(active, dense, colors) }]}>{entry.title}</Text>
+            {dense && pill ? <View style={[styles.densePill, paint]} testID={`${testID}-pill-${entry.key}`}>{label}</View> : label}
           </Pressable>
         );
       })}

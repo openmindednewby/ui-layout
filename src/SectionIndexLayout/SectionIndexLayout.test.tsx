@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ChipOverflow } from './ChipOverflow';
+import { SectionDensity } from './SectionDensity';
 import { SectionIndexLayout } from './SectionIndexLayout';
 import { resolveActiveKey } from './sectionKeys';
 
@@ -185,5 +186,14 @@ describe('SectionIndexLayout stackFrom', () => {
 
     expect(screen.getByTestId('section-index-chips')).toBeTruthy();
     expect(hidden).toBeNull();
+  });
+
+  it('with dense pill chips, keeps a 44 px hit box around a 38 px pill', () => {
+    render(<SectionIndexLayout breakpoint={NARROW} density={SectionDensity.DensePill} indexHeading="On this page" itemHint="Shows the section" sections={SECTIONS} />);
+
+    const hit = getComputedStyle(screen.getByTestId('section-index-chip-audit'));
+
+    expect(hit.minHeight).toBe('44px');
+    expect(getComputedStyle(screen.getByTestId('section-index-pill-audit')).minHeight).toBe('38px');
   });
 });
