@@ -15,6 +15,7 @@ export const LAYOUT_TEST_IDS = {
   modal: 'modal',
   sideSheet: 'side-sheet',
   bottomSheet: 'bottom-sheet',
+  fullPageSheet: 'full-page-sheet',
   /** Default base testID for `ConfirmDialog`; Confirm/Cancel are `confirm-dialog-{confirm,cancel}`. */
   confirmDialog: 'confirm-dialog',
   /** Default base testID for `FormDialog`: `form-dialog`, `form-save`, `form-cancel`. */
