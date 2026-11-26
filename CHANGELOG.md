@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.69.0
+
+- INV-TAX-2 "Move the tax screen's chart, tiles and fact card into the shared UI packages". New `StatTile` (label, one 24px tabular figure on a 32px line, optional note; grows from a 150px basis). New `FactCard` (title above a bordered surface card) and `FactRow` (strong label, optional notes under it, value on the right; `first` drops the top divider). Colours from the UiProvider theme.
+
 ## 1.66.1
 
 - `RecordHeader`: beside the title the actions row takes at most 60% of the width and wraps, so the title and id chips keep the rest (they were squeezed to the space the unwrapped actions left). `actionsStyleOf(compact)` exported.
