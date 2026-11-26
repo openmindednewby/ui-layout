@@ -5,6 +5,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { resolveBannerColors } from './bannerColors';
+import { BannerIcon } from './BannerIcon';
+import { bannerIconShape } from './BannerIconShape';
 import { BannerTone } from './BannerTone';
 
 const GAP = 8;
@@ -28,13 +30,15 @@ export interface InlineBannerProps {
   testID?: string;
 }
 
-/** A bordered, tinted note inside a card: optional icon slot, strong lead and body, coloured by a semantic tone. */
+/** A bordered, tinted note inside a card: a tone icon (or the icon slot), strong lead and body, coloured by tone and theme mode. */
 export const InlineBanner = ({ tone = BannerTone.Info, title, children, renderIcon, testID }: InlineBannerProps): React.ReactElement => {
   const colors = resolveBannerColors(useUi().theme, tone);
   const bodyIsText = children === undefined || typeof children === 'string';
   return (
     <View style={[styles.banner, { borderColor: colors.border, backgroundColor: colors.fill }]} testID={testID}>
-      {renderIcon === undefined ? null : renderIcon(colors.ink)}
+      {renderIcon === undefined ? (
+        <BannerIcon color={colors.ink} cutout={colors.fill} shape={bannerIconShape(tone)} testID={testID === undefined ? undefined : `${testID}-icon`} />
+      ) : renderIcon(colors.ink)}
       {bodyIsText ? (
         <Text style={[styles.text, { color: colors.ink }]} testID={testID === undefined ? undefined : `${testID}-text`}>
           {title === undefined ? null : <Text style={styles.strong}>{title}</Text>}
