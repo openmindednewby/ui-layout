@@ -6,7 +6,7 @@ const LONG_TITLE = 'Invoice 2026-016 for quarterly maintenance, hosting and supp
 
 function titleElement(): HTMLElement {
   render(<ListRow accessibilityHint="Shows the invoice" accessibilityLabel="2026-016" selected={false} title={LONG_TITLE} trailing="€12,875.50" onPress={jest.fn()} />);
-  return screen.getByText(LONG_TITLE);
+  return screen.getByText((_, element) => element?.tagName === 'DIV' && element.textContent === LONG_TITLE);
 }
 
 describe('ListRow title wrapping', () => {

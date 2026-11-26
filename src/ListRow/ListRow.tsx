@@ -12,6 +12,7 @@ import { ListRowToneContext } from './hooks/useListRowTone';
 import { useRowPalette } from './hooks/useRowPalette';
 import { RowSelectedStyle } from './RowSelectedStyle';
 import { isFocusVisible } from './utils/focusVisible';
+import { keepCodesWhole } from './utils/keepCodesWhole';
 import { resolveRowLook, type RowLook, type RowPalette } from './utils/rowLook';
 import { TITLE_LINE, TITLE_WRAP, TRAILING_END } from './utils/titleWrap';
 
@@ -81,12 +82,12 @@ function focusTarget(event: unknown): unknown {
 
 function metaSlot(node: React.ReactNode, color: string): React.ReactNode {
   if (typeof node !== 'string') return node;
-  return <Text style={[styles.shrink, { color }]}>{node}</Text>;
+  return <Text style={[styles.shrink, { color }]}>{keepCodesWhole(node)}</Text>;
 }
 
 function titleSlot(node: React.ReactNode, color: string): React.ReactNode {
   if (typeof node !== 'string') return node;
-  return <Text style={[styles.strong, { color }, TITLE_WRAP]}>{node}</Text>;
+  return <Text style={[styles.strong, { color }, TITLE_WRAP]}>{keepCodesWhole(node)}</Text>;
 }
 
 function trailingSlot(node: React.ReactNode, color: string, testID: string | undefined): React.ReactNode {
