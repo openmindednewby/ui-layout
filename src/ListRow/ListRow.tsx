@@ -43,6 +43,7 @@ export interface ListRowProps {
   meta?: React.ReactNode;
   badges?: React.ReactNode;
   after?: React.ReactNode;
+  divider?: boolean;
   selected: boolean;
   selectedStyle?: RowSelectedStyle;
   onPress: () => void;
@@ -69,13 +70,14 @@ function slot(node: React.ReactNode, color: string, strong: boolean): React.Reac
   return <Text style={[styles.shrink, strong ? styles.strong : null, { color }]}>{node}</Text>;
 }
 
-/** A selectable list row with title, trailing, meta and badge slots and one selected-style setting. */
+/** A selectable list row with title, trailing, meta and badge slots, one selected-style setting and an optional top divider. */
 export const ListRow = ({
   title,
   trailing,
   meta,
   badges,
   after,
+  divider = true,
   selected,
   selectedStyle = RowSelectedStyle.Surface,
   onPress,
@@ -99,7 +101,7 @@ export const ListRow = ({
         style={(state) => {
           const { pressed, hovered } = state as WebPressState;
           const look = resolveRowLook(selectedStyle, { selected, pressed, focused, hovered: hovered === true }, palette);
-          return [styles.row, { borderTopColor: colors.border }, look.container];
+          return [styles.row, { borderTopColor: colors.border, borderTopWidth: divider ? 1 : 0 }, look.container];
         }}
         testID={testID}
         onBlur={() => {

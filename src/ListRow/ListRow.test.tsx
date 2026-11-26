@@ -53,4 +53,12 @@ describe('ListRow', () => {
 
     expect(screen.queryByTestId(`${TEST_ID}-check`)).toBeNull();
   });
+
+  it('with divider off, draws no top border', () => {
+    const divider = false;
+
+    render(<ListRow accessibilityHint="Shows the invoice" accessibilityLabel="2026-002" divider={divider} selected={false} testID={TEST_ID} title="2026-002" onPress={jest.fn()} />);
+
+    expect(getComputedStyle(screen.getByTestId(TEST_ID)).borderTopWidth).toBe('0px');
+  });
 });

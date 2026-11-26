@@ -27,7 +27,7 @@ import { useA11y } from '@dloizides/a11y';
 import { useUi } from '@dloizides/ui-feedback';
 
 import { MIN_TARGET_PX } from '../constants';
-import { segmentLook, segmentShape, trackShape } from './segmentLook';
+import { labelShape, segmentLook, segmentShape, trackShape } from './segmentLook';
 import { SegmentedVariant } from './SegmentedVariant';
 
 const TRACK_PADDING = 3;
@@ -112,9 +112,9 @@ export interface SegmentedControlProps<V extends string = string> {
   style?: StyleProp<ViewStyle>;
   /** Fill the parent width, every segment an equal share. */
   stretch?: boolean;
-  /** Raised (default) lifts the selected segment; Filled paints it with `selectedColor`. */
+  /** Raised (default) lifts the selected segment; Filled paints it with `selectedColor`; Boxed is the square-cornered frame track that tints it with `selectedColor`. */
   variant?: SegmentedVariant;
-  /** Fill of the selected segment in the Filled variant (default: theme text colour). */
+  /** Fill of the selected segment in the Filled (default: theme text colour) and Boxed (default: surface) variants. */
   selectedColor?: string;
   testID?: string;
 }
@@ -168,7 +168,7 @@ export function SegmentedControl<V extends string = string>({
             testID={opt.testID}
             {...ariaSelectedProps(selected)}
           >
-            <Text style={[styles.label, { color: look.ink }]}>{opt.label}</Text>
+            <Text style={[styles.label, ...labelShape(variant), { color: look.ink }]}>{opt.label}</Text>
           </Pressable>
         );
       })}

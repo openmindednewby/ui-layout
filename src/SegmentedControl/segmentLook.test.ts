@@ -1,4 +1,4 @@
-import { segmentLook, segmentShape, trackShape } from './segmentLook';
+import { labelShape, segmentLook, segmentShape, trackShape } from './segmentLook';
 import { SegmentedVariant } from './SegmentedVariant';
 
 const COLORS = { text: 'ink', textSecondary: 'muted', surface: 'paper' };
@@ -62,5 +62,29 @@ describe('segmentShape', () => {
     const shape = segmentShape(SegmentedVariant.Raised, stretch);
 
     expect(shape).toEqual([{ flex: 1 }]);
+  });
+
+  it('with the Boxed variant and a selected segment, tints with the given colour and keeps the text ink', () => {
+    const selectedColor = 'tint';
+
+    const look = segmentLook(SegmentedVariant.Boxed, true, COLORS, selectedColor);
+
+    expect(look).toEqual({ fill: 'tint', ink: 'ink' });
+  });
+
+  it('with the Boxed variant, adds one track, segment and label shape', () => {
+    const variant = SegmentedVariant.Boxed;
+
+    const counts = { track: trackShape(variant, false).length, segment: segmentShape(variant, false).length, label: labelShape(variant).length };
+
+    expect(counts).toEqual({ track: 1, segment: 1, label: 1 });
+  });
+
+  it('with the Raised variant, adds no label shape', () => {
+    const variant = SegmentedVariant.Raised;
+
+    const shapes = labelShape(variant);
+
+    expect(shapes).toEqual([]);
   });
 });

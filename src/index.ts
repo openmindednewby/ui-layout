@@ -168,6 +168,9 @@ export type { RecordActionButtonProps } from './RecordHeader/RecordActionButton'
 export { isRecordHeaderCompact } from './RecordHeader/recordHeaderLayout';
 export { IdChip } from './CopyableId/IdChip';
 export type { IdChipProps } from './CopyableId/IdChip';
+export { IdEllipsis } from './CopyableId/IdEllipsis';
+export { CardTitle } from './CardTitle/CardTitle';
+export type { CardTitleProps } from './CardTitle/CardTitle';
 export { UnderlineTabs } from './Tabs/UnderlineTabs';
 export type { UnderlineTabsProps, UnderlineTab } from './Tabs/UnderlineTabs';
 export { TabsVariant } from './Tabs/TabsVariant';

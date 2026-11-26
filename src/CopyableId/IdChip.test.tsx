@@ -48,4 +48,12 @@ describe('IdChip', () => {
 
     expect(writer).not.toHaveBeenCalled();
   });
+
+  it('with a width, sets that width on the chip', () => {
+    const width = 200;
+
+    render(<IdChip accessibilityHint="hint" accessibilityLabel="copy" label="ID" testID="chip" value={FULL} width={width} />);
+
+    expect(getComputedStyle(screen.getByTestId('chip')).width).toBe('200px');
+  });
 });
