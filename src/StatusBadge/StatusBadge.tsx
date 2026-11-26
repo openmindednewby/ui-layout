@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     // Never wider than the container: a long label wraps inside the pill instead of being clipped.
     maxWidth: '100%',
+    minWidth: 'auto',
   },
   badgeWithIcon: {
     flexDirection: 'row',
