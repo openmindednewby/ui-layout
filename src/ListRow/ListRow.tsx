@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0, gap: GAP },
   line: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: LINE_GAP },
   shrink: { flexShrink: 1, minWidth: 0 },
+  trailing: { flexShrink: 0 },
   strong: { fontSize: FONT, fontWeight: '600' },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP, justifyContent: 'flex-end' },
 });
@@ -68,6 +69,13 @@ function focusTarget(event: unknown): unknown {
 function slot(node: React.ReactNode, color: string, strong: boolean): React.ReactNode {
   if (typeof node !== 'string') return node;
   return <Text style={[styles.shrink, strong ? styles.strong : null, { color }]}>{node}</Text>;
+}
+
+function trailingSlot(node: React.ReactNode, color: string, testID: string | undefined): React.ReactNode {
+  if (node === undefined) return null;
+  const id = testID === undefined ? undefined : `${testID}-trailing`;
+  if (typeof node !== 'string') return <View style={styles.trailing} testID={id}>{node}</View>;
+  return <Text numberOfLines={1} style={[styles.trailing, styles.strong, { color }]} testID={id}>{node}</Text>;
 }
 
 /** A selectable list row with title, trailing, meta and badge slots, one selected-style setting and an optional top divider. */
@@ -119,7 +127,7 @@ export const ListRow = ({
         <View style={styles.body}>
           <View style={styles.line}>
             {slot(title, rest.titleColor, true)}
-            {slot(trailing, rest.textColor, true)}
+            {trailingSlot(trailing, rest.textColor, testID)}
           </View>
           <View style={styles.line}>
             <View style={styles.shrink}>{slot(meta, rest.textColor, false)}</View>
