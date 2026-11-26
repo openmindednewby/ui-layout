@@ -13,6 +13,7 @@ import { useRowPalette } from './hooks/useRowPalette';
 import { RowSelectedStyle } from './RowSelectedStyle';
 import { isFocusVisible } from './utils/focusVisible';
 import { resolveRowLook, type RowLook, type RowPalette } from './utils/rowLook';
+import { TITLE_LINE, TITLE_WRAP, TRAILING_END } from './utils/titleWrap';
 
 const FONT = 15;
 const PAD_H = 16;
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0, gap: GAP },
   line: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: LINE_GAP },
   shrink: { flexShrink: 1, minWidth: 0 },
-  trailing: { flexShrink: 0 },
+  trailing: { flexShrink: 0, ...TRAILING_END },
   strong: { fontSize: FONT, fontWeight: '600' },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP, justifyContent: 'flex-end' },
 });
@@ -78,9 +79,14 @@ function focusTarget(event: unknown): unknown {
   return (event as { nativeEvent?: { target?: unknown } } | undefined)?.nativeEvent?.target;
 }
 
-function slot(node: React.ReactNode, color: string, strong: boolean): React.ReactNode {
+function metaSlot(node: React.ReactNode, color: string): React.ReactNode {
   if (typeof node !== 'string') return node;
-  return <Text style={[styles.shrink, strong ? styles.strong : null, { color }]}>{node}</Text>;
+  return <Text style={[styles.shrink, { color }]}>{node}</Text>;
+}
+
+function titleSlot(node: React.ReactNode, color: string): React.ReactNode {
+  if (typeof node !== 'string') return node;
+  return <Text style={[styles.strong, { color }, TITLE_WRAP]}>{node}</Text>;
 }
 
 function trailingSlot(node: React.ReactNode, color: string, testID: string | undefined): React.ReactNode {
@@ -132,12 +138,12 @@ export const ListRow = ({
       >
         {selectionMark(rest, palette, testID)}
         <View style={styles.body}>
-          <View style={styles.line}>
-            {slot(title, rest.titleColor, true)}
+          <View style={[styles.line, TITLE_LINE]}>
+            {titleSlot(title, rest.titleColor)}
             {trailingSlot(trailing, rest.textColor, testID)}
           </View>
           <View style={styles.line}>
-            <View style={styles.shrink}>{slot(meta, rest.textColor, false)}</View>
+            <View style={styles.shrink}>{metaSlot(meta, rest.textColor)}</View>
             {badges === undefined ? null : <View style={styles.badges}>{badges}</View>}
           </View>
         </View>
