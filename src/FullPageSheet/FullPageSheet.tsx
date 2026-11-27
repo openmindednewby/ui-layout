@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { Platform, Modal as RNModal, StyleSheet, Text, View } from 'react-native';
+import { Platform, Modal as RNModal, StyleSheet, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
@@ -11,10 +11,7 @@ import { useScrollLock } from '../hooks/useScrollLock';
 import { FullPageSheetPanel } from './FullPageSheetPanel';
 import type { FullPageSheetPanelProps } from './FullPageSheetPanel';
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  hint: { position: 'absolute', width: 1, height: 1, overflow: 'hidden', opacity: 0 },
-});
+const styles = StyleSheet.create({ root: { flex: 1 } });
 
 export interface FullPageSheetProps extends FullPageSheetPanelProps {
   visible: boolean;
@@ -46,17 +43,11 @@ export const FullPageSheet = ({
         accessibilityViewIsModal
         aria-modal
         accessibilityHint={accessibilityHint}
-        aria-describedby={accessibilityHint === undefined ? undefined : `${testID}-hint`}
         aria-label={accessibilityLabel ?? t(LAYOUT_I18N.dialog)}
         role="dialog"
         style={styles.root}
         testID={`${testID}-dialog`}
       >
-        {accessibilityHint === undefined ? null : (
-          <Text accessibilityElementsHidden importantForAccessibility="no-hide-descendants" nativeID={`${testID}-hint`} style={styles.hint}>
-            {accessibilityHint}
-          </Text>
-        )}
         {visible ? <FullPageSheetPanel testID={testID} {...panel} /> : null}
       </View>
     </RNModal>
