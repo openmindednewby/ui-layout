@@ -68,6 +68,14 @@ describe('FullPageSheet open state', () => {
     expect(screen.getByTestId('sheet-content')).toBeTruthy();
   });
 
+  it('with an accessibility hint, puts it on the dialog element', () => {
+    renderSheet({ accessibilityHint: 'Swipe or press Escape to close' });
+
+    const describedBy = screen.getByTestId(DIALOG_ID).getAttribute('aria-describedby');
+
+    expect(document.getElementById(String(describedBy))?.textContent).toBe('Swipe or press Escape to close');
+  });
+
   it('with visible false, does not mount the content', () => {
     renderSheet({ visible: false });
 
