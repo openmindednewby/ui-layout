@@ -1,7 +1,14 @@
-jest.mock('react-native', () => ({
-  ...jest.requireActual('react-native'),
-  useWindowDimensions: () => ({ width: 1280, height: 800, scale: 1, fontScale: 1 }),
-}));
+const mockViewProps = jest.fn();
+
+jest.mock('react-native', () => {
+  const actual = jest.requireActual('react-native');
+  const { createElement, forwardRef } = jest.requireActual('react');
+  const View = forwardRef((props: Record<string, unknown>, ref: unknown) => {
+    mockViewProps(props);
+    return createElement(actual.View, { ...props, ref });
+  });
+  return { ...actual, View, useWindowDimensions: () => ({ width: 1280, height: 800, scale: 1, fontScale: 1 }) };
+});
 
 import { fireEvent, render, screen } from '@testing-library/react';
 
@@ -27,6 +34,7 @@ const renderSheet = (overrides: Partial<FullPageSheetProps> = {}): ReturnType<ty
 
 afterEach(() => {
   document.body.style.overflow = '';
+  mockViewProps.mockClear();
   jest.restoreAllMocks();
 });
 
@@ -66,6 +74,14 @@ describe('FullPageSheet open state', () => {
     expect(dialog.getAttribute('aria-modal')).toBe('true');
     expect(dialog.getAttribute('aria-label')).toBe('Invoice preview');
     expect(screen.getByTestId('sheet-content')).toBeTruthy();
+  });
+
+  it('with an accessibility hint, puts it on the dialog element', () => {
+    renderSheet({ accessibilityHint: 'Swipe or press Escape to close' });
+
+    const dialogProps = mockViewProps.mock.calls.map(([props]) => props).find((props) => props.testID === DIALOG_ID);
+
+    expect(dialogProps?.accessibilityHint).toBe('Swipe or press Escape to close');
   });
 
   it('with visible false, does not mount the content', () => {

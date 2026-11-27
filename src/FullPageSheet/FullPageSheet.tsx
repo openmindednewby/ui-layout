@@ -16,12 +16,14 @@ const styles = StyleSheet.create({ root: { flex: 1 } });
 export interface FullPageSheetProps extends FullPageSheetPanelProps {
   visible: boolean;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 /** One item drawn large over the whole screen; Close is focused on open, Escape and back close it. */
 export const FullPageSheet = ({
   visible,
   accessibilityLabel,
+  accessibilityHint,
   testID = LAYOUT_TEST_IDS.fullPageSheet,
   ...panel
 }: FullPageSheetProps): React.ReactElement => {
@@ -40,6 +42,7 @@ export const FullPageSheet = ({
         ref={dialogRef}
         accessibilityViewIsModal
         aria-modal
+        accessibilityHint={accessibilityHint}
         aria-label={accessibilityLabel ?? t(LAYOUT_I18N.dialog)}
         role="dialog"
         style={styles.root}
