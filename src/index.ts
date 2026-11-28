@@ -187,6 +187,8 @@ export type { CardTitleProps } from './CardTitle/CardTitle';
 export { UnderlineTabs } from './Tabs/UnderlineTabs';
 export type { UnderlineTabsProps, UnderlineTab } from './Tabs/UnderlineTabs';
 export { TabsVariant } from './Tabs/TabsVariant';
+export { SlidingTabs } from './Tabs/SlidingTabs';
+export type { SlidingTabsProps } from './Tabs/SlidingTabs';
 export { WidgetCard } from './WidgetCard/WidgetCard';
 export type { WidgetCardProps } from './WidgetCard/WidgetCard';
 
