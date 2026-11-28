@@ -37,7 +37,7 @@ export interface SlidingTabsProps {
 export const SlidingTabs = ({ tabs, activeKey, onChange, accessibilityLabel, accessibilityHint, underlineColor, fadeColor, testID }: SlidingTabsProps): React.ReactElement => {
   const { theme } = useUi();
   const reduced = useReducedMotion();
-  const underline = underlineColor ?? theme.palette.primary[DEFAULT_UNDERLINE_STEP];
+  const underline = underlineColor ?? theme.palette.primary[DEFAULT_UNDERLINE_STEP] ?? theme.colors.text;
   const fade = useEdgeFade();
   const activeIndex = tabs.findIndex((tab) => tab.key === activeKey);
   const indicator = useTabIndicator(activeIndex, reduced);

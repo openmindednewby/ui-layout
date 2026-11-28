@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { Platform, Pressable, StyleSheet, Text, type LayoutChangeEvent, type PressableProps, type View, type ViewStyle } from 'react-native';
 
