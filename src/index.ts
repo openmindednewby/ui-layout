@@ -27,7 +27,9 @@ export { SplitLayout } from './SplitPanes/SplitLayout';
 export { isSplitSideBySide } from './SplitPanes/isSplitSideBySide';
 
 export { StickyPreview } from './StickyPreview/StickyPreview';
-export type { StickyPreviewProps, StickyPreviewTapLabels } from './StickyPreview/StickyPreview';
+export type { StickyPreviewProps } from './StickyPreview/StickyPreview';
+export { TapToOpenPreview } from './StickyPreview/TapToOpenPreview';
+export type { TapToOpenPreviewProps, TapToOpenLabels } from './StickyPreview/TapToOpenPreview';
 export { useVisibleViewport, isKeyboardOpen } from './StickyPreview/hooks/useVisibleViewport';
 export type { VisibleViewport } from './StickyPreview/hooks/useVisibleViewport';
 
