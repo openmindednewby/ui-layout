@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ViewProps } from 'react-native';
 
+import { useA11y } from '@dloizides/a11y';
 import { useUi } from '@dloizides/ui-feedback';
 
-import { SECTION_BAR_HEIGHT, SectionRailBar, tablistHintProps, type SectionMoreLabels } from './SectionRailBar';
+import { SECTION_BAR_HEIGHT, SectionRailBar, type SectionMoreLabels } from './SectionRailBar';
 import { SectionItemShape, SectionRailItem } from './SectionRailItem';
 import type { TabDescriptor } from './Tabs';
 import { TABS_COLLAPSE_BREAKPOINT, useTabsCollapsed } from './tabsResponsive';
@@ -55,12 +56,15 @@ export const SectionRail = ({
 }: SectionRailProps): React.ReactElement => {
   const { theme } = useUi();
   const collapsed = useTabsCollapsed(collapseBelow);
+  const { a11yProps, hintNode } = useA11y({ label: accessibilityLabel, hint: accessibilityHint, testID });
+  const tablistHint = (accessibilityHint === undefined ? {} : { 'aria-describedby': (a11yProps as unknown as Record<string, unknown>)['aria-describedby'] }) as ViewProps;
   if (collapsed) {
     return (
       <View style={styles.phoneRoot} testID={testID}>
         {railHeader}
         <View role="tabpanel" style={styles.phonePanel} testID={`${testID}-panel`}>{children}</View>
-        <SectionRailBar accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} activeKey={activeKey} barCount={barCount} more={more} onChange={onChange} tabs={tabs} testID={testID} />
+        <SectionRailBar accessibilityLabel={accessibilityLabel} activeKey={activeKey} barCount={barCount} more={more} onChange={onChange} tablistHint={tablistHint} tabs={tabs} testID={testID} />
+        {hintNode}
       </View>
     );
   }
@@ -68,7 +72,7 @@ export const SectionRail = ({
     <View style={styles.wideRoot} testID={testID}>
       <View style={[styles.rail, { borderRightColor: theme.colors.border }]} testID={`${testID}-rail`}>
         {railHeader}
-        <View {...tablistHintProps(accessibilityHint)} aria-label={accessibilityLabel} aria-orientation="vertical" role="tablist" style={styles.railList}>
+        <View {...tablistHint} aria-label={accessibilityLabel} aria-orientation="vertical" role="tablist" style={styles.railList}>
           {tabs.map((tab) => (
             <SectionRailItem
               key={tab.key}
@@ -83,6 +87,7 @@ export const SectionRail = ({
         </View>
       </View>
       <View role="tabpanel" style={styles.widePanel} testID={`${testID}-panel`}>{children}</View>
+      {hintNode}
     </View>
   );
 };

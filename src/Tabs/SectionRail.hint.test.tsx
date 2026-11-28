@@ -22,7 +22,8 @@ const HINT = 'Switches the event section';
 const hintOnTablist = (width: number): string | null => {
   mockWidth = width;
   render(<SectionRail accessibilityHint={HINT} accessibilityLabel="Sections" activeKey="a" more={MORE} onChange={jest.fn()} tabs={TABS} />);
-  return screen.getByRole('tablist').getAttribute('aria-description');
+  const describedBy = screen.getByRole('tablist').getAttribute('aria-describedby') ?? '';
+  return document.getElementById(describedBy)?.textContent ?? null;
 };
 
 describe('SectionRail accessibilityHint', () => {
