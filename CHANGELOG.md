@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.80.0
+
+- MODC-1 D-850 "console parts to packages": AlertBand (tone or colours, action slot, wide row), LabelValueLine, KeyValueRows, SectionCard, SectionLabel, ShowAllList + visibleRows (labels as props), SplitColumns (container width) + isSplitAt, ThumbnailSlot. New parts, no change to existing ones.
+
 ## 1.77.0
 
 - `SlidingTabs`: underline tabs with a sliding underline on select, hover tone, focus ring, Arrow/Home/End keys and reduced motion; `useTabIndicator` hook.
