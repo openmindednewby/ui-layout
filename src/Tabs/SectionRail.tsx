@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
-import { SECTION_BAR_HEIGHT, SectionRailBar, type SectionMoreLabels } from './SectionRailBar';
+import { SECTION_BAR_HEIGHT, SectionRailBar, tablistHintProps, type SectionMoreLabels } from './SectionRailBar';
 import { SectionItemShape, SectionRailItem } from './SectionRailItem';
 import type { TabDescriptor } from './Tabs';
 import { TABS_COLLAPSE_BREAKPOINT, useTabsCollapsed } from './tabsResponsive';
@@ -30,6 +30,7 @@ export interface SectionRailProps {
   activeKey: string;
   onChange: (key: string) => void;
   accessibilityLabel: string;
+  accessibilityHint?: string;
   more: SectionMoreLabels;
   railHeader?: React.ReactNode;
   children?: React.ReactNode;
@@ -44,6 +45,7 @@ export const SectionRail = ({
   activeKey,
   onChange,
   accessibilityLabel,
+  accessibilityHint,
   more,
   railHeader,
   children,
@@ -58,7 +60,7 @@ export const SectionRail = ({
       <View style={styles.phoneRoot} testID={testID}>
         {railHeader}
         <View role="tabpanel" style={styles.phonePanel} testID={`${testID}-panel`}>{children}</View>
-        <SectionRailBar accessibilityLabel={accessibilityLabel} activeKey={activeKey} barCount={barCount} more={more} onChange={onChange} tabs={tabs} testID={testID} />
+        <SectionRailBar accessibilityHint={accessibilityHint} accessibilityLabel={accessibilityLabel} activeKey={activeKey} barCount={barCount} more={more} onChange={onChange} tabs={tabs} testID={testID} />
       </View>
     );
   }
@@ -66,7 +68,7 @@ export const SectionRail = ({
     <View style={styles.wideRoot} testID={testID}>
       <View style={[styles.rail, { borderRightColor: theme.colors.border }]} testID={`${testID}-rail`}>
         {railHeader}
-        <View aria-label={accessibilityLabel} aria-orientation="vertical" role="tablist" style={styles.railList}>
+        <View {...tablistHintProps(accessibilityHint)} aria-label={accessibilityLabel} aria-orientation="vertical" role="tablist" style={styles.railList}>
           {tabs.map((tab) => (
             <SectionRailItem
               key={tab.key}
