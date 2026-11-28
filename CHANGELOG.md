@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased (minor)
+
+- `TapToOpenPreview`: tap-to-open moved out of StickyPreview into its own wrapper built on `forceCompact`; Open now opens while stuck or with the keyboard up; the Open/Close control is a 44x44 sibling of the slot, never a button around it. BREAKING for `StickyPreview tapToOpen` (removed, use TapToOpenPreview `labels`); StickyPreview gains `autoCompact` (default true).
+
 ## 1.80.0
 
 - MODC-1 D-850 "console parts to packages": AlertBand (tone or colours, action slot, wide row), LabelValueLine, KeyValueRows, SectionCard, SectionLabel, ShowAllList + visibleRows (labels as props), SplitColumns (container width) + isSplitAt, ThumbnailSlot. New parts, no change to existing ones.
