@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.77.0
+
+- `SlidingTabs`: underline tabs with a sliding underline on select, hover tone, focus ring, Arrow/Home/End keys and reduced motion; `useTabIndicator` hook.
+
 ## 1.71.0
 
 - MODC-1 "Module C unified console" residuals-3 S21-M. `StatusBadge` takes `minWidth: auto`, so in a squeezed row the chip keeps its longest word whole ("Review" no longer breaks to "Revie / w"); a longer label still wraps between words. No API change.
