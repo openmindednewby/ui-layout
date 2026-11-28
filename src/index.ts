@@ -189,6 +189,11 @@ export type { UnderlineTabsProps, UnderlineTab } from './Tabs/UnderlineTabs';
 export { TabsVariant } from './Tabs/TabsVariant';
 export { SlidingTabs } from './Tabs/SlidingTabs';
 export type { SlidingTabsProps } from './Tabs/SlidingTabs';
+export { SectionRail } from './Tabs/SectionRail';
+export type { SectionRailProps } from './Tabs/SectionRail';
+export type { SectionMoreLabels } from './Tabs/SectionRailBar';
+export { splitSectionTabs, DEFAULT_SECTION_BAR_COUNT } from './Tabs/sectionRailModel';
+export type { SectionBarSplit } from './Tabs/sectionRailModel';
 export { WidgetCard } from './WidgetCard/WidgetCard';
 export type { WidgetCardProps } from './WidgetCard/WidgetCard';
 
