@@ -64,6 +64,7 @@ export const SlidingTabItem = forwardRef<View, SlidingTabItemProps>(({ tab, sele
       accessibilityState={{ selected }}
       aria-selected={selected}
       focusable={selected}
+      tabIndex={selected ? 0 : -1}
       style={(state) => {
         const { hovered, focused, pressed } = state as WebPressState;
         const toned = hovered === true || pressed;
