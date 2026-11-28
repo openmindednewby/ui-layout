@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { StickyPreview } from './StickyPreview';
 import { isPastStickyLine } from './hooks/useStuckSentinel';
@@ -154,5 +154,38 @@ describe('isPastStickyLine', () => {
     const result = isPastStickyLine(10, true, 0);
 
     expect(result).toBe(false);
+  });
+});
+
+describe('StickyPreview tapToOpen', () => {
+  const labels = { openLabel: 'Open', openHint: 'Opens', closeLabel: 'Close', closeHint: 'Closes' };
+
+  function renderTapPreview(): void {
+    render(<StickyPreview accessibilityLabel="Preview" compact="small" full="large" tapToOpen={labels} testID={TEST_ID} />);
+  }
+
+  it('at rest with a tall viewport, shows the compact slot', () => {
+    renderTapPreview();
+
+    const shown = screen.getByTestId(`${TEST_ID}-compact`);
+
+    expect(shown.textContent).toBe('small');
+  });
+
+  it('when the compact slot is pressed, shows the full slot', () => {
+    renderTapPreview();
+
+    fireEvent.click(screen.getByTestId(`${TEST_ID}-open`));
+
+    expect(screen.getByTestId(`${TEST_ID}-full`).textContent).toBe('large');
+  });
+
+  it('when the opened full slot is pressed, returns to the compact slot', () => {
+    renderTapPreview();
+    fireEvent.click(screen.getByTestId(`${TEST_ID}-open`));
+
+    fireEvent.click(screen.getByTestId(`${TEST_ID}-close`));
+
+    expect(screen.getByTestId(`${TEST_ID}-compact`).textContent).toBe('small');
   });
 });
