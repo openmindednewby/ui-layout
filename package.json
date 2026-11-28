@@ -83,7 +83,7 @@
   "peerDependencies": {
     "@dloizides/ui-buttons": ">=1.8.0",
     "@dloizides/ui-feedback": ">=1.1.0",
-    "@dloizides/ui-icons": ">=1.0.1",
+    "@dloizides/ui-icons": ">=1.2.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
     "react-native": ">=0.74.0",
@@ -98,7 +98,7 @@
     "@babel/core": "^7.29.7",
     "@dloizides/ui-buttons": "^1.8.0",
     "@dloizides/ui-feedback": "^1.2.0",
-    "@dloizides/ui-icons": "^1.0.1",
+    "@dloizides/ui-icons": "^1.4.0",
     "@react-native/babel-preset": "^0.81.6",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

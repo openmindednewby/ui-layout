@@ -170,6 +170,12 @@ export { resolveTintColors } from './StatusBadge/toneColors';
 
 export { Timeline } from './Timeline/Timeline';
 export type { TimelineProps, TimelineEntry } from './Timeline/Timeline';
+export { TimelineStep } from './TimelineStep/TimelineStep';
+export type { TimelineStepProps } from './TimelineStep/TimelineStep';
+export { StepMarker } from './TimelineStep/StepMarker';
+export type { StepMarkerProps } from './TimelineStep/StepMarker';
+export { StepMarkerNumber } from './TimelineStep/StepMarkerNumber';
+export { StepMarkerState } from './TimelineStep/StepMarkerState';
 
 export { RecordHeader } from './RecordHeader/RecordHeader';
 export type { RecordHeaderProps } from './RecordHeader/RecordHeader';
