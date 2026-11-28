@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
 
 import { useUi } from '@dloizides/ui-feedback';
 
@@ -28,13 +28,14 @@ export interface SectionRailBarProps {
   activeKey: string;
   onChange: (key: string) => void;
   accessibilityLabel: string;
+  tablistHint?: ViewProps;
   more: SectionMoreLabels;
   barCount?: number;
   testID: string;
 }
 
 /** Phone form of the section rail: a bottom bar of the first sections plus More, which opens the rest above the bar. */
-export const SectionRailBar = ({ tabs, activeKey, onChange, accessibilityLabel, more, barCount, testID }: SectionRailBarProps): React.ReactElement => {
+export const SectionRailBar = ({ tabs, activeKey, onChange, accessibilityLabel, tablistHint, more, barCount, testID }: SectionRailBarProps): React.ReactElement => {
   const { theme } = useUi();
   const [moreOpen, setMoreOpen] = useState(false);
   const split = splitSectionTabs(tabs, activeKey, barCount);
@@ -60,7 +61,7 @@ export const SectionRailBar = ({ tabs, activeKey, onChange, accessibilityLabel, 
           ))}
         </View>
       ) : null}
-      <View aria-label={accessibilityLabel} role="tablist" style={[styles.bar, pinnedToViewport, paper]} testID={`${testID}-bar`}>
+      <View {...tablistHint} aria-label={accessibilityLabel} role="tablist" style={[styles.bar, pinnedToViewport, paper]} testID={`${testID}-bar`}>
         {split.barTabs.map((tab) => (
           <SectionRailItem
             key={tab.key}
