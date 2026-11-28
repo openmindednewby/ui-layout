@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Animated, Easing, type LayoutChangeEvent } from 'react-native';
+import { Animated, Easing, Platform, type LayoutChangeEvent } from 'react-native';
 
 export const TAB_INDICATOR_MS = 180;
 
@@ -19,7 +19,7 @@ export interface TabIndicator {
 const slide = (value: Animated.Value, toValue: number): Animated.CompositeAnimation =>
   Animated.timing(value, { toValue, duration: TAB_INDICATOR_MS, easing: Easing.out(Easing.cubic), useNativeDriver: false });
 
-/** Slides the underline to the measured active tab; jumps on first placement and under reduced motion. */
+/** Slides the underline to the measured active tab (CSS transition on web); jumps on first placement and under reduced motion. */
 export function useTabIndicator(activeIndex: number, reduced: boolean): TabIndicator {
   const [boxes, setBoxes] = useState<ReadonlyArray<TabBox | undefined>>([]);
   const left = useRef(new Animated.Value(0)).current;
@@ -30,7 +30,7 @@ export function useTabIndicator(activeIndex: number, reduced: boolean): TabIndic
 
   useEffect(() => {
     if (targetX === undefined || targetWidth === undefined) return;
-    if (reduced || !placed.current) {
+    if (reduced || !placed.current || Platform.OS === 'web') {
       left.setValue(targetX);
       width.setValue(targetWidth);
       placed.current = true;

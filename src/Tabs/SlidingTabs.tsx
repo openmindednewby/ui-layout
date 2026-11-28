@@ -8,6 +8,7 @@ import { useUi } from '@dloizides/ui-feedback';
 import { EdgeFadeStrip } from './EdgeFadeStrip';
 import { useEdgeFade } from './edgeFade';
 import { SlidingTabItem } from './SlidingTabItem';
+import { indicatorTransition } from './tabIndicatorTransition';
 import { nextTabIndex } from './tabKeyNav';
 import { useTabIndicator } from './useTabIndicator';
 import type { UnderlineTab } from './underlineTabTypes';
@@ -67,7 +68,7 @@ export const SlidingTabs = ({ tabs, activeKey, onChange, accessibilityLabel, acc
               onTabKey={moveFrom(index)}
             />
           ))}
-          {indicator.measured ? <Animated.View pointerEvents="none" style={[styles.indicator, { backgroundColor: underline, left: indicator.left, width: indicator.width }]} testID={testID === undefined ? undefined : `${testID}-indicator`} /> : null}
+          {indicator.measured ? <Animated.View pointerEvents="none" style={[styles.indicator, indicatorTransition(reduced), { backgroundColor: underline, left: indicator.left, width: indicator.width }]} testID={testID === undefined ? undefined : `${testID}-indicator`} /> : null}
         </View>
       </ScrollView>
       {fade.visible ? <EdgeFadeStrip color={fadeColor ?? theme.colors.background} /> : null}
